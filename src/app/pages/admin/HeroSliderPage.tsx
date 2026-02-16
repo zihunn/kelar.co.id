@@ -46,6 +46,7 @@ export function HeroSliderPage() {
     description: "",
     image: "",
     redirectUrl: "",
+    linkType: "article" as "article" | "section",
     status: "draft" as "published" | "draft" | "takedown",
   });
 
@@ -96,11 +97,13 @@ export function HeroSliderPage() {
   const handleEdit = (id: string) => {
     const slide = heroSlides.find((s) => s.id === id);
     if (slide) {
+      const isSection = slide.redirectUrl?.startsWith("/#");
       setFormData({
         title: slide.title || "",
         description: slide.description || "",
         image: slide.image || "",
         redirectUrl: slide.redirectUrl || "",
+        linkType: isSection ? "section" : "article",
         status: slide.status || "draft",
       });
       setEditingId(id);
@@ -131,6 +134,7 @@ export function HeroSliderPage() {
       description: "",
       image: "",
       redirectUrl: "",
+      linkType: "article",
       status: "draft",
     });
     setEditingId(null);
@@ -295,25 +299,89 @@ export function HeroSliderPage() {
 
                 <div>
                   <label className="block text-gray-700 dark:text-gray-300 mb-2">
-                    Link ke Artikel
+                    Tipe Tautan
                   </label>
-                  <select
-                    value={formData.redirectUrl || ""}
-                    onChange={(e) =>
-                      setFormData({ ...formData, redirectUrl: e.target.value })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]"
-                    required
-                  >
-                    <option value="">Pilih Artikel</option>
-                    {articles
-                      .filter((a) => a.status === "published")
-                      .map((article) => (
-                        <option key={article.id} value={article.id}>
-                          {article.title}
-                        </option>
-                      ))}
-                  </select>
+                  <div className="flex gap-4 mb-3">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="linkType"
+                        value="article"
+                        checked={formData.linkType === "article"}
+                        onChange={() =>
+                          setFormData({
+                            ...formData,
+                            linkType: "article",
+                            redirectUrl: "",
+                          })
+                        }
+                        className="w-4 h-4 text-[var(--kelar-primary)] focus:ring-[var(--kelar-primary)]"
+                      />
+                      <span className="text-sm dark:text-gray-300">
+                        Artikel
+                      </span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="linkType"
+                        value="section"
+                        checked={formData.linkType === "section"}
+                        onChange={() =>
+                          setFormData({
+                            ...formData,
+                            linkType: "section",
+                            redirectUrl: "",
+                          })
+                        }
+                        className="w-4 h-4 text-[var(--kelar-primary)] focus:ring-[var(--kelar-primary)]"
+                      />
+                      <span className="text-sm dark:text-gray-300">
+                        Section Halaman
+                      </span>
+                    </label>
+                  </div>
+
+                  {formData.linkType === "article" ? (
+                    <select
+                      value={formData.redirectUrl || ""}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          redirectUrl: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]"
+                      required
+                    >
+                      <option value="">Pilih Artikel</option>
+                      {articles
+                        .filter((a) => a.status === "published")
+                        .map((article) => (
+                          <option key={article.id} value={article.id}>
+                            {article.title}
+                          </option>
+                        ))}
+                    </select>
+                  ) : (
+                    <select
+                      value={formData.redirectUrl || ""}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          redirectUrl: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]"
+                      required
+                    >
+                      <option value="">Pilih Section</option>
+                      <option value="/#home">Beranda</option>
+                      <option value="/#about">Tentang Kami</option>
+                      <option value="/#artikel">Artikel</option>
+                      <option value="/#contact">Kontak</option>
+                    </select>
+                  )}
                 </div>
 
                 <div>

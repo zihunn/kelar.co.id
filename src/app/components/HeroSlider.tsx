@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { useLanguage } from "../context/LanguageContext";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 
 export function HeroSlider() {
   const { heroSlides } = useData();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -103,7 +104,34 @@ export function HeroSlider() {
                     {slide.description}
                   </p>
                   <button
-                    onClick={() => navigate(`/artikel/${slide.redirectUrl}`)}
+                    onClick={() => {
+                      if (slide.redirectUrl.startsWith("/#")) {
+                        const sectionId = slide.redirectUrl.replace("/#", "");
+                        if (location.pathname === "/") {
+                          const element = document.getElementById(sectionId);
+                          if (element) {
+                            const navbarElement = document.querySelector("nav");
+                            const navbarHeight =
+                              navbarElement?.offsetHeight || 96;
+                            const elementPosition =
+                              element.getBoundingClientRect().top;
+                            const offsetPosition =
+                              elementPosition +
+                              window.pageYOffset -
+                              navbarHeight;
+
+                            window.scrollTo({
+                              top: offsetPosition,
+                              behavior: "smooth",
+                            });
+                          }
+                        } else {
+                          navigate(slide.redirectUrl);
+                        }
+                      } else {
+                        navigate(`/artikel/${slide.redirectUrl}`);
+                      }
+                    }}
                     className="px-8 py-4 bg-[var(--kelar-primary)] text-white rounded-lg hover:bg-[var(--kelar-primary-light)] transition-colors"
                   >
                     {t("hero.readMore")}
