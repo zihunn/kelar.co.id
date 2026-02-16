@@ -9,6 +9,8 @@ export function HeroSlider() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   // Only show published slides
   const publishedSlides = heroSlides.filter(
@@ -43,8 +45,38 @@ export function HeroSlider() {
     setCurrentSlide((prev) => (prev + 1) % publishedSlides.length);
   };
 
+  // Minimum distance for a swipe to be registered
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      goToNext();
+    } else if (isRightSwipe) {
+      goToPrevious();
+    }
+  };
+
   return (
-    <div className="relative mt-24 overflow-hidden">
+    <div
+      className="relative mt-16 md:mt-24 overflow-hidden"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       {/* Slides Container */}
       <div
         className="flex transition-transform duration-500 ease-in-out"
@@ -52,7 +84,7 @@ export function HeroSlider() {
       >
         {publishedSlides.map((slide) => (
           <div key={slide.id} className="w-full flex-shrink-0">
-            <div className="relative h-[500px] md:h-[600px]">
+            <div className="relative h-[700px] md:h-[850px]">
               {/* Background Image */}
               <div
                 className="absolute inset-0 bg-cover bg-center"
@@ -83,22 +115,22 @@ export function HeroSlider() {
         ))}
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - Hidden on Mobile */}
       {publishedSlides.length > 1 && (
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/60 transition-all shadow-lg text-[var(--kelar-primary)]"
+            className="hidden md:flex absolute left-1 md:left-4 top-1/2 -translate-y-1/2 z-10 w-7 h-7 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full items-center justify-center hover:bg-white/30 transition-all shadow-lg text-white"
             aria-label="Previous slide"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
           </button>
           <button
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/60 transition-all shadow-lg text-[var(--kelar-primary)]"
+            className="hidden md:flex absolute right-1 md:right-4 top-1/2 -translate-y-1/2 z-10 w-7 h-7 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full items-center justify-center hover:bg-white/30 transition-all shadow-lg text-white"
             aria-label="Next slide"
           >
-            <ChevronRight size={24} />
+            <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
           </button>
         </>
       )}

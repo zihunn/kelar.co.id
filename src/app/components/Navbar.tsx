@@ -26,7 +26,9 @@ export function Navbar() {
 
     const handleScroll = () => {
       const sections = ["home", "about", "artikel", "contact"];
-      const scrollPosition = window.scrollY + 150; // Offset for navbar height
+      const navbarElement = document.querySelector("nav");
+      const navbarHeight = navbarElement?.offsetHeight || 96;
+      const scrollPosition = window.scrollY + navbarHeight + 50; // Offset for navbar height + buffer
 
       let current = "";
       for (const section of sections) {
@@ -65,7 +67,8 @@ export function Navbar() {
     const element = document.getElementById(sectionId);
 
     if (element) {
-      const navbarHeight = 96; // h-24 = 6rem = 96px
+      const navbarElement = document.querySelector("nav");
+      const navbarHeight = navbarElement?.offsetHeight || 96;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition =
         elementPosition + window.pageYOffset - navbarHeight;
@@ -82,13 +85,13 @@ export function Navbar() {
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-sm fixed top-0 left-0 right-0 z-50 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-24">
+        <div className="flex justify-between items-center h-16 md:h-24">
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img
               src={theme === "dark" ? logoWhite : logoBlue}
               alt="Kelar.co.id"
-              className="h-16 md:h-20"
+              className="h-12 md:h-20"
             />
           </Link>
 
@@ -158,7 +161,7 @@ export function Navbar() {
             className="md:hidden p-2 text-gray-700 dark:text-gray-300"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
