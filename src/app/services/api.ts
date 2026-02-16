@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://kelar.test/api";
+const API_BASE_URL = "https://api.kelar.co.id/api";
 
 export const api = {
   async login(email: string, password: string) {
