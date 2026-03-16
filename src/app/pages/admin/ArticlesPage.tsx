@@ -215,19 +215,19 @@ export function ArticlesPage() {
     switch (status) {
       case "published":
         return (
-          <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full text-xs font-medium">
+          <span className="px-6 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md">
             Published
           </span>
         );
       case "draft":
         return (
-          <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs font-medium">
+          <span className="px-6 py-2 bg-orange-500/20 text-orange-400 border border-orange-500/30 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md">
             Draft
           </span>
         );
       case "takedown":
         return (
-          <span className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-full text-xs font-medium">
+          <span className="px-6 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md">
             Takedown
           </span>
         );
@@ -238,17 +238,20 @@ export function ArticlesPage() {
 
   return (
     <AdminLayout>
-      <div>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-3">
-          <h1 className="text-2xl sm:text-3xl dark:text-white">
-            {t("admin.manageArticles")}
-          </h1>
+      <div className="space-y-10 pb-20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-4xl font-black text-white tracking-tighter drop-shadow-lg">
+              {t("admin.manageArticles")}
+            </h1>
+            <p className="text-white/80 font-medium">Kelola publikasi dan konten artikel Kelar.co.id</p>
+          </div>
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-[var(--kelar-primary)] text-white rounded-lg hover:bg-[var(--kelar-primary-light)] transition-colors"
+            className="flex items-center justify-center gap-3 px-8 py-4 bg-white text-[var(--background)] rounded-2xl font-black transition-all shadow-2xl hover:bg-white/90 active:scale-95 text-lg"
           >
-            <Plus size={20} />
-            <span className="text-sm sm:text-base">
+            <Plus size={24} />
+            <span>
               {t("admin.addArticle")}
             </span>
           </button>
@@ -256,17 +259,17 @@ export function ArticlesPage() {
 
         {/* Form Modal */}
         {showForm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between p-6 border-b dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
-                <h2 className="text-2xl dark:text-white">
+          <div className="fixed inset-0 bg-blue-950/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-blue-900/40 backdrop-blur-3xl rounded-[3rem] border border-white/20 shadow-[0_0_100px_rgba(0,0,0,0.5)] max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
+              <div className="flex items-center justify-between p-8 border-b border-white/10 sticky top-0 bg-blue-900/60 backdrop-blur-3xl z-10">
+                <h2 className="text-3xl font-black text-white tracking-tight">
                   {editingId
                     ? `${t("admin.edit")} ${t("admin.article")}`
                     : t("admin.addArticle")}
                 </h2>
                 <button
                   onClick={resetForm}
-                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  className="text-white/60 hover:text-white transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -274,7 +277,7 @@ export function ArticlesPage() {
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
                     {t("admin.title")}
                   </label>
                   <input
@@ -283,23 +286,23 @@ export function ArticlesPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, title: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]"
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
                     Thumbnail
                   </label>
                   <div className="flex gap-2 mb-3">
                     <button
                       type="button"
                       onClick={() => setImageSource("url")}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
+                      className={`flex items-center gap-2 px-6 py-3 rounded-xl border transition-all font-black text-xs uppercase tracking-widest ${
                         imageSource === "url"
-                          ? "bg-[var(--kelar-primary)] text-white border-[var(--kelar-primary)]"
-                          : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+                          ? "bg-white text-[var(--background)] border-white shadow-xl"
+                          : "bg-white/5 text-white/40 border-white/10 hover:bg-white/10"
                       }`}
                     >
                       <LinkIcon size={16} />
@@ -308,10 +311,10 @@ export function ArticlesPage() {
                     <button
                       type="button"
                       onClick={() => setImageSource("upload")}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
+                      className={`flex items-center gap-2 px-6 py-3 rounded-xl border transition-all font-black text-xs uppercase tracking-widest ${
                         imageSource === "upload"
-                          ? "bg-[var(--kelar-primary)] text-white border-[var(--kelar-primary)]"
-                          : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+                          ? "bg-white text-[var(--background)] border-white shadow-xl"
+                          : "bg-white/5 text-white/40 border-white/10 hover:bg-white/10"
                       }`}
                     >
                       <Upload size={16} />
@@ -330,7 +333,7 @@ export function ArticlesPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, thumbnail: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]"
+                      className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                       placeholder="https://example.com/image.jpg"
                       required={!formData.thumbnail}
                     />
@@ -339,7 +342,7 @@ export function ArticlesPage() {
                       type="file"
                       accept="image/*"
                       onChange={handleImageUpload}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]"
+                      className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20"
                       required={!formData.thumbnail}
                     />
                   )}
@@ -353,7 +356,7 @@ export function ArticlesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
                     {t("admin.excerpt")}
                   </label>
                   <textarea
@@ -361,17 +364,17 @@ export function ArticlesPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, excerpt: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)] h-24"
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all h-24"
                     placeholder={t("admin.excerptPlaceholder")}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
                     {t("admin.content")}
                   </label>
-                  <div className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
+                  <div className="border border-white/10 rounded-[2rem] overflow-hidden bg-white/5">
                     <ReactQuill
                       theme="snow"
                       value={formData.content}
@@ -380,14 +383,14 @@ export function ArticlesPage() {
                       }
                       modules={quillModules}
                       formats={quillFormats}
-                      className="bg-white dark:bg-gray-700 dark:text-white"
+                      className="text-white"
                       style={{ minHeight: "300px" }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
                     {t("admin.date")}
                   </label>
                   <input
@@ -396,13 +399,13 @@ export function ArticlesPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, date: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]"
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all [color-scheme:dark]"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
                     {t("admin.status")}
                   </label>
                   <select
@@ -413,20 +416,20 @@ export function ArticlesPage() {
                         status: e.target.value as any,
                       })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]"
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none cursor-pointer"
                     required
                   >
-                    <option value="draft">{t("admin.draft")}</option>
-                    <option value="published">{t("admin.published")}</option>
-                    <option value="takedown">{t("admin.takedown")}</option>
+                    <option value="draft" className="bg-blue-900">{t("admin.draft")}</option>
+                    <option value="published" className="bg-blue-900">{t("admin.published")}</option>
+                    <option value="takedown" className="bg-blue-900">{t("admin.takedown")}</option>
                   </select>
                 </div>
 
-                <div className="flex gap-3 pt-4">
+                <div className="flex gap-4 pt-8">
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="flex-1 py-3 bg-[var(--kelar-primary)] text-white rounded-lg hover:bg-[var(--kelar-primary-light)] transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+                    className="flex-1 py-4 bg-white text-[var(--background)] rounded-2xl font-black transition-all shadow-2xl hover:bg-white/90 active:scale-95 disabled:opacity-70 flex items-center justify-center gap-2"
                   >
                     {isSaving && <Loader2 className="animate-spin" size={20} />}
                     {editingId ? t("admin.update") : t("admin.save")}
@@ -435,7 +438,7 @@ export function ArticlesPage() {
                     type="button"
                     onClick={resetForm}
                     disabled={isSaving}
-                    className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+                    className="flex-1 py-4 bg-white/5 border border-white/10 text-white rounded-2xl hover:bg-white/10 transition-all font-black disabled:opacity-50"
                   >
                     {t("admin.cancel")}
                   </button>
@@ -446,15 +449,16 @@ export function ArticlesPage() {
         )}
 
         {/* Content - Table for Desktop, Cards for Mobile */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-md overflow-hidden">
+        <div className="bg-white/10 backdrop-blur-3xl rounded-[3rem] border border-white/20 shadow-2xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-[0.02] rounded-full blur-[100px] pointer-events-none" />
           {articles.length === 0 ? (
             <div className="p-8 sm:p-12 text-center">
-              <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm sm:text-base">
+              <p className="text-white/60 mb-6 text-lg font-medium">
                 {t("admin.noArticles")}
               </p>
               <button
                 onClick={() => setShowForm(true)}
-                className="px-4 py-2 bg-[var(--kelar-primary)] text-white rounded-lg hover:bg-[var(--kelar-primary-light)] transition-colors text-sm sm:text-base"
+                className="px-8 py-4 bg-white text-[var(--background)] rounded-2xl font-black transition-all shadow-2xl hover:bg-white/90 active:scale-95"
               >
                 {t("admin.addFirstArticle")}
               </button>
@@ -462,30 +466,30 @@ export function ArticlesPage() {
           ) : (
             <>
               {/* Mobile Card View */}
-              <div className="lg:hidden divide-y divide-gray-200 dark:divide-gray-700">
+              <div className="lg:hidden divide-y divide-white/5">
                 {articles.map((article) => (
                   <div
                     key={article.id}
-                    className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="p-6 hover:bg-white/5 transition-colors"
                   >
-                    <div className="flex gap-4">
+                    <div className="flex gap-6">
                       <img
                         src={article.thumbnail}
                         alt={article.title}
-                        className="w-24 h-20 object-cover rounded flex-shrink-0"
+                        className="w-24 h-24 object-cover rounded-2xl flex-shrink-0 shadow-lg border border-white/10"
                       />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 dark:text-gray-200 mb-1 line-clamp-1">
+                        <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">
                           {article.title}
                         </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                        <p className="text-xs font-medium text-white/40 mb-3">
                           {new Date(article.date).toLocaleDateString("id-ID", {
                             year: "numeric",
                             month: "short",
                             day: "numeric",
                           })}
                         </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
+                        <p className="text-sm text-white/60 mb-4 line-clamp-2">
                           {article.excerpt}
                         </p>
                         <div className="flex items-center justify-between">
@@ -493,17 +497,17 @@ export function ArticlesPage() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleEdit(article.id)}
-                              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                              className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
                               title={t("admin.edit")}
                             >
-                              <Edit2 size={16} />
+                              <Edit2 size={18} />
                             </button>
                             <button
                               onClick={() => handleDelete(article.id)}
-                              className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                              className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                               title={t("admin.delete")}
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={18} />
                             </button>
                           </div>
                         </div>
@@ -516,30 +520,30 @@ export function ArticlesPage() {
               {/* Desktop Table View */}
               <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                  <thead className="bg-white/5 border-b border-white/10">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">
                         Thumbnail
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">
                         {t("admin.title")}
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">
                         {t("admin.date")}
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">
                         {t("admin.status")}
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">
                         {t("admin.actions")}
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  <tbody className="divide-y divide-white/10">
                     {articles.map((article) => (
                       <tr
                         key={article.id}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                        className="hover:bg-white/10 transition-all duration-300 group border-b border-white/5 last:border-0"
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <img
@@ -549,15 +553,15 @@ export function ArticlesPage() {
                           />
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900 dark:text-gray-200 max-w-md">
+                          <div className="text-sm font-bold text-white max-w-md">
                             {article.title}
                           </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                          <div className="text-sm text-white/60 mt-1 line-clamp-2">
                             {article.excerpt}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                          <div className="text-sm font-medium text-white/70">
                             {new Date(article.date).toLocaleDateString(
                               "id-ID",
                               {
@@ -575,14 +579,14 @@ export function ArticlesPage() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleEdit(article.id)}
-                              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                              className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
                               title={t("admin.edit")}
                             >
                               <Edit2 size={18} />
                             </button>
                             <button
                               onClick={() => handleDelete(article.id)}
-                              className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                              className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                               title={t("admin.delete")}
                             >
                               <Trash2 size={18} />

@@ -12,6 +12,12 @@ const LandingPage = lazy(() =>
 const ArticleDetail = lazy(() =>
   import("./pages/ArticleDetail").then((m) => ({ default: m.ArticleDetail })),
 );
+const VirtualOfficePage = lazy(() =>
+  import("./pages/VirtualOfficePage").then((m) => ({ default: m.VirtualOfficePage })),
+);
+const VirtualOfficeDetailPage = lazy(() =>
+  import("./pages/VirtualOfficeDetailPage").then((m) => ({ default: m.VirtualOfficeDetailPage })),
+);
 const LoginPage = lazy(() =>
   import("./pages/admin/LoginPage").then((m) => ({ default: m.LoginPage })),
 );
@@ -25,14 +31,9 @@ const HeroSliderPage = lazy(() =>
     default: m.HeroSliderPage,
   })),
 );
-const ArticlesPage = lazy(() =>
-  import("./pages/admin/ArticlesPage").then((m) => ({
-    default: m.ArticlesPage,
-  })),
-);
-const AboutUsPage = lazy(() =>
-  import("./pages/admin/AboutUsPage").then((m) => ({ default: m.AboutUsPage })),
-);
+const ArticlesPage = lazy(() => import("./pages/admin/ArticlesPage").then((m) => ({ default: m.ArticlesPage })));
+const AboutUsPage = lazy(() => import("./pages/admin/AboutUsPage").then((m) => ({ default: m.AboutUsPage })));
+const PromosPage = lazy(() => import("./pages/admin/PromosPage").then((m) => ({ default: m.PromosPage })));
 
 function NotFound() {
   const { t } = useLanguage();
@@ -86,6 +87,22 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/virtual-office",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <VirtualOfficePage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/virtual-office/:id",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <VirtualOfficeDetailPage />
+      </Suspense>
+    ),
+  },
+  {
     path: "/admin/login",
     element: (
       <Suspense fallback={<LoadingFallback />}>
@@ -122,6 +139,14 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<LoadingFallback />}>
         <AboutUsPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/admin/promos",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <PromosPage />
       </Suspense>
     ),
   },

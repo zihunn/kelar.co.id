@@ -24,7 +24,7 @@ export function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-[var(--kelar-secondary)] text-white py-12">
+    <footer className="bg-black/20 backdrop-blur-3xl border-t border-white/5 text-white py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Logo & Description */}
@@ -34,13 +34,13 @@ export function Footer() {
               alt="Kelar.co.id"
               className="h-16 md:h-20 mb-4"
             />
-            <p className="text-gray-300 text-sm">{t("footer.description")}</p>
+            <p className="text-white/60 text-sm leading-relaxed">{t("footer.description")}</p>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h3 className="mb-4">{t("footer.contactTitle")}</h3>
-            <div className="space-y-3 text-sm text-gray-300">
+            <h3 className="mb-6 font-bold text-white uppercase tracking-widest text-xs">{t("footer.contactTitle")}</h3>
+            <div className="space-y-4 text-sm text-white/70">
               <div className="flex items-start gap-2">
                 <MapPin size={18} className="mt-0.5 flex-shrink-0" />
                 <span>{aboutUs.address}</span>
@@ -68,7 +68,7 @@ export function Footer() {
 
           {/* Social Media */}
           <div>
-            <h3 className="mb-4">{t("footer.followUs")}</h3>
+            <h3 className="mb-6 font-bold text-white uppercase tracking-widest text-xs">{t("footer.followUs")}</h3>
             <div className="flex gap-4">
               <a
                 href={socialMedia.instagram}
@@ -99,7 +99,7 @@ export function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-white/20 pt-8 text-center text-sm text-gray-300">
+        <div className="border-t border-white/10 pt-10 text-center text-sm text-white/50">
           <p>
             &copy; {new Date().getFullYear()} Kelar.co.id.{" "}
             {t("footer.copyright")}

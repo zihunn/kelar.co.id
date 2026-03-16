@@ -7,6 +7,7 @@ import {
   LogOut,
   Menu,
   X,
+  Tag,
 } from "lucide-react";
 import { useSidebar } from "../../context/SidebarContext";
 import { useLanguage } from "../../context/LanguageContext";
@@ -25,6 +26,7 @@ export function AdminSidebar() {
     },
     { path: "/admin/hero-slider", icon: Image, label: t("admin.heroSlider") },
     { path: "/admin/articles", icon: FileText, label: t("admin.articles") },
+    { path: "/admin/promos", icon: Tag, label: t("admin.promos") },
     { path: "/admin/about", icon: Info, label: t("admin.aboutUs") },
   ];
 
@@ -42,12 +44,10 @@ export function AdminSidebar() {
 
   return (
     <div
-      className={`bg-[var(--kelar-secondary)] text-white h-screen fixed left-0 top-0 flex flex-col transition-all duration-300 z-40 ${
-        // Mobile behavior: slide in/out from left
-        // Desktop behavior: collapse to icon-only
+      className={`bg-blue-950/40 backdrop-blur-2xl text-white h-screen fixed left-0 top-0 flex flex-col transition-all duration-300 z-40 border-r border-white/10 ${
         isCollapsed
           ? "-translate-x-full lg:translate-x-0 lg:w-20"
-          : "translate-x-0 w-64"
+          : "translate-x-0 w-64 shadow-[20px_0_50px_rgba(0,0,0,0.2)]"
       }`}
     >
       {/* Logo & Toggle */}
@@ -81,11 +81,11 @@ export function AdminSidebar() {
               key={item.path}
               to={item.path}
               onClick={handleMenuClick}
-              className={`flex items-center gap-3 px-6 py-3 transition-colors ${
+              className={`flex items-center gap-3 px-6 py-4 transition-all ${
                 isActive
-                  ? "bg-[var(--kelar-primary)] text-white"
-                  : "text-gray-300 hover:bg-white/10 hover:text-white"
-              } ${isCollapsed ? "justify-center lg:px-6" : ""}`}
+                  ? "bg-white text-[var(--background)] font-black shadow-xl"
+                  : "text-white/70 hover:bg-white/5 hover:text-white"
+              } ${isCollapsed ? "justify-center" : ""}`}
               title={isCollapsed ? item.label : ""}
             >
               <Icon size={20} />
@@ -99,7 +99,7 @@ export function AdminSidebar() {
       <div className="p-6 border-t border-white/10">
         <button
           onClick={handleLogout}
-          className={`flex items-center gap-3 text-gray-300 hover:text-white transition-colors w-full ${
+          className={`flex items-center gap-3 text-white/70 hover:text-white transition-colors w-full ${
             isCollapsed ? "justify-center" : ""
           }`}
           title={isCollapsed ? t("admin.logout") : ""}

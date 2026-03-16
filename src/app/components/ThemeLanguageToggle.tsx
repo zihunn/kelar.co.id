@@ -25,13 +25,13 @@ export function ThemeLanguageToggle() {
       {/* Theme Toggle */}
       <button
         onClick={toggleTheme}
-        className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 transition-all text-white backdrop-blur-md"
         title={theme === 'light' ? t('settings.darkMode') : t('settings.lightMode')}
       >
         {theme === 'light' ? (
-          <Moon size={20} className="text-gray-700 dark:text-gray-300" />
+          <Moon size={20} />
         ) : (
-          <Sun size={20} className="text-gray-700 dark:text-gray-300" />
+          <Sun size={20} />
         )}
       </button>
 
@@ -39,38 +39,38 @@ export function ThemeLanguageToggle() {
       <div className="relative" ref={menuRef}>
         <button
           onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-          className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+          className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 transition-all text-white flex items-center gap-2 backdrop-blur-md"
           title={t('settings.language')}
         >
-          <Globe size={20} className="text-gray-700 dark:text-gray-300" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
+          <Globe size={20} />
+          <span className="text-sm font-bold uppercase tracking-wider">
             {language}
           </span>
         </button>
 
         {showLanguageMenu && (
-          <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+          <div className="absolute right-0 mt-3 w-40 bg-[var(--background)] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden z-50 backdrop-blur-xl">
             <button
               onClick={() => {
                 setLanguage('id');
                 setShowLanguageMenu(false);
               }}
-              className={`w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                language === 'id' ? 'bg-gray-100 dark:bg-gray-700' : ''
+              className={`w-full px-5 py-3 text-left hover:bg-white/10 transition-colors ${
+                language === 'id' ? 'bg-white/10 font-bold' : ''
               }`}
             >
-              <span className="text-sm text-gray-700 dark:text-gray-300">🇮🇩 Indonesia</span>
+              <span className="text-sm text-white flex items-center gap-2">🇮🇩 <span className="opacity-80">Indonesia</span></span>
             </button>
             <button
               onClick={() => {
                 setLanguage('en');
                 setShowLanguageMenu(false);
               }}
-              className={`w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                language === 'en' ? 'bg-gray-100 dark:bg-gray-700' : ''
+              className={`w-full px-5 py-3 text-left hover:bg-white/10 transition-colors ${
+                language === 'en' ? 'bg-white/10 font-bold' : ''
               }`}
             >
-              <span className="text-sm text-gray-700 dark:text-gray-300">🇬🇧 English</span>
+              <span className="text-sm text-white flex items-center gap-2">🇬🇧 <span className="opacity-80">English</span></span>
             </button>
           </div>
         )}

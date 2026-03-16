@@ -97,10 +97,10 @@ export function HeroSlider() {
               {/* Content */}
               <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
                 <div className="max-w-2xl text-white">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-8 leading-tight tracking-tight">
                     {slide.title}
                   </h1>
-                  <p className="text-lg md:text-xl mb-8 text-gray-200">
+                  <p className="text-xl md:text-2xl mb-10 text-white/80 font-light leading-relaxed">
                     {slide.description}
                   </p>
                   <button
@@ -132,7 +132,7 @@ export function HeroSlider() {
                         navigate(`/artikel/${slide.redirectUrl}`);
                       }
                     }}
-                    className="px-8 py-4 bg-[var(--kelar-primary)] text-white rounded-lg hover:bg-[var(--kelar-primary-light)] transition-colors"
+                    className="px-10 py-5 bg-white text-[#005696] rounded-full hover:bg-white/90 transition-all font-bold shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
                   >
                     {t("hero.readMore")}
                   </button>

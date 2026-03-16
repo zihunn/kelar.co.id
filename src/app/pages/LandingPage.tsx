@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 import { HeroSlider } from "../components/HeroSlider";
@@ -17,8 +18,16 @@ import {
   Award,
   Clock,
   TrendingUp,
+  Tag,
+  Zap,
+  ShieldCheck,
+  Building2,
+  BarChart3,
+  Palette,
+  ChevronDown,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform, useSpring } from "motion/react";
+import { useRef } from "react";
 
 // TikTok icon component
 function TikTokIcon({ size = 20 }: { size?: number }) {
@@ -56,6 +65,32 @@ function useInView(threshold = 0.1) {
 export function LandingPage() {
   const { articles, aboutUs, socialMedia } = useData();
   const { t } = useLanguage();
+  const location = useLocation();
+
+  // Handle scroll to hash
+  useEffect(() => {
+    if (location.hash) {
+      const sectionId = location.hash.replace("#", "");
+      
+      // Delay to ensure content is rendered
+      const timeoutId = setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const navbarElement = document.querySelector("nav");
+          const navbarHeight = navbarElement?.offsetHeight || 96;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
+      }, 500); // 500ms delay to allow Hero and other sections to settle
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [location.hash]);
 
   // Only show published articles
   const publishedArticles = articles.filter((a) => a.status === "published");
@@ -65,6 +100,69 @@ export function LandingPage() {
   const [statsRef, statsInView] = useInView();
   const [servicesRef, servicesInView] = useInView();
   const [articlesRef, articlesInView] = useInView();
+  const [promoRef, promoInView] = useInView();
+  const [servicesSectionRefView, servicesSectionInView] = useInView();
+
+  // Scroll targets for specific parallax content
+  const heroRef = useRef(null);
+  const featureSectionRef = useRef(null);
+  const promoSectionRef = useRef(null);
+  const servicesSectionRef = useRef(null);
+  const aboutSectionRef = useRef(null);
+  const articleSectionRef = useRef(null);
+
+  const { scrollYProgress: featureProgress } = useScroll({ target: featureSectionRef, offset: ["start end", "end start"] });
+  const { scrollYProgress: promoProgress } = useScroll({ target: promoSectionRef, offset: ["start end", "end start"] });
+  const { scrollYProgress: servicesProgress } = useScroll({ target: servicesSectionRef, offset: ["start end", "end start"] });
+  const { scrollYProgress: aboutProgress } = useScroll({ target: aboutSectionRef, offset: ["start end", "end start"] });
+  const { scrollYProgress: articleProgress } = useScroll({ target: articleSectionRef, offset: ["start end", "end start"] });
+
+  const featureY = useTransform(featureProgress, [0, 1], [100, -100]);
+  const promoY = useTransform(promoProgress, [0, 1], [80, -80]);
+  const servicesYProgressTransform = useTransform(servicesProgress, [0, 1], [120, -120]);
+  const aboutY = useTransform(aboutProgress, [0, 1], [150, -150]);
+  const articleY = useTransform(articleProgress, [0, 1], [120, -120]);
+  const headerY = useTransform(aboutProgress, [0, 1], [-50, 50]);
+
+  // Dummy Promo Data
+  const promos = [
+    { id: 1, image: "https://hivefive.co.id/wp-content/uploads/2026/03/WhatsApp-Image-2026-01-22-at-09.31.49-2.webp", title: "Promo Khusus V6" },
+    { id: 2, image: "https://hivefive.co.id/wp-content/uploads/2026/03/WhatsApp-Image-2026-01-22-at-09.31.49-2.webp", title: "Diskon Pendaftaran" },
+    { id: 3, image: "https://hivefive.co.id/wp-content/uploads/2026/03/WhatsApp-Image-2026-01-22-at-09.31.49-2.webp", title: "Bundling Hemat" },
+    { id: 4, image: "https://hivefive.co.id/wp-content/uploads/2026/03/WhatsApp-Image-2026-01-22-at-09.31.49-2.webp", title: "Eksklusif UMKM" },
+  ];
+
+  // Our Services Data
+  const servicesData = [
+    {
+      id: 1,
+      icon: ShieldCheck,
+      title: t("services_section.item1.title"),
+      desc: t("services_section.item1.desc"),
+      color: "from-blue-500 to-indigo-600"
+    },
+    {
+      id: 2,
+      icon: Building2,
+      title: t("services_section.item2.title"),
+      desc: t("services_section.item2.desc"),
+      color: "from-emerald-500 to-teal-600"
+    },
+    {
+      id: 3,
+      icon: BarChart3,
+      title: t("services_section.item3.title"),
+      desc: t("services_section.item3.desc"),
+      color: "from-amber-500 to-orange-600"
+    },
+    {
+      id: 4,
+      icon: Palette,
+      title: t("services_section.item4.title"),
+      desc: t("services_section.item4.desc"),
+      color: "from-purple-500 to-pink-600"
+    }
+  ];
 
   const features = [
     {
@@ -105,314 +203,554 @@ export function LandingPage() {
     t("services.item6"),
   ];
 
+  const { scrollY } = useScroll();
+  const smoothY = useSpring(scrollY, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+  // Parallax transforms for background elements
+  const y1 = useTransform(smoothY, [0, 5000], [0, 800]);
+  const y2 = useTransform(smoothY, [0, 5000], [0, -1000]);
+  const y3 = useTransform(smoothY, [0, 5000], [0, 500]);
+  const rotate1 = useTransform(smoothY, [0, 5000], [0, 180]);
+  const rotate2 = useTransform(smoothY, [0, 5000], [0, -180]);
+
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
-      <Navbar />
+    <div className="relative min-h-screen bg-background text-foreground transition-all selection:bg-white selection:text-[var(--background)] overflow-x-hidden">
+      {/* Parallax Background Elements */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <motion.div
+          style={{ y: y1, rotate: rotate1 }}
+          className="absolute top-[10%] -left-20 w-[500px] h-[500px] bg-white opacity-[0.03] rounded-full blur-[100px]"
+        />
+        <motion.div
+          style={{ y: y2, rotate: rotate2 }}
+          className="absolute top-[40%] -right-40 w-[600px] h-[600px] bg-white opacity-[0.05] rounded-full blur-[120px]"
+        />
+        <motion.div
+          style={{ y: y3 }}
+          className="absolute bottom-[10%] left-[20%] w-[400px] h-[400px] bg-white opacity-[0.02] rounded-full blur-[80px]"
+        />
 
-      {/* Hero Section */}
-      <section id="home">
-        <HeroSlider />
-      </section>
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] pointer-events-none" />
+      </div>
 
-      {/* Features Section */}
-      <section className="py-20 bg-white dark:bg-gray-900 relative overflow-hidden transition-colors">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[var(--kelar-primary)] opacity-5 rounded-full blur-3xl" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                className="text-center p-6 rounded-2xl bg-gradient-to-b from-[var(--kelar-bg-light)] to-white dark:from-gray-800 dark:to-gray-800 hover:shadow-xl transition-all duration-300 group"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[var(--kelar-primary)] to-[var(--kelar-secondary)] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <feature.icon className="text-white" size={32} />
-                </div>
-                <h3 className="text-lg mb-2 dark:text-white">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      <div className="relative z-10">
+        <Navbar />
 
-      {/* About Us Section */}
-      <section
-        id="about"
-        className="py-20 bg-gradient-to-br from-[var(--kelar-bg-light)] via-white to-[var(--kelar-bg-light)] dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 relative overflow-hidden transition-colors"
-      >
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[var(--kelar-secondary)] opacity-5 rounded-full blur-3xl" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <motion.div
-            ref={aboutRef}
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            animate={aboutInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl md:text-5xl mb-4 bg-gradient-to-r from-[var(--kelar-primary)] to-[var(--kelar-secondary)] bg-clip-text text-transparent">
-              {t("about.title_alt")}
-            </h2>
-            <div className="w-24 h-1.5 bg-gradient-to-r from-[var(--kelar-primary)] to-[var(--kelar-secondary)] mx-auto rounded-full" />
-          </motion.div>
+        {/* Hero Section */}
+        <section id="home" ref={heroRef}>
+          <HeroSlider />
+        </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Description */}
+        {/* Features Section */}
+        <section ref={featureSectionRef} className="py-24 bg-background relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={aboutInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              style={{ y: featureY }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
             >
-              <p className="text-lg text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-                {aboutUs.description}
-              </p>
+              <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">
+                {t("features.sectionTitle")}
+              </h2>
+              <div className="w-24 h-1 bg-gradient-to-r from-[var(--kelar-primary)] to-[var(--kelar-secondary)] mx-auto rounded-full" />
+            </motion.div>
 
-              {/* Stats */}
-              <div ref={statsRef} className="grid grid-cols-2 gap-6 mb-8">
-                {stats.map((stat, index) => (
-                  <motion.div
-                    key={index}
-                    className="text-center p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={statsInView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <div className="text-3xl mb-2 bg-gradient-to-r from-[var(--kelar-primary)] to-[var(--kelar-secondary)] bg-clip-text text-transparent">
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      {stat.label}
-                    </div>
-                  </motion.div>
-                ))}
+            <motion.div
+              style={{ y: featureY }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  className="text-center p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-500 group backdrop-blur-sm"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[var(--kelar-primary)] to-[var(--kelar-secondary)] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <feature.icon className="text-white" size={32} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 text-white">
+                    {feature.title}
+                  </h3>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Limited Promo Section - Horizontal Scroll */}
+        <section
+          id="promo"
+          ref={promoSectionRef}
+          className="py-24 bg-background relative overflow-hidden"
+        >
+          <div className="absolute top-1/2 left-0 w-full h-[300px] bg-white opacity-[0.02] -translate-y-1/2 blur-3xl pointer-events-none" />
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div
+              ref={promoRef}
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
+              animate={promoInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="inline-flex items-center gap-2 px-6 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white text-xs font-black uppercase tracking-widest mb-6 animate-pulse">
+                <Zap size={14} className="text-yellow-400" />
+                <span>{t("promo.title")}</span>
               </div>
+              <h2 className="text-4xl md:text-6xl font-black mb-6 text-white tracking-tight">
+                E-Katalog V6 <span className="text-white/40">Offers</span>
+              </h2>
+              <p className="text-white/60 max-w-xl mx-auto text-lg md:text-xl font-light leading-relaxed">
+                {t("promo.subtitle")}
+              </p>
+            </motion.div>
 
-              {/* Services List */}
-              <div ref={servicesRef}>
-                <h3 className="text-2xl mb-6 text-[var(--kelar-secondary)] dark:text-blue-400">
-                  {t("services.title")}
-                </h3>
-                <div className="space-y-3">
-                  {services.map((service, index) => (
+            {/* Horizontal Scroll Container */}
+            <motion.div
+              style={{ y: promoY }}
+              className="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar"
+            >
+              {promos.map((promo, index) => (
+                <motion.a
+                  key={promo.id}
+                  href="https://wa.me/6281122218988"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-shrink-0 w-[85vw] sm:w-[500px] aspect-[4/5] bg-white/5 rounded-[3rem] overflow-hidden border border-white/10 group snap-center relative shadow-2xl"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={promoInView ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ duration: 0.8, delay: index * 0.15 }}
+                  whileHover={{ y: -15, transition: { duration: 0.4 } }}
+                >
+                  <img
+                    src={promo.image}
+                    alt={promo.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="absolute bottom-10 left-10 right-10">
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-2">
+                        <span className="w-10 h-1 bg-white rounded-full" />
+                        <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.3em]">Special Promo</span>
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight tracking-tight">
+                        {promo.title}
+                      </h3>
+                      <p className="text-white/60 text-sm font-medium">Klik untuk konsultasi & klaim promo via WhatsApp</p>
+                    </div>
+                  </div>
+
+                  <div className="absolute top-10 right-10 w-16 h-16 bg-white text-[var(--background)] rounded-3xl flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:rotate-12 transition-all duration-500 shadow-[0_0_50px_rgba(255,255,255,0.3)] scale-75 group-hover:scale-100">
+                    <Phone size={32} />
+                  </div>
+                </motion.a>
+              ))}
+            </motion.div>
+
+            <div className="flex justify-center mt-4">
+              <div className="flex gap-2 items-center text-white/20 font-black text-[10px] uppercase tracking-widest">
+                <span>Scroll to explore</span>
+                <div className="w-12 h-[1px] bg-white/10" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Section - Horizontal Scroll */}
+        <section
+          id="layanan"
+          ref={servicesSectionRef}
+          className="py-24 bg-white/5 backdrop-blur-3xl border-y border-white/5 relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--kelar-primary)] opacity-5 rounded-full blur-[120px] translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[var(--kelar-secondary)] opacity-5 rounded-full blur-[120px] -translate-x-1/2 translate-y-1/2" />
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div
+              ref={servicesSectionRefView}
+              className="text-center mb-20"
+              initial={{ opacity: 0, y: 30 }}
+              animate={servicesSectionInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-4xl md:text-6xl font-black mb-6 text-white tracking-tight">
+                {t("services_section.title")}
+              </h2>
+              <p className="text-white/60 max-w-2xl mx-auto text-lg md:text-xl font-light">
+                {t("services_section.subtitle")}
+              </p>
+            </motion.div>
+
+            <motion.div 
+              style={{ y: servicesYProgressTransform }}
+              className="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar"
+            >
+              {servicesData.map((service, index) => (
+                <motion.div
+                  key={service.id}
+                  className="flex-shrink-0 w-[85vw] sm:w-[350px] bg-white text-[var(--background)] rounded-[3rem] p-10 flex flex-col snap-center relative group overflow-hidden shadow-2xl"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={servicesSectionInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  whileHover={{ y: -10 }}
+                >
+                  {/* Decorative background number */}
+                  <div className="absolute -top-10 -right-10 text-[10rem] font-black opacity-[0.03] group-hover:opacity-[0.05] transition-opacity pointer-events-none text-black">
+                    0{service.id}
+                  </div>
+
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform duration-500`}>
+                    <service.icon size={32} className="text-white" />
+                  </div>
+
+                  <h3 className="text-2xl font-black mb-6 leading-tight">
+                    {service.title}
+                  </h3>
+                  
+                  <p className="text-[var(--background)]/70 text-lg mb-10 font-medium leading-relaxed flex-grow">
+                    {service.desc}
+                  </p>
+
+                  <motion.a
+                    href="https://wa.me/6281122218988"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-auto px-8 py-4 rounded-2xl bg-[var(--background)] text-white font-black text-center hover:bg-[var(--background)]/90 transition-all flex items-center justify-center gap-2 group/btn"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <span>{t("services_section.cta")}</span>
+                    <Phone size={18} className="group-hover/btn:rotate-12 transition-transform" />
+                  </motion.a>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        <section
+          id="about"
+          ref={aboutSectionRef}
+          className="py-24 bg-white/5 backdrop-blur-lg border-y border-white/5 relative overflow-hidden"
+        >
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[var(--kelar-secondary)] opacity-5 rounded-full blur-3xl" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <motion.div
+              ref={aboutRef}
+              style={{ y: headerY }}
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
+              animate={aboutInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-4xl md:text-6xl font-black mb-6 text-white text-shadow-sm">
+                {t("about.title_alt")}
+              </h2>
+              <div className="w-32 h-2 bg-white/20 mx-auto rounded-full overflow-hidden">
+                <div className="w-1/2 h-full bg-white" />
+              </div>
+            </motion.div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              {/* Description */}
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={aboutInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <p className="text-xl text-white/90 mb-10 leading-relaxed font-light">
+                  {aboutUs.description}
+                </p>
+
+                {/* Stats */}
+                <div ref={statsRef} className="grid grid-cols-2 gap-6 mb-8">
+                  {stats.map((stat, index) => (
                     <motion.div
                       key={index}
-                      className="flex items-start gap-3 group"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={servicesInView ? { opacity: 1, x: 0 } : {}}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                      className="text-center p-6 bg-white/10 rounded-3xl border border-white/10 backdrop-blur-md"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={statsInView ? { opacity: 1, scale: 1 } : {}}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
                     >
-                      <div className="w-6 h-6 bg-gradient-to-br from-[var(--kelar-primary)] to-[var(--kelar-secondary)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
-                        <CheckCircle2 size={14} className="text-white" />
+                      <div className="text-4xl font-black mb-1 text-white">
+                        {stat.value}
                       </div>
-                      <span className="text-gray-700 dark:text-gray-300">
-                        {service}
-                      </span>
+                      <div className="text-xs font-bold uppercase tracking-widest text-white/60">
+                        {stat.label}
+                      </div>
                     </motion.div>
                   ))}
                 </div>
+
+                {/* Services List */}
+                <div ref={servicesRef}>
+                  <h3 className="text-2xl font-bold mb-8 text-white flex items-center gap-3">
+                    <div className="w-8 h-1 bg-white rounded-full" />
+                    {t("services.title")}
+                  </h3>
+                  <div className="space-y-3">
+                    {services.map((service, index) => (
+                      <motion.div
+                        key={index}
+                        className="flex items-start gap-3 group"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={servicesInView ? { opacity: 1, x: 0 } : {}}
+                        transition={{ duration: 0.4, delay: index * 0.1 }}
+                      >
+                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-white transition-all group-hover:scale-110">
+                          <CheckCircle2 size={14} className="text-white group-hover:text-[var(--background)]" />
+                        </div>
+                        <span className="text-white/80 group-hover:text-white transition-colors text-lg">
+                          {service}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="bg-white/10 backdrop-blur-2xl rounded-[2.5rem] p-10 border border-white/20 shadow-2xl relative overflow-hidden group"
+                initial={{ opacity: 0, x: 50 }}
+                animate={aboutInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all duration-700" />
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-14 h-14 bg-white text-[var(--background)] rounded-2xl flex items-center justify-center shadow-xl">
+                    <Mail size={28} />
+                  </div>
+                  <h3 className="text-3xl font-bold text-white">
+                    {t("about.contactUs")}
+                  </h3>
+                </div>
+
+                <div className="space-y-5 mb-10">
+                  <div className="flex items-start gap-4 p-5 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10 group/item">
+                    <MapPin
+                      size={24}
+                      className="text-white mt-1 flex-shrink-0 group-hover/item:scale-110 transition-transform"
+                    />
+                    <span className="text-white/90 group-hover/item:text-white transition-colors">
+                      {aboutUs.address}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4 p-5 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10 group/item">
+                    <Mail
+                      size={24}
+                      className="text-white flex-shrink-0 group-hover/item:scale-110 transition-transform"
+                    />
+                    <a
+                      href={`mailto:${aboutUs.email}`}
+                      className="text-white/90 group-hover/item:text-white transition-colors"
+                    >
+                      {aboutUs.email}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-4 p-5 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10 group/item">
+                    <Phone
+                      size={24}
+                      className="text-white flex-shrink-0 group-hover/item:scale-110 transition-transform"
+                    />
+                    <a
+                      href={`tel:${aboutUs.phone}`}
+                      className="text-white/90 group-hover/item:text-white transition-colors"
+                    >
+                      {aboutUs.phone}
+                    </a>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="mb-6 text-xl font-bold text-white">
+                    {t("about.socialMedia")}
+                  </h4>
+                  <div className="flex gap-3">
+                    <a
+                      href={socialMedia.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white"
+                    >
+                      <Instagram size={24} />
+                    </a>
+                    <a
+                      href={socialMedia.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white"
+                    >
+                      <Facebook size={24} />
+                    </a>
+                    <a
+                      href={socialMedia.tiktok}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white"
+                    >
+                      <TikTokIcon size={24} />
+                    </a>
+                    <a
+                      href={socialMedia.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white"
+                    >
+                      <Linkedin size={24} />
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="artikel"
+          ref={articleSectionRef}
+          className="py-24 bg-background relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-1/2 w-full h-[500px] bg-gradient-to-b from-white/5 to-transparent -translate-x-1/2 blur-3xl" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <motion.div
+              ref={articlesRef}
+              style={{ y: headerY }}
+              className="text-center mb-24"
+              initial={{ opacity: 0, y: 30 }}
+              animate={articlesInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-4xl md:text-6xl font-black mb-6 text-white">
+                {t("articles.title_alt")}
+              </h2>
+              <div className="w-24 h-2 bg-white/20 mx-auto mb-8 rounded-full overflow-hidden">
+                <div className="w-full h-full bg-white animate-pulse" />
               </div>
+              <p className="text-white/70 max-w-2xl mx-auto text-xl font-light leading-relaxed">
+                {t("articles.subtitle_alt")}
+              </p>
             </motion.div>
 
-            {/* Contact & Social Media */}
+            {publishedArticles.length === 0 ? (
+              <div className="text-center text-gray-500 dark:text-gray-400 py-12">
+                {t("articles.noArticles")}
+              </div>
+            ) : (
+              <motion.div
+                style={{ y: articleY }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
+                {publishedArticles.map((article, index) => (
+                  <motion.div
+                    key={article.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={articlesInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <ArticleCard article={article} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </div>
+        </section>
+
+        {/* Contact CTA Section - Refined for Balance */}
+        <section
+          id="contact"
+          className="py-12 md:py-16 relative overflow-hidden px-4"
+        >
+          <div className="max-w-6xl mx-auto">
             <motion.div
-              className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 border border-gray-100 dark:border-gray-700"
-              initial={{ opacity: 0, x: 50 }}
-              animate={aboutInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="relative rounded-[3.5rem] overflow-hidden bg-white/10 backdrop-blur-2xl border border-white/20 text-white shadow-2xl group"
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-[var(--kelar-primary)] to-[var(--kelar-secondary)] rounded-2xl flex items-center justify-center">
-                  <Mail className="text-white" size={24} />
-                </div>
-                <h3 className="text-2xl text-[var(--kelar-secondary)] dark:text-blue-400">
-                  {t("about.contactUs")}
-                </h3>
-              </div>
+              {/* Background Flair for CTA */}
+              <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white opacity-[0.05] rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:opacity-[0.08] transition-opacity duration-700" />
+              <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-white opacity-[0.03] rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl group-hover:opacity-[0.05] transition-opacity duration-700" />
 
-              <div className="space-y-5 mb-10">
-                <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-[var(--kelar-bg-light)] dark:hover:bg-gray-700 transition-colors">
-                  <MapPin
-                    size={22}
-                    className="text-[var(--kelar-primary)] mt-1 flex-shrink-0"
-                  />
-                  <span className="text-gray-700 dark:text-gray-300">
-                    {aboutUs.address}
-                  </span>
-                </div>
-                <div className="flex items-center gap-4 p-4 rounded-xl hover:bg-[var(--kelar-bg-light)] dark:hover:bg-gray-700 transition-colors">
-                  <Mail
-                    size={22}
-                    className="text-[var(--kelar-primary)] flex-shrink-0"
-                  />
-                  <a
+              <div className="relative px-8 py-16 md:px-16 md:py-24 flex flex-col items-center text-center">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                  className="w-24 h-24 mb-10 bg-white text-[var(--background)] rounded-3xl flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500"
+                >
+                  <TrendingUp size={40} />
+                </motion.div>
+
+                <motion.h2
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                  className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tighter text-shadow-lg"
+                >
+                  {t("cta.title")}
+                </motion.h2>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                  className="text-xl md:text-2xl mb-14 text-white/70 max-w-2xl font-light leading-relaxed"
+                >
+                  {t("cta.subtitle")}
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                  className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto"
+                >
+                  <motion.a
+                    href={`https://wa.me/62${aboutUs.whatsapp.replace(/^0/, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-12 py-6 bg-white text-[var(--background)] rounded-full hover:bg-white/90 transition-all duration-300 shadow-2xl hover:scale-105 inline-flex items-center justify-center gap-4 text-xl font-black"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Phone size={24} />
+                    <span>{t("cta.whatsapp")}</span>
+                  </motion.a>
+                  <motion.a
                     href={`mailto:${aboutUs.email}`}
-                    className="text-gray-700 dark:text-gray-300 hover:text-[var(--kelar-primary)] transition-colors"
+                    className="px-12 py-6 bg-transparent border-2 border-white text-white rounded-full hover:bg-white hover:text-[var(--background)] transition-all duration-300 inline-flex items-center justify-center gap-4 text-xl font-black"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    {aboutUs.email}
-                  </a>
-                </div>
-                <div className="flex items-center gap-4 p-4 rounded-xl hover:bg-[var(--kelar-bg-light)] dark:hover:bg-gray-700 transition-colors">
-                  <Phone
-                    size={22}
-                    className="text-[var(--kelar-primary)] flex-shrink-0"
-                  />
-                  <a
-                    href={`tel:${aboutUs.phone}`}
-                    className="text-gray-700 dark:text-gray-300 hover:text-[var(--kelar-primary)] transition-colors"
-                  >
-                    {aboutUs.phone}
-                  </a>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="mb-5 text-lg text-[var(--kelar-secondary)] dark:text-blue-400">
-                  {t("about.socialMedia")}
-                </h4>
-                <div className="flex gap-3">
-                  <a
-                    href={socialMedia.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-14 h-14 bg-gradient-to-br from-[var(--kelar-bg-light)] to-white dark:from-gray-700 dark:to-gray-700 rounded-2xl flex items-center justify-center hover:from-[var(--kelar-primary)] hover:to-[var(--kelar-secondary)] hover:text-white transition-all duration-300 hover:scale-110 shadow-md dark:text-gray-300"
-                  >
-                    <Instagram size={24} />
-                  </a>
-                  <a
-                    href={socialMedia.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-14 h-14 bg-gradient-to-br from-[var(--kelar-bg-light)] to-white dark:from-gray-700 dark:to-gray-700 rounded-2xl flex items-center justify-center hover:from-[var(--kelar-primary)] hover:to-[var(--kelar-secondary)] hover:text-white transition-all duration-300 hover:scale-110 shadow-md dark:text-gray-300"
-                  >
-                    <Facebook size={24} />
-                  </a>
-                  <a
-                    href={socialMedia.tiktok}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-14 h-14 bg-gradient-to-br from-[var(--kelar-bg-light)] to-white dark:from-gray-700 dark:to-gray-700 rounded-2xl flex items-center justify-center hover:from-[var(--kelar-primary)] hover:to-[var(--kelar-secondary)] hover:text-white transition-all duration-300 hover:scale-110 shadow-md dark:text-gray-300"
-                  >
-                    <TikTokIcon size={24} />
-                  </a>
-                  <a
-                    href={socialMedia.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-14 h-14 bg-gradient-to-br from-[var(--kelar-bg-light)] to-white dark:from-gray-700 dark:to-gray-700 rounded-2xl flex items-center justify-center hover:from-[var(--kelar-primary)] hover:to-[var(--kelar-secondary)] hover:text-white transition-all duration-300 hover:scale-110 shadow-md dark:text-gray-300"
-                  >
-                    <Linkedin size={24} />
-                  </a>
-                </div>
+                    <Mail size={24} />
+                    <span>{t("cta.email")}</span>
+                  </motion.a>
+                </motion.div>
               </div>
             </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Articles Section */}
-      <section
-        id="artikel"
-        className="py-20 bg-white dark:bg-gray-900 relative overflow-hidden transition-colors"
-      >
-        <div className="absolute top-0 left-1/2 w-96 h-96 bg-[var(--kelar-primary)] opacity-5 rounded-full blur-3xl" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <motion.div
-            ref={articlesRef}
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            animate={articlesInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl md:text-5xl mb-4 bg-gradient-to-r from-[var(--kelar-primary)] to-[var(--kelar-secondary)] bg-clip-text text-transparent">
-              {t("articles.title_alt")}
-            </h2>
-            <div className="w-24 h-1.5 bg-gradient-to-r from-[var(--kelar-primary)] to-[var(--kelar-secondary)] mx-auto mb-6 rounded-full" />
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
-              {t("articles.subtitle_alt")}
-            </p>
-          </motion.div>
-
-          {publishedArticles.length === 0 ? (
-            <div className="text-center text-gray-500 dark:text-gray-400 py-12">
-              {t("articles.noArticles")}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {publishedArticles.map((article, index) => (
-                <motion.div
-                  key={article.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={articlesInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <ArticleCard article={article} />
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Contact CTA Section */}
-      <section
-        id="contact"
-        className="py-20 bg-gradient-to-br from-[var(--kelar-primary)] via-[var(--kelar-primary)] to-[var(--kelar-secondary)] relative overflow-hidden"
-      >
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[var(--kelar-secondary)] opacity-20 rounded-full blur-3xl" />
-
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <div className="w-20 h-20 mx-auto mb-6 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center">
-              <TrendingUp size={40} className="text-white" />
-            </div>
-            <h2 className="text-4xl md:text-5xl mb-6">{t("cta.title")}</h2>
-            <p className="text-xl mb-10 text-blue-100">{t("cta.subtitle")}</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.a
-                href={`https://wa.me/62${aboutUs.whatsapp.replace(/^0/, "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-10 py-5 bg-white text-[var(--kelar-primary)] rounded-2xl hover:bg-gray-100 transition-all duration-300 shadow-2xl hover:shadow-xl hover:scale-105 inline-flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Phone size={20} />
-                <span className="font-medium">{t("cta.whatsapp")}</span>
-              </motion.a>
-              <motion.a
-                href={`mailto:${aboutUs.email}`}
-                className="px-10 py-5 bg-transparent border-2 border-white text-white rounded-2xl hover:bg-white hover:text-[var(--kelar-primary)] transition-all duration-300 inline-flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Mail size={20} />
-                <span className="font-medium">{t("cta.email")}</span>
-              </motion.a>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 }

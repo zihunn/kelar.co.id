@@ -1,7 +1,7 @@
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { useData } from '../../context/DataContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { Image, FileText, CheckCircle, Clock, Info } from 'lucide-react';
+import { Image, FileText, CheckCircle, Clock, Info, Tag as TagIcon } from 'lucide-react';
 
 export function DashboardPage() {
   const { heroSlides, articles } = useData();
@@ -39,73 +39,118 @@ export function DashboardPage() {
 
   return (
     <AdminLayout>
-      <div>
-        <h1 className="text-2xl sm:text-3xl mb-6 sm:mb-8 dark:text-white">{t('admin.overview')}</h1>
+      <div className="space-y-10 pb-20">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-4xl font-black text-white tracking-tighter drop-shadow-lg">
+            {t('admin.overview')}
+          </h1>
+          <p className="text-white/80 font-medium">Selamat datang di sistem manajemen konten Kelar.co.id</p>
+        </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
-          {stats.map((stat) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div key={stat.label} className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-md p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
-                    <Icon className="text-white" size={20} />
+              <div 
+                key={stat.label} 
+                className="bg-white/10 backdrop-blur-2xl rounded-[2.5rem] border border-white/20 shadow-2xl p-8 group hover:bg-white/15 transition-all relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-white/10 transition-colors" />
+                <div className="flex items-center justify-between mb-8 relative z-10">
+                  <div className={`w-16 h-16 ${stat.color} rounded-2xl flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110 duration-500`}>
+                    <Icon className="text-white" size={32} />
                   </div>
-                  <span className="text-2xl sm:text-3xl text-gray-800 dark:text-gray-200">{stat.value}</span>
+                  <span className="text-5xl font-black text-white tracking-tighter">{stat.value}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
+                <p className="text-sm font-black uppercase tracking-widest text-white/80 relative z-10">{stat.label}</p>
               </div>
             );
           })}
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-md p-4 sm:p-6 mb-6 sm:mb-8">
-          <h2 className="text-lg sm:text-xl mb-3 sm:mb-4 dark:text-white">{t('admin.quickActions')}</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-white/10 backdrop-blur-3xl rounded-[3rem] border border-white/20 shadow-2xl p-10 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-[0.03] rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2" />
+          
+          <div className="flex items-center gap-4 mb-10 border-b border-white/10 pb-6">
+            <div className="w-12 h-1 bg-white rounded-full" />
+            <h2 className="text-2xl font-black text-white tracking-tight leading-none">{t('admin.quickActions')}</h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
             <a
               href="/admin/hero-slider"
-              className="p-3 sm:p-4 border-2 border-[var(--kelar-primary)] dark:border-blue-500 rounded-lg hover:bg-[var(--kelar-primary)] hover:text-white dark:text-gray-300 transition-colors text-center"
+              className="group/btn p-8 bg-white/5 border border-white/10 rounded-[2.5rem] hover:bg-white text-white hover:text-[var(--background)] transition-all duration-500 text-center shadow-lg active:scale-[0.98]"
             >
-              <Image className="mx-auto mb-2" size={20} />
-              <span className="text-sm sm:text-base">{t('admin.manageSlider')}</span>
+              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover/btn:bg-[var(--background)]/10 transition-colors">
+                <Image className="group-hover/btn:scale-110 transition-transform" size={32} />
+              </div>
+              <span className="text-lg font-black tracking-tight">{t('admin.manageSlider')}</span>
             </a>
             <a
               href="/admin/articles"
-              className="p-3 sm:p-4 border-2 border-[var(--kelar-primary)] dark:border-blue-500 rounded-lg hover:bg-[var(--kelar-primary)] hover:text-white dark:text-gray-300 transition-colors text-center"
+              className="group/btn p-8 bg-white/5 border border-white/10 rounded-[2.5rem] hover:bg-white text-white hover:text-[var(--background)] transition-all duration-500 text-center shadow-lg active:scale-[0.98]"
             >
-              <FileText className="mx-auto mb-2" size={20} />
-              <span className="text-sm sm:text-base">{t('admin.manageArticles')}</span>
+              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover/btn:bg-[var(--background)]/10 transition-colors">
+                <FileText className="group-hover/btn:scale-110 transition-transform" size={32} />
+              </div>
+              <span className="text-lg font-black tracking-tight">{t('admin.manageArticles')}</span>
             </a>
             <a
               href="/admin/about"
-              className="p-3 sm:p-4 border-2 border-[var(--kelar-primary)] dark:border-blue-500 rounded-lg hover:bg-[var(--kelar-primary)] hover:text-white dark:text-gray-300 transition-colors text-center"
+              className="group/btn p-8 bg-white/5 border border-white/10 rounded-[2.5rem] hover:bg-white text-white hover:text-[var(--background)] transition-all duration-500 text-center shadow-lg active:scale-[0.98]"
             >
-              <Info className="mx-auto mb-2" size={20} />
-              <span className="text-sm sm:text-base">{t('admin.aboutUs')}</span>
+              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover/btn:bg-[var(--background)]/10 transition-colors">
+                <Info className="group-hover/btn:scale-110 transition-transform" size={32} />
+              </div>
+              <span className="text-lg font-black tracking-tight">{t('admin.aboutUs')}</span>
+            </a>
+            <a
+              href="/admin/promos"
+              className="group/btn p-8 bg-white/5 border border-white/10 rounded-[2.5rem] hover:bg-white text-white hover:text-[var(--background)] transition-all duration-500 text-center shadow-lg active:scale-[0.98]"
+            >
+              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover/btn:bg-[var(--background)]/10 transition-colors">
+                <TagIcon className="group-hover/btn:scale-110 transition-transform" size={32} />
+              </div>
+              <span className="text-lg font-black tracking-tight">{t('admin.managePromos')}</span>
             </a>
           </div>
         </div>
 
         {/* Recent Articles */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-md p-4 sm:p-6">
-          <h2 className="text-lg sm:text-xl mb-3 sm:mb-4 dark:text-white">{t('admin.recentArticles')}</h2>
+        <div className="bg-white/10 backdrop-blur-3xl rounded-[3rem] border border-white/20 shadow-2xl p-10">
+          <div className="flex items-center gap-4 mb-10 border-b border-white/10 pb-6">
+            <div className="w-12 h-1 bg-white rounded-full" />
+            <h2 className="text-2xl font-black text-white tracking-tight leading-none">{t('admin.recentArticles')}</h2>
+          </div>
+          
           {articles.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-6 sm:py-8 text-sm sm:text-base">{t('admin.noArticles')}</p>
+            <div className="text-center py-20 bg-white/5 rounded-[2.5rem] border border-white/10">
+              <FileText size={64} className="mx-auto text-white/10 mb-6" />
+              <p className="text-white/40 text-lg font-medium">{t('admin.noArticles')}</p>
+            </div>
           ) : (
-            <div className="space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-1 gap-4">
               {articles.slice(0, 5).map(article => (
-                <div key={article.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg gap-3 sm:gap-0">
-                  <div className="flex-1">
-                    <h3 className="mb-1 dark:text-white text-sm sm:text-base">{article.title}</h3>
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{article.date}</p>
+                <div 
+                  key={article.id} 
+                  className="group flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-[2rem] transition-all gap-4 sm:gap-0"
+                >
+                  <div className="flex items-center gap-6">
+                    <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white/50 group-hover:text-white transition-colors">
+                      <FileText size={20} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">{article.title}</h3>
+                      <p className="text-sm font-medium text-white/40">{article.date}</p>
+                    </div>
                   </div>
                   <span 
-                    className={`px-3 py-1 rounded-full text-xs sm:text-sm self-start sm:self-auto ${
+                    className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest self-start sm:self-auto shadow-lg backdrop-blur-md ${
                       article.status === 'published' 
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' 
-                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
+                        ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                        : 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
                     }`}
                   >
                     {article.status === 'published' ? t('admin.published') : t('admin.draft')}

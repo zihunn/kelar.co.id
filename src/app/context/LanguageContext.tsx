@@ -71,6 +71,58 @@ const translations: Record<Language, any> = {
       contactUs: "Hubungi Kami",
       socialMedia: "Media Sosial",
     },
+    promo: {
+      title: "Promo Terbatas",
+      subtitle: "Jangan lewatkan penawaran spesial untuk pendaftaran E-Katalog V6 Anda",
+    },
+    services_section: {
+      title: "Layanan Kami",
+      subtitle: "Solusi lengkap untuk pertumbuhan bisnis Anda",
+      cta: "Konsultasi Sekarang",
+      item1: {
+        title: "Penerbitan Legalitas",
+        desc: "Terbitkan usaha kamu mulai dari CV, PT, Koperasi, Yayasan, PMA, hingga Firma"
+      },
+      item2: {
+        title: "Virtual Office",
+        desc: "Hadirkan kantor non fisik dengan biaya terjangkau dan profesional untuk membantu mendirikan dan mengembangkan bisnis Anda."
+      },
+      item3: {
+        title: "Konsultasi Pajak & Akuntansi",
+        desc: "Layanan penyusunan laporan perpajakan dan keuangan, baik perorangan maupun perusahaan"
+      },
+      item4: {
+        title: "Branding Usaha",
+        desc: "Layanan yang komprehensif untuk membantu Anda membangun identitas merek yang efektif dan menarik."
+      }
+    },
+    virtual_office: {
+      title: "Virtual Office",
+      subtitle: "Solusi Kantor Modern untuk Bisnis Anda",
+      whatIsTitle: "Apa itu Virtual Office?",
+      whatIsDesc: "Virtual Office adalah layanan alamat bisnis prestisius yang memungkinkan Anda untuk bekerja dari mana saja tanpa harus memiliki kantor fisik secara permanen. Sangat cocok bagi UMKM, Startup, dan Profesional yang ingin membangun kredibilitas bisnis dengan biaya efisien.",
+      facilitiesTitle: "Fasilitas Premium",
+      facilitiesSubtitle: "Segala yang Anda butuhkan untuk operasional bisnis profesional",
+      facilities: {
+        item1: "Alamat Bisnis Bergengsi",
+        item2: "Layanan Penerimaan Surat & Paket",
+        item3: "Layanan Resepsionis Profesional",
+        item4: "Akses Ruang Meeting & Coworking",
+        item5: "Nomor Telepon Khusus Perusahaan",
+        item6: "Legalitas Domisili Perusahaan"
+      },
+      listTitle: "Lokasi Virtual Office Kami",
+      listSubtitle: "Pilih lokasi terbaik untuk kredibilitas bisnis Anda",
+      priceLabel: "Mulai dari",
+      perYear: "/ tahun",
+      cta: "Pesan Sekarang",
+      location: "Lokasi",
+      facilitiesLabel: "Fasilitas",
+      map: "Peta Lokasi",
+      contactTitle: "Tertarik dengan Lokasi Ini?",
+      contactDesc: "Hubungi tim kami untuk konsultasi gratis dan penawaran terbaik untuk bisnis Anda.",
+      backToList: "Kembali ke Daftar"
+    },
     articles: {
       title: "Artikel & Berita",
       subtitle: "Informasi terkini seputar E-Katalog dan pengadaan pemerintah",
@@ -118,12 +170,17 @@ const translations: Record<Language, any> = {
       manageSlider: "Kelola Hero Slider",
       manageArticles: "Kelola Artikel",
       manageAbout: "Kelola About Us & Media Sosial",
+      managePromos: "Kelola Promo",
+      promos: "Promo",
       recentArticles: "Artikel Terbaru",
       noArticles: "Belum ada artikel",
       addSlide: "Tambah Slide",
       addArticle: "Tambah Artikel",
+      addPromo: "Tambah Promo",
       addFirstArticle: "Tambah Artikel Pertama",
+      addFirstPromo: "Tambah Promo Pertama",
       article: "Artikel",
+      promo: "Promo",
       edit: "Edit",
       delete: "Hapus",
       save: "Simpan",
@@ -153,7 +210,9 @@ const translations: Record<Language, any> = {
       twitterOptional: "Twitter (Opsional)",
       saveChanges: "Simpan Semua Perubahan",
       deleteArticle: "Hapus Artikel",
+      deletePromo: "Hapus Promo",
       confirmDeleteArticle: "Anda yakin ingin menghapus artikel ini?",
+      confirmDeletePromo: "Anda yakin ingin menghapus promo ini?",
       deleteConfirm: {
         title: "Hapus",
         message: "Anda yakin ingin menghapus item ini?",
@@ -161,6 +220,8 @@ const translations: Record<Language, any> = {
         no: "Batal",
         warning: "Aksi ini tidak dapat dibatalkan!",
       },
+      promoName: "Nama Promo",
+      promoImage: "Gambar Promo",
     },
     settings: {
       theme: "Tema",
@@ -178,13 +239,14 @@ const translations: Record<Language, any> = {
       consultation: "Konsultasi Gratis",
     },
     features: {
+      sectionTitle: "Keunggulan Kelar",
       item1: {
         title: "Proses Mudah & Cepat",
-        desc: "Pendaftaran E-Katalog V6 yang efisien dengan pendampingan profesional",
+        desc: "Dengan pendampingan dari Kelar, Toko kamu akan tayang dalam waktu singkat!",
       },
       item2: {
         title: "Tim Berpengalaman",
-        desc: "Didukung tim ahli yang memahami regulasi pengadaan pemerintah",
+        desc: "Didukung Tim ahli Kami yang memahami regulasi pengadaan pemerintah",
       },
       item3: {
         title: "Tingkat Keberhasilan Tinggi",
@@ -246,6 +308,58 @@ const translations: Record<Language, any> = {
       contactUs: "Contact Us",
       socialMedia: "Social Media",
     },
+    promo: {
+      title: "Limited Promo",
+      subtitle: "Don't miss out on special offers for your E-Catalog V6 registration",
+    },
+    services_section: {
+      title: "Our Services",
+      subtitle: "Complete solutions for your business growth",
+      cta: "Consult Now",
+      item1: {
+        title: "Legality Issuance",
+        desc: "Publish your business starting from CV, PT, Cooperative, Foundation, PMA, to Firm"
+      },
+      item2: {
+        title: "Virtual Office",
+        desc: "Bring non-physical offices with affordable and professional costs to help set up and develop your business."
+      },
+      item3: {
+        title: "Tax & Accounting Consultation",
+        desc: "Tax and financial report preparation services, both individual and corporate"
+      },
+      item4: {
+        title: "Business Branding",
+        desc: "Comprehensive services to help you build an effective and attractive brand identity."
+      }
+    },
+    virtual_office: {
+      title: "Virtual Office",
+      subtitle: "Modern Office Solutions for Your Business",
+      whatIsTitle: "What is Virtual Office?",
+      whatIsDesc: "Virtual Office is a prestigious business address service that allows you to work from anywhere without having to own a permanent physical office. Perfect for MSMEs, Startups, and Professionals who want to build business credibility with cost efficiency.",
+      facilitiesTitle: "Premium Facilities",
+      facilitiesSubtitle: "Everything you need for professional business operations",
+      facilities: {
+        item1: "Prestigious Business Address",
+        item2: "Mail & Package Handling Service",
+        item3: "Professional Receptionist Service",
+        item4: "Meeting Room & Coworking Access",
+        item5: "Company Special Phone Number",
+        item6: "Company Domicile Legality"
+      },
+      listTitle: "Our Virtual Office Locations",
+      listSubtitle: "Choose the best location for your business credibility",
+      priceLabel: "Starts from",
+      perYear: "/ year",
+      cta: "Book Now",
+      location: "Location",
+      facilitiesLabel: "Facilities",
+      map: "Location Map",
+      contactTitle: "Interested in This Location?",
+      contactDesc: "Contact our team for a free consultation and the best offer for your business.",
+      backToList: "Back to List"
+    },
     articles: {
       title: "Articles & News",
       subtitle: "Latest information about E-Catalog and government procurement",
@@ -293,12 +407,17 @@ const translations: Record<Language, any> = {
       manageSlider: "Manage Hero Slider",
       manageArticles: "Manage Articles",
       manageAbout: "Manage About Us & Social Media",
+      managePromos: "Manage Promos",
+      promos: "Promos",
       recentArticles: "Recent Articles",
       noArticles: "No articles yet",
       addSlide: "Add Slide",
       addArticle: "Add Article",
+      addPromo: "Add Promo",
       addFirstArticle: "Add First Article",
+      addFirstPromo: "Add First Promo",
       article: "Article",
+      promo: "Promo",
       edit: "Edit",
       delete: "Delete",
       save: "Save",
@@ -328,7 +447,9 @@ const translations: Record<Language, any> = {
       twitterOptional: "Twitter (Optional)",
       saveChanges: "Save All Changes",
       deleteArticle: "Delete Article",
+      deletePromo: "Delete Promo",
       confirmDeleteArticle: "Are you sure you want to delete this article?",
+      confirmDeletePromo: "Are you sure you want to delete this promo?",
       deleteConfirm: {
         title: "Delete",
         message: "Are you sure you want to delete this item?",
@@ -336,6 +457,8 @@ const translations: Record<Language, any> = {
         no: "Cancel",
         warning: "This action cannot be undone!",
       },
+      promoName: "Promo Name",
+      promoImage: "Promo Image",
     },
     settings: {
       theme: "Theme",
@@ -353,13 +476,14 @@ const translations: Record<Language, any> = {
       consultation: "Free Consultation",
     },
     features: {
+      sectionTitle: "Why Choose Kelar?",
       item1: {
         title: "Easy & Fast Process",
-        desc: "Efficient E-Catalog V6 registration with professional assistance",
+        desc: "With Kelar's assistance, your store will be live in a short time!",
       },
       item2: {
         title: "Experienced Team",
-        desc: "Supported by expert team understanding government procurement regulations",
+        desc: "Supported by our expert team who understand government procurement regulations",
       },
       item3: {
         title: "High Success Rate",

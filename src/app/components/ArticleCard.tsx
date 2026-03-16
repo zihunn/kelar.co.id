@@ -21,39 +21,49 @@ export function ArticleCard({ article }: ArticleCardProps) {
   return (
     <Link
       to={`/artikel/${article.id}`}
-      className="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+      className="group flex flex-col h-full bg-white/10 backdrop-blur-2xl rounded-[2.5rem] overflow-hidden shadow-2xl hover:shadow-white/5 transition-all duration-500 hover:-translate-y-2 border border-white/20 relative overflow-hidden"
     >
       {/* Thumbnail */}
-      <div className="aspect-video overflow-hidden relative">
+      <div className="relative aspect-[16/10] overflow-hidden">
         <img
           src={article.thumbnail}
           alt={article.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute top-6 left-6">
+          <span className="px-4 py-1.5 bg-white text-[var(--background)] text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+            Insight
+          </span>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="p-6">
-        <div className="flex items-center gap-2 text-sm text-[var(--kelar-primary)] mb-3">
-          <Calendar size={16} />
+      <div className="p-10 flex flex-col flex-grow">
+        <div className="flex items-center gap-3 text-xs font-bold text-white/40 mb-6 uppercase tracking-widest">
+          <Calendar size={14} />
           <span>{formatDate(article.date)}</span>
         </div>
 
-        <h3 className="text-xl mb-3 dark:text-white group-hover:text-[var(--kelar-primary)] transition-colors line-clamp-2">
+        <h3 className="text-2xl font-black mb-6 text-white group-hover:text-white/80 transition-colors line-clamp-2 leading-[1.2] tracking-tight text-shadow-sm">
           {article.title}
         </h3>
 
-        <p className="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4">
+        <p className="text-white/60 line-clamp-3 mb-10 text-base leading-relaxed font-light">
           {article.excerpt}
         </p>
 
-        <div className="flex items-center gap-2 text-[var(--kelar-primary)] group-hover:gap-3 transition-all">
-          <span>{t("articles.readMore")}</span>
-          <ArrowRight
-            size={18}
-            className="group-hover:translate-x-1 transition-transform"
-          />
+        <div className="mt-auto flex items-center justify-between pt-8 border-t border-white/10">
+          <div className="flex items-center gap-3 text-white font-black text-sm group-hover:gap-5 transition-all duration-300 uppercase tracking-widest">
+            <span>{t("articles.readMore")}</span>
+            <ArrowRight
+              size={18}
+              className="group-hover:translate-x-2 transition-transform"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-[var(--background)] transition-all duration-500">
+             <ArrowRight size={20} />
+          </div>
         </div>
       </div>
     </Link>
