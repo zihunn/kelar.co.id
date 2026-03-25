@@ -2,19 +2,22 @@
 
 :root {
   --font-size: 16px;
-  --background: #005696; /* Pantone 2935 */
+  --background: #012440;
+  /* Deep navy from the image */
   --foreground: #ffffff;
-  --card: rgba(255, 255, 255, 0.05);
+  --card: rgba(255, 255, 255, 0.08);
   --card-foreground: #ffffff;
-  --popover: #004a82;
+  --popover: #023859;
   --popover-foreground: #ffffff;
   --primary: #ffffff;
-  --primary-foreground: #005696;
-  --secondary: #6eaada;
-  --secondary-foreground: #005696;
-  --muted: rgba(255, 255, 255, 0.1);
-  --muted-foreground: #cbdff0;
-  --accent: rgba(255, 255, 255, 0.15);
+  --primary-foreground: #012440;
+  --secondary: #33a1fd;
+  /* Vibrant light blue from highlights */
+  --secondary-foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.15);
+  --muted-foreground: #8db5d9;
+  --accent: #2d98da;
+  /* Medium blue from architectural elements */
   --accent-foreground: #ffffff;
   --destructive: #ff4d4d;
   --destructive-foreground: #ffffff;
@@ -40,11 +43,12 @@
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: rgba(255, 255, 255, 0.3);
 
-  /* Kelar Brand Colors */
-  --kelar-primary: #005696; /* Pantone 2935 */
+  /* Kelar Brand Colors Refined */
+  --kelar-primary: #005696;
+  /* Core navy */
   --kelar-secondary: #ffffff;
-  --kelar-primary-light: #6eaada;
-  --kelar-bg-light: #004a82;
+  --kelar-primary-light: #4895ef;
+  --kelar-bg-light: #00305a;
 }
 
 .dark {
@@ -186,10 +190,13 @@
   }
 
   @keyframes bounce-slow {
-    0%, 100% {
+
+    0%,
+    100% {
       transform: translateY(-5%);
       animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
     }
+
     50% {
       transform: translateY(0);
       animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
@@ -203,6 +210,7 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -214,9 +222,11 @@
   .ql-align-center {
     text-align: center;
   }
+
   .ql-align-right {
     text-align: right;
   }
+
   .ql-align-justify {
     text-align: justify;
   }
@@ -231,9 +241,11 @@
   .prose .ql-size-small {
     font-size: 0.75em;
   }
+
   .prose .ql-size-large {
     font-size: 1.5em;
   }
+
   .prose .ql-size-huge {
     font-size: 2.5em;
   }
@@ -245,24 +257,31 @@
   .ql-indent-1 {
     padding-left: 3em;
   }
+
   .ql-indent-2 {
     padding-left: 6em;
   }
+
   .ql-indent-3 {
     padding-left: 9em;
   }
+
   .ql-indent-4 {
     padding-left: 12em;
   }
+
   .ql-indent-5 {
     padding-left: 15em;
   }
+
   .ql-indent-6 {
     padding-left: 18em;
   }
+
   .ql-indent-7 {
     padding-left: 21em;
   }
+
   .ql-indent-8 {
     padding-left: 24em;
   }
@@ -287,13 +306,13 @@
     padding-left: 2em !important;
   }
 
-  .prose ol > li:not([class*="ql-indent-"]),
-  .ql-editor ol > li:not([class*="ql-indent-"]) {
+  .prose ol>li:not([class*="ql-indent-"]),
+  .ql-editor ol>li:not([class*="ql-indent-"]) {
     counter-increment: list-0;
   }
 
-  .prose ol > li::before,
-  .ql-editor ol > li::before {
+  .prose ol>li::before,
+  .ql-editor ol>li::before {
     content: counter(list-0) ". ";
     position: absolute;
     left: 0;
@@ -301,58 +320,63 @@
     color: var(--kelar-secondary);
   }
 
-  .dark .prose ol > li::before,
-  .dark .ql-editor ol > li::before {
+  .dark .prose ol>li::before,
+  .dark .ql-editor ol>li::before {
     color: white;
   }
 
   /* Level 1 Indentation */
-  .prose ol > li.ql-indent-1,
-  .ql-editor ol > li.ql-indent-1 {
+  .prose ol>li.ql-indent-1,
+  .ql-editor ol>li.ql-indent-1 {
     counter-increment: list-1;
     counter-reset: list-2;
     padding-left: 4em !important;
   }
-  .prose ol > li.ql-indent-1::before,
-  .ql-editor ol > li.ql-indent-1::before {
+
+  .prose ol>li.ql-indent-1::before,
+  .ql-editor ol>li.ql-indent-1::before {
     content: counter(list-1, lower-alpha) ". ";
     left: 2em;
   }
 
   /* Resetting sub-counters logic for Quill - Improved */
-  .prose ol > li:not([class*="ql-indent-"]),
-  .ql-editor ol > li:not([class*="ql-indent-"]) {
+  .prose ol>li:not([class*="ql-indent-"]),
+  .ql-editor ol>li:not([class*="ql-indent-"]) {
     counter-reset: list-1 list-2 list-3;
   }
-  .prose ol > li.ql-indent-1:not(.ql-indent-2),
-  .ql-editor ol > li.ql-indent-1:not(.ql-indent-2) {
+
+  .prose ol>li.ql-indent-1:not(.ql-indent-2),
+  .ql-editor ol>li.ql-indent-1:not(.ql-indent-2) {
     counter-reset: list-2 list-3;
   }
-  .prose ol > li.ql-indent-2:not(.ql-indent-3),
-  .ql-editor ol > li.ql-indent-2:not(.ql-indent-3) {
+
+  .prose ol>li.ql-indent-2:not(.ql-indent-3),
+  .ql-editor ol>li.ql-indent-2:not(.ql-indent-3) {
     counter-reset: list-3;
   }
 
   /* Level 2 Indentation */
-  .prose ol > li.ql-indent-2,
-  .ql-editor ol > li.ql-indent-2 {
+  .prose ol>li.ql-indent-2,
+  .ql-editor ol>li.ql-indent-2 {
     counter-increment: list-2;
     counter-reset: list-3;
     padding-left: 6em !important;
   }
-  .prose ol > li.ql-indent-2::before,
-  .ql-editor ol > li.ql-indent-2::before {
+
+  .prose ol>li.ql-indent-2::before,
+  .ql-editor ol>li.ql-indent-2::before {
     content: counter(list-2, lower-roman) ". ";
     left: 4em;
   }
 
   /* Unordered List Bullets for different levels */
-  .prose ul > li,
-  .ql-editor ul > li {
+  .prose ul>li,
+  .ql-editor ul>li {
     list-style-type: none;
   }
-  .prose ul > li::before,
-  .ql-editor ul > li::before {
+
+  .prose ul>li::before,
+  .ql-editor ul>li::before {
     content: "•";
     position: absolute;
     left: 0.75em;
@@ -360,27 +384,29 @@
     font-size: 1.2em;
   }
 
-  .dark .prose ul > li::before,
-  .dark .ql-editor ul > li::before {
+  .dark .prose ul>li::before,
+  .dark .ql-editor ul>li::before {
     color: white;
   }
 
-  .prose ul > li.ql-indent-1,
-  .ql-editor ul > li.ql-indent-1 {
+  .prose ul>li.ql-indent-1,
+  .ql-editor ul>li.ql-indent-1 {
     padding-left: 4em !important;
   }
-  .prose ul > li.ql-indent-1::before,
-  .ql-editor ul > li.ql-indent-1::before {
+
+  .prose ul>li.ql-indent-1::before,
+  .ql-editor ul>li.ql-indent-1::before {
     content: "○";
     left: 2.75em;
   }
 
-  .prose ul > li.ql-indent-2,
-  .ql-editor ul > li.ql-indent-2 {
+  .prose ul>li.ql-indent-2,
+  .ql-editor ul>li.ql-indent-2 {
     padding-left: 6em !important;
   }
-  .prose ul > li.ql-indent-2::before,
-  .ql-editor ul > li.ql-indent-2::before {
+
+  .prose ul>li.ql-indent-2::before,
+  .ql-editor ul>li.ql-indent-2::before {
     content: "■";
     left: 4.75em;
     font-size: 0.8em;
@@ -391,9 +417,11 @@
   .ql-indent-1:not(li) {
     padding-left: 3em;
   }
+
   .ql-indent-2:not(li) {
     padding-left: 6em;
   }
+
   .ql-indent-3:not(li) {
     padding-left: 9em;
   }

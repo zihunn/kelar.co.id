@@ -1,5 +1,4 @@
-// const API_BASE_URL = "https://api.kelar.co.id/api";
-const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL = "http://192.168.1.36:8000/api";
 
 export const api = {
   async login(email: string, password: string) {
@@ -290,15 +289,14 @@ export const api = {
     return data;
   },
 
-  async createService(serviceData: any) {
+  async createService(formData: FormData) {
     const response = await fetch(`${API_BASE_URL}/services`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Accept: "application/json",
         Authorization: `Bearer ${this.getToken()}`,
       },
-      body: JSON.stringify(serviceData),
+      body: formData,
     });
     const data = await response.json();
     if (!response.ok) {
@@ -307,15 +305,14 @@ export const api = {
     return data.data;
   },
 
-  async updateService(id: string, serviceData: any) {
+  async updateService(id: string, formData: FormData) {
     const response = await fetch(`${API_BASE_URL}/services/${id}`, {
-      method: "PUT",
+      method: "POST", // Using POST with _method=PUT for file upload support
       headers: {
-        "Content-Type": "application/json",
         Accept: "application/json",
         Authorization: `Bearer ${this.getToken()}`,
       },
-      body: JSON.stringify(serviceData),
+      body: formData,
     });
     const data = await response.json();
     if (!response.ok) {

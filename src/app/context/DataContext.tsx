@@ -9,8 +9,10 @@ import React, {
 export interface HeroSlide {
   id: string;
   title: string;
+  titleFontSize?: string;
   description: string;
   image: string;
+  bgPosition?: string;
   redirectUrl: string;
   status: "published" | "draft" | "takedown";
 }
@@ -46,7 +48,7 @@ export interface Service {
   subtitle: string;
   description: string;
   slug: string;
-  icon: string;
+  icons: string[];
   color: string;
   bgImage?: string;
   packages: ServicePackage[];
@@ -379,8 +381,10 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
           response.data.map((item: any) => ({
             id: item.id.toString(),
             title: item.title,
+            titleFontSize: item.title_font_size,
             description: item.description,
             image: item.image,
+            bgPosition: item.bg_position || "center",
             redirectUrl: item.redirect_url || "",
             status: item.status,
           })),
@@ -422,7 +426,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
             subtitle: s.subtitle,
             description: s.description,
             slug: s.slug,
-            icon: s.icon,
+            icons: s.icons || [s.icon],
             color: s.color,
             bgImage: s.bg_image,
             packages: s.packages.map((pkg: any) => ({
@@ -475,8 +479,10 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
           {
             id: data.id.toString(),
             title: data.title,
+            titleFontSize: data.title_font_size,
             description: data.description,
             image: data.image,
+            bgPosition: data.bg_position || "center",
             redirectUrl: data.redirect_url || "",
             status: data.status,
           },
@@ -499,8 +505,10 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
               ? {
                   ...s,
                   title: data.title,
+                  titleFontSize: data.title_font_size,
                   description: data.description,
                   image: data.image,
+                  bgPosition: data.bg_position || "center",
                   redirectUrl: data.redirect_url || "",
                   status: data.status,
                 }

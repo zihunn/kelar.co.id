@@ -33,7 +33,7 @@ export function ServicesPage() {
     subtitle: "",
     description: "",
     slug: "",
-    icon: "ShieldCheck",
+    icons: [] as (File | string)[], // Support both existing URLs and new files
     color: "from-blue-500 to-indigo-600",
     bg_image: "",
     packages: [] as any[]
@@ -47,7 +47,7 @@ export function ServicesPage() {
         subtitle: service.subtitle,
         description: service.description,
         slug: service.slug,
-        icon: service.icon,
+        icons: service.icons || [], 
         color: service.color,
         bg_image: service.bgImage || "",
         packages: service.packages.map(pkg => ({
@@ -122,12 +122,42 @@ export function ServicesPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
+    const submissionData = new FormData();
+    submissionData.append("title", formData.title);
+    submissionData.append("subtitle", formData.subtitle);
+    submissionData.append("description", formData.description);
+    submissionData.append("slug", formData.slug);
+    submissionData.append("color", formData.color);
+    if (formData.bg_image) submissionData.append("bg_image", formData.bg_image);
+
+    // Append icons
+    formData.icons.forEach((icon) => {
+      if (icon instanceof File) {
+        submissionData.append("icons[]", icon);
+      }
+    });
+
+    // Append packages as JSON since Laravel can handle it or manually append
+    // For simplicity with Laravel mapping, we could append nested fields
+    formData.packages.forEach((pkg, pIdx) => {
+      submissionData.append(`packages[${pIdx}][name]`, pkg.name);
+      submissionData.append(`packages[${pIdx}][price]`, pkg.price);
+      submissionData.append(`packages[${pIdx}][is_popular]`, pkg.is_popular ? "1" : "0");
+      pkg.features.forEach((feat: string, fIdx: number) => {
+        submissionData.append(`packages[${pIdx}][features][${fIdx}]`, feat);
+      });
+    });
+
+    if (editingId) {
+      submissionData.append("_method", "PUT"); // Laravel SPOOFING
+    }
+
     try {
       if (editingId) {
-        await updateService(editingId, formData);
+        await updateService(editingId, submissionData);
         toast.success("Layanan berhasil diupdate");
       } else {
-        await addService(formData);
+        await addService(submissionData);
         toast.success("Layanan berhasil ditambahkan");
       }
       setShowForm(false);
@@ -137,7 +167,7 @@ export function ServicesPage() {
         subtitle: "",
         description: "",
         slug: "",
-        icon: "ShieldCheck",
+        icons: [],
         color: "from-blue-500 to-indigo-600",
         bg_image: "",
         packages: []
@@ -154,14 +184,6 @@ export function ServicesPage() {
     s.slug.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getIcon = (iconName: string) => {
-    switch (iconName) {
-      case "ShieldCheck": return <ShieldCheck size={20} />;
-      case "Building2": return <Building2 size={20} />;
-      case "Award": return <Award size={20} />;
-      default: return <ShieldCheck size={20} />;
-    }
-  };
 
   return (
     <AdminLayout>
@@ -184,7 +206,7 @@ export function ServicesPage() {
                 subtitle: "",
                 description: "",
                 slug: "",
-                icon: "ShieldCheck",
+                icons: [],
                 color: "from-blue-500 to-indigo-600",
                 bg_image: "",
                 packages: []
@@ -234,8 +256,17 @@ export function ServicesPage() {
                     <tr key={service.id} className="hover:bg-white/5 transition-colors group">
                       <td className="px-6 py-6 font-medium">
                         <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center text-white shadow-lg`}>
-                            {getIcon(service.icon)}
+                          <div className="flex -space-x-4">
+                            {(service.icons || []).slice(0, 3).map((icon, idx) => (
+                              <div key={idx} className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-lg border-2 border-[#002d4f] overflow-hidden">
+                                <img src={icon} alt="" className="w-full h-full object-contain p-1" />
+                              </div>
+                            ))}
+                            {(!service.icons || service.icons.length === 0) && (
+                               <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-[#0E1B47] shadow-lg border-2 border-[#002d4f]">
+                                 <ShieldCheck size={20} />
+                               </div>
+                            )}
                           </div>
                           <div>
                             <div className="text-white font-bold">{service.title}</div>
@@ -352,17 +383,45 @@ export function ServicesPage() {
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50 resize-none font-light"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Icon</label>
-                    <select
-                      value={formData.icon}
-                      onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50 appearance-none cursor-pointer"
-                    >
-                      <option value="ShieldCheck">Shield Check</option>
-                      <option value="Building2">Building</option>
-                      <option value="Award">Award</option>
-                    </select>
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Icons (Multiupload)</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {formData.icons.map((icon, idx) => (
+                        <div key={idx} className="relative aspect-square rounded-2xl bg-white/5 border border-white/10 overflow-hidden group">
+                          <img 
+                            src={icon instanceof File ? URL.createObjectURL(icon) : icon} 
+                            className="w-full h-full object-contain p-4 opacity-80" 
+                            alt="" 
+                          />
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              const newIcons = [...formData.icons];
+                              newIcons.splice(idx, 1);
+                              setFormData({...formData, icons: newIcons});
+                            }}
+                            className="absolute inset-0 bg-red-500/80 items-center justify-center hidden group-hover:flex transition-all"
+                          >
+                            <Trash2 size={24} className="text-white" />
+                          </button>
+                        </div>
+                      ))}
+                      <label className="aspect-square rounded-2xl bg-white/5 border-2 border-dashed border-white/10 hover:border-[var(--kelar-primary)]/50 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-white/10 text-white/30 hover:text-[var(--kelar-primary)]">
+                        <Plus size={32} />
+                        <span className="text-[10px] font-bold uppercase mt-1">Upload</span>
+                        <input 
+                          type="file" 
+                          multiple 
+                          accept="image/*"
+                          className="hidden" 
+                          onChange={(e) => {
+                            const files = Array.from(e.target.files || []);
+                            setFormData({...formData, icons: [...formData.icons, ...files]});
+                          }}
+                        />
+                      </label>
+                    </div>
+                    <p className="text-[10px] text-white/30 italic mt-2">* Rekomendasi 2-3 icon per layanan. Ukuran 500x500px.</p>
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Warna (Gradient Class)</label>

@@ -85,19 +85,18 @@ export function HeroSlider() {
       >
         {publishedSlides.map((slide) => (
           <div key={slide.id} className="w-full flex-shrink-0">
-            <div className="relative h-[600px] md:h-[750px]">
-              {/* Background Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center"
+            <div className="relative h-[500px] md:h-[750px]">
+              <div 
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 style={{ backgroundImage: `url(${slide.image})` }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent dark:from-black/90 dark:via-black/50 dark:to-transparent" />
               </div>
 
-              {/* Content */}
-              <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+              {/* Content - Increased z-index for visibility */}
+              <div className="relative z-20 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
                 <div className="max-w-2xl text-white">
-                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-8 leading-tight tracking-tight">
+                  <h1 className={`${slide.titleFontSize || 'text-3xl md:text-5xl lg:text-6xl'} font-black mb-8 leading-tight tracking-tight`}>
                     {slide.title}
                   </h1>
                   <p className="text-xl md:text-2xl mb-10 text-white/80 font-light leading-relaxed">
@@ -148,14 +147,14 @@ export function HeroSlider() {
         <>
           <button
             onClick={goToPrevious}
-            className="hidden md:flex absolute left-1 md:left-4 top-1/2 -translate-y-1/2 z-10 w-7 h-7 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full items-center justify-center hover:bg-white/30 transition-all shadow-lg text-white"
+            className="hidden md:flex absolute left-1 md:left-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full items-center justify-center hover:bg-white/30 transition-all shadow-lg text-white"
             aria-label="Previous slide"
           >
             <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
           </button>
           <button
             onClick={goToNext}
-            className="hidden md:flex absolute right-1 md:right-4 top-1/2 -translate-y-1/2 z-10 w-7 h-7 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full items-center justify-center hover:bg-white/30 transition-all shadow-lg text-white"
+            className="hidden md:flex absolute right-1 md:right-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full items-center justify-center hover:bg-white/30 transition-all shadow-lg text-white"
             aria-label="Next slide"
           >
             <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />

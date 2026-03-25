@@ -133,31 +133,31 @@ export function LandingPage() {
   const articleY = useTransform(articleProgress, [0, 1], [120, -120]);
   const headerY = useTransform(aboutProgress, [0, 1], [-50, 50]);
 
-  // Our Services Data
+  // Hardcoded services with new icons support for initial view or offline
   const servicesData = [
     {
       id: 1,
       slug: "ekatalog",
-      icon: ShieldCheck,
+      icons: ["/icons/services/logo layanan 1a.png", "/icons/services/logo layanan 1b.png"],
       title: t("services_section.item1.title"),
       desc: t("services_section.item1.desc"),
-      color: "from-blue-500 to-indigo-600"
+      color: "from-blue-600 to-indigo-700"
     },
     {
       id: 2,
       slug: "perizinan",
-      icon: Award,
+      icons: ["/icons/services/logo layanan 2a.png", "/icons/services/logo layanan 2b.png"],
       title: t("services_section.item2.title"),
       desc: t("services_section.item2.desc"),
-      color: "from-emerald-500 to-teal-600"
+      color: "from-sky-500 to-blue-600"
     },
     {
       id: 3,
       slug: "legalitas",
-      icon: Building2,
+      icons: ["/icons/services/logo layanan 3a.png", "/icons/services/logo layanan 4a.png"],
       title: t("services_section.item3.title"),
       desc: t("services_section.item3.desc"),
-      color: "from-amber-500 to-orange-600"
+      color: "from-blue-400 to-cyan-500"
     }
   ];
 
@@ -427,7 +427,7 @@ export function LandingPage() {
               {servicesData.map((service, index) => (
                 <motion.div
                   key={service.id}
-                  className="bg-white dark:bg-slate-800/80 text-[var(--background)] dark:text-white rounded-[3rem] p-8 md:p-10 flex flex-col relative group overflow-hidden shadow-2xl h-full border border-white/10 dark:border-white/5"
+                  className="bg-[#004e89] dark:bg-slate-800/80 text-white rounded-[3rem] p-8 md:p-10 flex flex-col relative group overflow-hidden shadow-2xl h-full border border-white/10 dark:border-white/5"
                   initial={{ opacity: 0, y: 50 }}
                   animate={servicesSectionInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -438,8 +438,20 @@ export function LandingPage() {
                     0{service.id}
                   </div>
 
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br flex-shrink-0 ${service.color} flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform duration-500`}>
-                    <service.icon size={32} className="text-white" />
+                  <div className="flex flex-wrap gap-5 mb-10">
+                    {service.icons.map((Icon: any, idx) => (
+                      <div key={idx} className={`w-24 h-24 rounded-[1.5rem] bg-white flex-shrink-0 flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-500`}>
+                        {typeof Icon === 'string' ? (
+                          <img 
+                            src={Icon.startsWith('http') ? Icon : Icon} 
+                            alt={`${service.title} icon ${idx}`}
+                            className="w-18 h-18 object-contain p-1" 
+                          />
+                        ) : (
+                          <Icon size={40} className="text-[#0E1B47]" />
+                        )}
+                      </div>
+                    ))}
                   </div>
 
                   <h3 className="text-xl md:text-2xl font-black mb-6 leading-relaxed relative break-words dark:text-white">
@@ -447,14 +459,14 @@ export function LandingPage() {
                   </h3>
 
                   <div className="relative flex-grow mb-10">
-                    <p className="text-[var(--background)]/70 dark:text-white/70 text-base md:text-lg font-medium leading-relaxed">
+                    <p className="text-white/70 text-base md:text-lg font-medium leading-relaxed">
                       {service.desc}
                     </p>
                   </div>
 
-                  <Link
+                   <Link
                     to={`/layanan/${service.slug}`}
-                    className="relative mt-auto px-6 py-4 rounded-2xl bg-[var(--background)] dark:bg-blue-500 text-white font-black text-center hover:bg-[var(--background)]/90 dark:hover:bg-blue-600 transition-all flex items-center justify-center gap-3 overflow-hidden group/btn hover:scale-105 active:scale-95 duration-200"
+                    className="relative mt-auto px-6 py-4 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white font-black text-center transition-all flex items-center justify-center gap-3 overflow-hidden group/btn hover:scale-105 active:scale-95 duration-200"
                   >
                     <span className="relative z-10">{t("services_section.cta")}</span>
                     <Phone size={18} className="relative z-10 group-hover/btn:rotate-12 transition-transform" />
