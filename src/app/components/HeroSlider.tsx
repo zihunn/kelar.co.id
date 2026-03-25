@@ -85,8 +85,8 @@ export function HeroSlider() {
       >
         {publishedSlides.map((slide) => (
           <div key={slide.id} className="w-full flex-shrink-0">
-            <div className="relative h-[500px] md:h-[750px]">
-              <div 
+            <div className="relative h-[400px] md:h-[700px]">
+              <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 style={{ backgroundImage: `url(${slide.image})` }}
               >
@@ -169,11 +169,10 @@ export function HeroSlider() {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all ${
-                index === currentSlide
-                  ? "bg-white w-8"
-                  : "bg-white/50 hover:bg-white/75"
-              }`}
+              className={`w-3 h-3 rounded-full transition-all ${index === currentSlide
+                ? "bg-white w-8"
+                : "bg-white/50 hover:bg-white/75"
+                }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
