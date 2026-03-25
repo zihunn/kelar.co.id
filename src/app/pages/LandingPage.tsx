@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router";
+import { useLocation, Link } from "react-router";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 import { HeroSlider } from "../components/HeroSlider";
@@ -9,22 +9,28 @@ import { useLanguage } from "../context/LanguageContext";
 import {
   Instagram,
   Facebook,
-  Linkedin,
   MapPin,
   Mail,
   Phone,
   CheckCircle2,
   Users,
-  Award,
   Clock,
+  Linkedin,
   TrendingUp,
-  Tag,
-  Zap,
+  Gavel,
+  FileBadge,
+  Briefcase,
+  Scale,
+  Globe,
   ShieldCheck,
   Building2,
   BarChart3,
   Palette,
   ChevronDown,
+  Award,
+  Tag,
+  Zap,
+  History,
 } from "lucide-react";
 import { motion, useScroll, useTransform, useSpring } from "motion/react";
 import { useRef } from "react";
@@ -63,15 +69,15 @@ function useInView(threshold = 0.1) {
 }
 
 export function LandingPage() {
-  const { articles, aboutUs, socialMedia } = useData();
+  const { articles, aboutUs, socialMedia, promos, services } = useData();
   const { t } = useLanguage();
   const location = useLocation();
 
-  // Handle scroll to hash
+  // Handle scroll to hash or top on refresh
   useEffect(() => {
     if (location.hash) {
       const sectionId = location.hash.replace("#", "");
-      
+
       // Delay to ensure content is rendered
       const timeoutId = setTimeout(() => {
         const element = document.getElementById(sectionId);
@@ -89,11 +95,14 @@ export function LandingPage() {
       }, 500); // 500ms delay to allow Hero and other sections to settle
 
       return () => clearTimeout(timeoutId);
+    } else {
+      window.scrollTo(0, 0);
     }
   }, [location.hash]);
 
-  // Only show published articles
+  // Only show published content
   const publishedArticles = articles.filter((a) => a.status === "published");
+  const publishedPromos = promos.filter((p) => p.status === "published");
 
   // Refs for scroll animations
   const [aboutRef, aboutInView] = useInView();
@@ -124,18 +133,11 @@ export function LandingPage() {
   const articleY = useTransform(articleProgress, [0, 1], [120, -120]);
   const headerY = useTransform(aboutProgress, [0, 1], [-50, 50]);
 
-  // Dummy Promo Data
-  const promos = [
-    { id: 1, image: "https://hivefive.co.id/wp-content/uploads/2026/03/WhatsApp-Image-2026-01-22-at-09.31.49-2.webp", title: "Promo Khusus V6" },
-    { id: 2, image: "https://hivefive.co.id/wp-content/uploads/2026/03/WhatsApp-Image-2026-01-22-at-09.31.49-2.webp", title: "Diskon Pendaftaran" },
-    { id: 3, image: "https://hivefive.co.id/wp-content/uploads/2026/03/WhatsApp-Image-2026-01-22-at-09.31.49-2.webp", title: "Bundling Hemat" },
-    { id: 4, image: "https://hivefive.co.id/wp-content/uploads/2026/03/WhatsApp-Image-2026-01-22-at-09.31.49-2.webp", title: "Eksklusif UMKM" },
-  ];
-
   // Our Services Data
   const servicesData = [
     {
       id: 1,
+      slug: "ekatalog",
       icon: ShieldCheck,
       title: t("services_section.item1.title"),
       desc: t("services_section.item1.desc"),
@@ -143,25 +145,28 @@ export function LandingPage() {
     },
     {
       id: 2,
-      icon: Building2,
+      slug: "perizinan",
+      icon: Award,
       title: t("services_section.item2.title"),
       desc: t("services_section.item2.desc"),
       color: "from-emerald-500 to-teal-600"
     },
     {
       id: 3,
-      icon: BarChart3,
+      slug: "legalitas",
+      icon: Building2,
       title: t("services_section.item3.title"),
       desc: t("services_section.item3.desc"),
       color: "from-amber-500 to-orange-600"
-    },
-    {
-      id: 4,
-      icon: Palette,
-      title: t("services_section.item4.title"),
-      desc: t("services_section.item4.desc"),
-      color: "from-purple-500 to-pink-600"
     }
+  ];
+
+  const teamData = [
+    { name: "Juno", role: "Komisaris", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
+    { name: "Agungan", role: "Direktur Operasional", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
+    { name: "Alexy", role: "Ekatalog Consultant", image: "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
+    { name: "Christine", role: "Tax Consultant", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
+    { name: "Rusli", role: "Legal Consultant", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
   ];
 
   const features = [
@@ -194,7 +199,7 @@ export function LandingPage() {
     { value: "24/7", label: t("stats.support") },
   ];
 
-  const services = [
+  const servicesList = [
     t("services.item1"),
     t("services.item2"),
     t("services.item3"),
@@ -293,85 +298,102 @@ export function LandingPage() {
         </section>
 
         {/* Limited Promo Section - Horizontal Scroll */}
-        <section
-          id="promo"
-          ref={promoSectionRef}
-          className="py-24 bg-background relative overflow-hidden"
-        >
-          <div className="absolute top-1/2 left-0 w-full h-[300px] bg-white opacity-[0.02] -translate-y-1/2 blur-3xl pointer-events-none" />
+        {publishedPromos.length > 0 && (
+          <section
+            id="promo"
+            ref={promoSectionRef}
+            className="py-24 bg-background relative overflow-hidden"
+          >
+            <div className="absolute top-1/2 left-0 w-full h-[300px] bg-white opacity-[0.02] -translate-y-1/2 blur-3xl pointer-events-none" />
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <motion.div
-              ref={promoRef}
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              animate={promoInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="inline-flex items-center gap-2 px-6 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white text-xs font-black uppercase tracking-widest mb-6 animate-pulse">
-                <Zap size={14} className="text-yellow-400" />
-                <span>{t("promo.title")}</span>
-              </div>
-              <h2 className="text-4xl md:text-6xl font-black mb-6 text-white tracking-tight">
-                E-Katalog V6 <span className="text-white/40">Offers</span>
-              </h2>
-              <p className="text-white/60 max-w-xl mx-auto text-lg md:text-xl font-light leading-relaxed">
-                {t("promo.subtitle")}
-              </p>
-            </motion.div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <motion.div
+                ref={promoRef}
+                className="text-center mb-16"
+                initial={{ opacity: 0, y: 30 }}
+                animate={promoInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="inline-flex items-center gap-2 px-6 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white text-xs font-black uppercase tracking-widest mb-6 animate-pulse">
+                  <Zap size={14} className="text-yellow-400" />
+                  <span>{t("promo.title")}</span>
+                </div>
+                <h2 className="text-4xl md:text-6xl font-black mb-6 text-white tracking-tight">
+                  E-Katalog V6 <span className="text-white/40">Offers</span>
+                </h2>
+                <p className="text-white/60 max-w-xl mx-auto text-lg md:text-xl font-light leading-relaxed">
+                  {t("promo.subtitle")}
+                </p>
+              </motion.div>
 
-            {/* Horizontal Scroll Container */}
-            <motion.div
-              style={{ y: promoY }}
-              className="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar"
-            >
-              {promos.map((promo, index) => (
-                <motion.a
-                  key={promo.id}
-                  href="https://wa.me/6281122218988"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-shrink-0 w-[85vw] sm:w-[500px] aspect-[4/5] bg-white/5 rounded-[3rem] overflow-hidden border border-white/10 group snap-center relative shadow-2xl"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={promoInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.8, delay: index * 0.15 }}
-                  whileHover={{ y: -15, transition: { duration: 0.4 } }}
-                >
-                  <img
-                    src={promo.image}
-                    alt={promo.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="absolute bottom-10 left-10 right-10">
-                    <div className="flex flex-col gap-3">
-                      <div className="flex items-center gap-2">
-                        <span className="w-10 h-1 bg-white rounded-full" />
-                        <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.3em]">Special Promo</span>
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight tracking-tight">
-                        {promo.title}
-                      </h3>
-                      <p className="text-white/60 text-sm font-medium">Klik untuk konsultasi & klaim promo via WhatsApp</p>
+              {/* Horizontal Scroll Container */}
+              <motion.div
+                style={{ y: promoY }}
+                className="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar"
+              >
+                {publishedPromos.map((promo, index) => (
+                  <motion.a
+                    key={promo.id}
+                    href="https://wa.me/6281122218988"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-shrink-0 w-[85vw] sm:w-[500px] h-[550px] bg-white/5 rounded-[3rem] p-8 md:p-12 border border-white/10 group snap-center relative shadow-2xl hover:bg-white/10 transition-colors flex flex-col"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={promoInView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ duration: 0.8, delay: index * 0.15 }}
+                    whileHover={{ y: -15, transition: { duration: 0.4 } }}
+                  >
+                    <div className="absolute top-8 right-8 w-14 h-14 bg-gradient-to-br from-yellow-400 to-orange-500 text-[var(--background)] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-[0_0_30px_rgba(250,204,21,0.4)] z-10">
+                      <Tag size={28} />
                     </div>
-                  </div>
 
-                  <div className="absolute top-10 right-10 w-16 h-16 bg-white text-[var(--background)] rounded-3xl flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:rotate-12 transition-all duration-500 shadow-[0_0_50px_rgba(255,255,255,0.3)] scale-75 group-hover:scale-100">
-                    <Phone size={32} />
-                  </div>
-                </motion.a>
-              ))}
-            </motion.div>
+                    <div className="mb-6 flex-grow overflow-hidden relative z-10">
+                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/10 border border-yellow-400/20 rounded-full mb-6">
+                        <Zap size={16} className="text-yellow-400" />
+                        <span className="text-[10px] font-black text-yellow-400 uppercase tracking-[0.2em] pt-0.5">Special Offer</span>
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-8 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-orange-500 transition-all duration-300">
+                        {promo.name}
+                      </h3>
 
-            <div className="flex justify-center mt-4">
-              <div className="flex gap-2 items-center text-white/20 font-black text-[10px] uppercase tracking-widest">
-                <span>Scroll to explore</span>
-                <div className="w-12 h-[1px] bg-white/10" />
-              </div>
+                      <div className="relative">
+                        {/* Decorative Line */}
+                        <div className="absolute left-0 top-2 bottom-4 w-[2px] bg-gradient-to-b from-yellow-400/50 to-transparent" />
+
+                        <div className="text-white/80 text-[15px] leading-relaxed whitespace-pre-wrap font-medium h-[220px] overflow-y-auto pl-6 pr-4 custom-scrollbar">
+                          {promo.content}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="relative z-10 mt-auto pt-6 border-t border-white/10 flex items-center justify-between group/cta">
+                      <div className="flex items-center gap-3 text-white group-hover:text-yellow-400 transition-colors">
+                        <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-yellow-400/10 transition-colors">
+                          <Phone size={18} />
+                        </div>
+                        <span className="text-sm font-black uppercase tracking-widest relative">
+                          Klaim Promo
+                          <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-yellow-400 transition-all duration-300 group-hover/cta:w-full" />
+                        </span>
+                      </div>
+
+                      <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center -rotate-45 group-hover:bg-yellow-400 group-hover:border-yellow-400 group-hover:text-[var(--background)] transition-all duration-300">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M5 12h14"></path>
+                          <path d="m12 5 7 7-7 7"></path>
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Hover Glow Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/0 via-transparent to-yellow-400/0 group-hover:from-yellow-400/5 group-hover:to-orange-500/10 transition-all duration-500 pointer-events-none" />
+                  </motion.a>
+                ))}
+              </motion.div>
+
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Services Section - Horizontal Scroll */}
         <section
@@ -381,7 +403,7 @@ export function LandingPage() {
         >
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--kelar-primary)] opacity-5 rounded-full blur-[120px] translate-x-1/2 -translate-y-1/2" />
           <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[var(--kelar-secondary)] opacity-5 rounded-full blur-[120px] -translate-x-1/2 translate-y-1/2" />
-          
+
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <motion.div
               ref={servicesSectionRefView}
@@ -398,47 +420,47 @@ export function LandingPage() {
               </p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               style={{ y: servicesYProgressTransform }}
-              className="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12"
             >
               {servicesData.map((service, index) => (
                 <motion.div
                   key={service.id}
-                  className="flex-shrink-0 w-[85vw] sm:w-[350px] bg-white text-[var(--background)] rounded-[3rem] p-10 flex flex-col snap-center relative group overflow-hidden shadow-2xl"
+                  className="bg-white dark:bg-slate-800/80 text-[var(--background)] dark:text-white rounded-[3rem] p-8 md:p-10 flex flex-col relative group overflow-hidden shadow-2xl h-full border border-white/10 dark:border-white/5"
                   initial={{ opacity: 0, y: 50 }}
                   animate={servicesSectionInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  whileHover={{ y: -10 }}
+                  whileHover={{ y: -8 }}
                 >
                   {/* Decorative background number */}
-                  <div className="absolute -top-10 -right-10 text-[10rem] font-black opacity-[0.03] group-hover:opacity-[0.05] transition-opacity pointer-events-none text-black">
+                  <div className="absolute -top-10 -right-10 text-[10rem] font-black opacity-[0.03] dark:opacity-5 group-hover:opacity-[0.05] dark:group-hover:opacity-10 transition-opacity pointer-events-none text-black dark:text-white leading-none">
                     0{service.id}
                   </div>
 
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform duration-500`}>
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br flex-shrink-0 ${service.color} flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform duration-500`}>
                     <service.icon size={32} className="text-white" />
                   </div>
 
-                  <h3 className="text-2xl font-black mb-6 leading-tight">
+                  <h3 className="text-xl md:text-2xl font-black mb-6 leading-relaxed relative break-words dark:text-white">
                     {service.title}
                   </h3>
-                  
-                  <p className="text-[var(--background)]/70 text-lg mb-10 font-medium leading-relaxed flex-grow">
-                    {service.desc}
-                  </p>
 
-                  <motion.a
-                    href="https://wa.me/6281122218988"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto px-8 py-4 rounded-2xl bg-[var(--background)] text-white font-black text-center hover:bg-[var(--background)]/90 transition-all flex items-center justify-center gap-2 group/btn"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <div className="relative flex-grow mb-10">
+                    <p className="text-[var(--background)]/70 dark:text-white/70 text-base md:text-lg font-medium leading-relaxed">
+                      {service.desc}
+                    </p>
+                  </div>
+
+                  <Link
+                    to={`/layanan/${service.slug}`}
+                    className="relative mt-auto px-6 py-4 rounded-2xl bg-[var(--background)] dark:bg-blue-500 text-white font-black text-center hover:bg-[var(--background)]/90 dark:hover:bg-blue-600 transition-all flex items-center justify-center gap-3 overflow-hidden group/btn hover:scale-105 active:scale-95 duration-200"
                   >
-                    <span>{t("services_section.cta")}</span>
-                    <Phone size={18} className="group-hover/btn:rotate-12 transition-transform" />
-                  </motion.a>
+                    <span className="relative z-10">{t("services_section.cta")}</span>
+                    <Phone size={18} className="relative z-10 group-hover/btn:rotate-12 transition-transform" />
+                  </Link>
+
+                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 dark:group-hover:opacity-20 blur-3xl transition-opacity duration-700 pointer-events-none rounded-full`} />
                 </motion.div>
               ))}
             </motion.div>
@@ -468,72 +490,37 @@ export function LandingPage() {
               </div>
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              {/* Description */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-24">
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 animate={aboutInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.2 }}
+                className="bg-white/5 border border-white/10 rounded-[2.5rem] p-10 hover:bg-white/10 transition-colors"
               >
-                <p className="text-xl text-white/90 mb-10 leading-relaxed font-light">
-                  {aboutUs.description}
-                </p>
-
-                {/* Stats */}
-                <div ref={statsRef} className="grid grid-cols-2 gap-6 mb-8">
-                  {stats.map((stat, index) => (
-                    <motion.div
-                      key={index}
-                      className="text-center p-6 bg-white/10 rounded-3xl border border-white/10 backdrop-blur-md"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={statsInView ? { opacity: 1, scale: 1 } : {}}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                    >
-                      <div className="text-4xl font-black mb-1 text-white">
-                        {stat.value}
-                      </div>
-                      <div className="text-xs font-bold uppercase tracking-widest text-white/60">
-                        {stat.label}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Services List */}
-                <div ref={servicesRef}>
-                  <h3 className="text-2xl font-bold mb-8 text-white flex items-center gap-3">
-                    <div className="w-8 h-1 bg-white rounded-full" />
-                    {t("services.title")}
-                  </h3>
-                  <div className="space-y-3">
-                    {services.map((service, index) => (
-                      <motion.div
-                        key={index}
-                        className="flex items-start gap-3 group"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={servicesInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.4, delay: index * 0.1 }}
-                      >
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-white transition-all group-hover:scale-110">
-                          <CheckCircle2 size={14} className="text-white group-hover:text-[var(--background)]" />
-                        </div>
-                        <span className="text-white/80 group-hover:text-white transition-colors text-lg">
-                          {service}
-                        </span>
-                      </motion.div>
-                    ))}
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[var(--kelar-primary)] to-[var(--kelar-secondary)] rounded-2xl flex justify-center items-center shadow-lg">
+                    <History className="text-white" size={28} />
                   </div>
+                  <h3 className="text-3xl font-bold text-white">Sejarah Kelar</h3>
+                </div>
+                <div className="space-y-6 text-white/80 font-light leading-relaxed text-lg text-justify">
+                  <p>
+                    Berdiri di tengah dinamika bisnis modern, Kelar lahir dari sebuah visi sederhana namun kuat: "Memudahkan langkah setiap pengusaha". Sejak awal kemunculannya, Kelar telah berkomitmen untuk menjadi mitra strategis bagi UMKM dan perusahaan besar dalam menavigasi kompleksitas legalitas dan birokrasi di Indonesia.
+                  </p>
+                  <p>
+                    Dengan dedikasi yang tak kenal lelah, kami terus berevolusi mengintegrasikan teknologi dan keahlian manusia guna memberikan layanan profesional, cepat, dan transparan untuk memastikan bisnis Anda tumbuh dengan jaminan dan tanpa hambatan legalitas.
+                  </p>
                 </div>
               </motion.div>
 
               <motion.div
-                className="bg-white/10 backdrop-blur-2xl rounded-[2.5rem] p-10 border border-white/20 shadow-2xl relative overflow-hidden group"
+                className="bg-white/5 backdrop-blur-2xl rounded-[2.5rem] p-10 border border-white/10 shadow-2xl relative overflow-hidden group"
                 initial={{ opacity: 0, x: 50 }}
                 animate={aboutInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all duration-700" />
-                <div className="flex items-center gap-3 mb-6">
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--kelar-primary)] opacity-20 rounded-full blur-3xl group-hover:opacity-30 transition-all duration-700" />
+                <div className="flex items-center gap-4 mb-8">
                   <div className="w-14 h-14 bg-white text-[var(--background)] rounded-2xl flex items-center justify-center shadow-xl">
                     <Mail size={28} />
                   </div>
@@ -542,83 +529,43 @@ export function LandingPage() {
                   </h3>
                 </div>
 
-                <div className="space-y-5 mb-10">
-                  <div className="flex items-start gap-4 p-5 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10 group/item">
-                    <MapPin
-                      size={24}
-                      className="text-white mt-1 flex-shrink-0 group-hover/item:scale-110 transition-transform"
-                    />
-                    <span className="text-white/90 group-hover/item:text-white transition-colors">
-                      {aboutUs.address}
-                    </span>
+                <div className="space-y-5 mb-10 relative z-10">
+                  <div className="flex items-start gap-4 p-5 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group/item">
+                    <MapPin size={24} className="text-white mt-1 flex-shrink-0 group-hover/item:scale-110 transition-transform" />
+                    <span className="text-white/90 group-hover/item:text-white transition-colors">{aboutUs.address}</span>
                   </div>
-                  <div className="flex items-center gap-4 p-5 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10 group/item">
-                    <Mail
-                      size={24}
-                      className="text-white flex-shrink-0 group-hover/item:scale-110 transition-transform"
-                    />
-                    <a
-                      href={`mailto:${aboutUs.email}`}
-                      className="text-white/90 group-hover/item:text-white transition-colors"
-                    >
-                      {aboutUs.email}
-                    </a>
+                  <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group/item">
+                    <Mail size={24} className="text-white flex-shrink-0 group-hover/item:scale-110 transition-transform" />
+                    <a href={`mailto:${aboutUs.email}`} className="text-white/90 group-hover/item:text-white transition-colors">{aboutUs.email}</a>
                   </div>
-                  <div className="flex items-center gap-4 p-5 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10 group/item">
-                    <Phone
-                      size={24}
-                      className="text-white flex-shrink-0 group-hover/item:scale-110 transition-transform"
-                    />
-                    <a
-                      href={`tel:${aboutUs.phone}`}
-                      className="text-white/90 group-hover/item:text-white transition-colors"
-                    >
-                      {aboutUs.phone}
-                    </a>
+                  <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group/item">
+                    <Phone size={24} className="text-white flex-shrink-0 group-hover/item:scale-110 transition-transform" />
+                    <a href={`tel:${aboutUs.phone}`} className="text-white/90 group-hover/item:text-white transition-colors">{aboutUs.phone}</a>
                   </div>
                 </div>
 
-                <div>
+                <div className="relative z-10">
                   <h4 className="mb-6 text-xl font-bold text-white">
                     {t("about.socialMedia")}
                   </h4>
                   <div className="flex gap-3">
-                    <a
-                      href={socialMedia.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white"
-                    >
+                    <a href={socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white">
                       <Instagram size={24} />
                     </a>
-                    <a
-                      href={socialMedia.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white"
-                    >
+                    <a href={socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white">
                       <Facebook size={24} />
                     </a>
-                    <a
-                      href={socialMedia.tiktok}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white"
-                    >
+                    <a href={socialMedia.tiktok} target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white">
                       <TikTokIcon size={24} />
                     </a>
-                    <a
-                      href={socialMedia.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white"
-                    >
+                    <a href={socialMedia.linkedin} target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white hover:text-[var(--background)] transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 text-white">
                       <Linkedin size={24} />
                     </a>
                   </div>
                 </div>
               </motion.div>
             </div>
+
           </div>
         </section>
 

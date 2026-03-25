@@ -25,6 +25,33 @@ export interface Article {
   status: "published" | "draft" | "takedown";
 }
 
+export interface Promo {
+  id: string;
+  name: string;
+  content: string;
+  status: "published" | "draft";
+}
+
+export interface ServicePackage {
+  id: string;
+  name: string;
+  price: string;
+  isPopular?: boolean;
+  features: string[];
+}
+
+export interface Service {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  slug: string;
+  icon: string;
+  color: string;
+  bgImage?: string;
+  packages: ServicePackage[];
+}
+
 export interface AboutUs {
   description: string;
   address: string;
@@ -56,6 +83,14 @@ interface DataContextType {
   updateAboutUs: (about: Partial<AboutUs>) => void;
   updateSocialMedia: (social: Partial<SocialMedia>) => void;
   getArticleById: (id: string) => Article | undefined;
+  promos: Promo[];
+  addPromo: (promo: Omit<Promo, "id">) => Promise<void>;
+  updatePromo: (id: string, promo: Partial<Promo>) => Promise<void>;
+  deletePromo: (id: string) => Promise<void>;
+  services: Service[];
+  addService: (service: any) => Promise<void>;
+  updateService: (id: string, service: any) => Promise<void>;
+  deleteService: (id: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -245,6 +280,20 @@ const defaultData = {
       status: "published" as const,
     },
   ],
+  promos: [
+    {
+      id: "1",
+      name: "Pendaftaran E-katalog LKPP",
+      content: "Gratis fasilitas :\na. Upload tayang produk / jasa sebanyak 10x\nb. Operator Reguler selama 1 bulan\nc. Weekly update Tender & Kompetisi selama 1 bulan",
+      status: "published" as const,
+    },
+    {
+      id: "2",
+      name: "Pembuatan Badan Usaha PT / CV",
+      content: "Gratis fasilitas :\na. Virtual Office (1 tahun)\nb. Logo Perusahaan (3 alternative)\nc. Corporate Identity :\n   a. kop surat\n   b. amplop\n   c. map dokumen\n   d. kartu nama\n   e. stempel\nd. Company Profile",
+      status: "draft" as const,
+    },
+  ],
   aboutUs: {
     description:
       "Kelar.co.id adalah partner terpercaya untuk membantu UMKM, vendor, dan perusahaan dalam mendaftarkan produk/jasa mereka ke E-Katalog V6 pengadaan pemerintah. Dengan tim profesional dan berpengalaman, kami memastikan proses pendaftaran berjalan lancar dan berhasil.",
@@ -268,6 +317,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
+  const [promos, setPromos] = useState<Promo[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [aboutUs, setAboutUs] = useState<AboutUs>(defaultData.aboutUs);
   const [socialMedia, setSocialMedia] = useState<SocialMedia>(
     defaultData.socialMedia,
@@ -340,12 +391,63 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  const loadPromos = async () => {
+    try {
+      const { api } = await import("../services/api");
+      const res = await api.getPromos();
+      if (res.data) {
+        setPromos(
+          res.data.map((p: any) => ({
+            id: p.id.toString(),
+            name: p.name,
+            content: p.content,
+            status: p.status,
+          })),
+        );
+      }
+    } catch (error) {
+      console.error("Gagal mengambil promo:", error);
+    }
+  };
+
+  const loadServices = async () => {
+    try {
+      const { api } = await import("../services/api");
+      const res = await api.getServices();
+      if (res.data) {
+        setServices(
+          res.data.map((s: any) => ({
+            id: s.id.toString(),
+            title: s.title,
+            subtitle: s.subtitle,
+            description: s.description,
+            slug: s.slug,
+            icon: s.icon,
+            color: s.color,
+            bgImage: s.bg_image,
+            packages: s.packages.map((pkg: any) => ({
+              id: pkg.id.toString(),
+              name: pkg.name,
+              price: pkg.price,
+              isPopular: !!pkg.is_popular,
+              features: pkg.features.map((f: any) => f.feature),
+            })),
+          })),
+        );
+      }
+    } catch (error) {
+      console.error("Gagal mengambil layanan:", error);
+    }
+  };
+
   useEffect(() => {
     const init = async () => {
       await Promise.all([
         loadHeroSliders(),
         fetchCompanySettings(),
         loadArticles(),
+        loadPromos(),
+        loadServices(),
       ]);
     };
     init();
@@ -356,11 +458,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
     const dataToStore = {
       heroSlides,
       articles,
+      promos,
       aboutUs,
       socialMedia,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
-  }, [heroSlides, articles, aboutUs, socialMedia]);
+  }, [heroSlides, articles, promos, aboutUs, socialMedia]);
 
   const addHeroSlide = async (formData: FormData) => {
     try {
@@ -521,11 +624,105 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
     return articles.find((a) => a.id === id);
   };
 
+  const deletePromo = async (id: string) => {
+    try {
+      const { api } = await import("../services/api");
+      await api.deletePromo(id);
+      setPromos(promos.filter((p) => p.id !== id));
+    } catch (error) {
+      console.error(`Gagal menghapus promo ${id}:`, error);
+      throw error;
+    }
+  };
+
+  const addPromo = async (promoData: Omit<Promo, "id">) => {
+    try {
+      const { api } = await import("../services/api");
+      const data = await api.createPromo(promoData);
+      if (data) {
+        setPromos([
+          ...promos,
+          {
+            id: data.id.toString(),
+            name: data.name,
+            content: data.content,
+            status: data.status,
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error("Gagal menambahkan promo:", error);
+      throw error;
+    }
+  };
+
+  const updatePromo = async (id: string, promoData: Partial<Promo>) => {
+    try {
+      const { api } = await import("../services/api");
+      const data = await api.updatePromo(id, promoData);
+      if (data) {
+        setPromos(
+          promos.map((p) =>
+            p.id === id
+              ? {
+                  ...p,
+                  name: data.name,
+                  content: data.content,
+                  status: data.status,
+                }
+              : p,
+          ),
+        );
+      }
+    } catch (error) {
+      console.error(`Gagal memperbarui promo ${id}:`, error);
+      throw error;
+    }
+  };
+
+  const addService = async (serviceData: any) => {
+    try {
+      const { api } = await import("../services/api");
+      const data = await api.createService(serviceData);
+      if (data) {
+        await loadServices(); // Refresh entire list for simplicity
+      }
+    } catch (error) {
+      console.error("Gagal menambahkan layanan:", error);
+      throw error;
+    }
+  };
+
+  const updateService = async (id: string, serviceData: any) => {
+    try {
+      const { api } = await import("../services/api");
+      const data = await api.updateService(id, serviceData);
+      if (data) {
+        await loadServices();
+      }
+    } catch (error) {
+      console.error(`Gagal memperbarui layanan ${id}:`, error);
+      throw error;
+    }
+  };
+
+  const deleteService = async (id: string) => {
+    try {
+      const { api } = await import("../services/api");
+      await api.deleteService(id);
+      setServices(services.filter((s) => s.id !== id));
+    } catch (error) {
+      console.error(`Gagal menghapus layanan ${id}:`, error);
+      throw error;
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
         heroSlides,
         articles,
+        promos,
         aboutUs,
         socialMedia,
         addHeroSlide,
@@ -538,6 +735,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
         updateAboutUs,
         updateSocialMedia,
         getArticleById,
+        addPromo,
+        updatePromo,
+        deletePromo,
+        services,
+        addService,
+        updateService,
+        deleteService,
       }}
     >
       {children}

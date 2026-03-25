@@ -23,7 +23,7 @@ export function HeroSlider() {
 
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % publishedSlides.length);
-    }, 5000);
+    }, 7000);
 
     return () => clearInterval(timer);
   }, [publishedSlides.length]);
@@ -85,7 +85,7 @@ export function HeroSlider() {
       >
         {publishedSlides.map((slide) => (
           <div key={slide.id} className="w-full flex-shrink-0">
-            <div className="relative h-[700px] md:h-[850px]">
+            <div className="relative h-[600px] md:h-[750px]">
               {/* Background Image */}
               <div
                 className="absolute inset-0 bg-cover bg-center"
@@ -97,7 +97,7 @@ export function HeroSlider() {
               {/* Content */}
               <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
                 <div className="max-w-2xl text-white">
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-8 leading-tight tracking-tight">
+                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-8 leading-tight tracking-tight">
                     {slide.title}
                   </h1>
                   <p className="text-xl md:text-2xl mb-10 text-white/80 font-light leading-relaxed">

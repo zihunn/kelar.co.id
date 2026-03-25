@@ -73,27 +73,27 @@ const translations: Record<Language, any> = {
     },
     promo: {
       title: "Promo Terbatas",
-      subtitle: "Jangan lewatkan penawaran spesial untuk pendaftaran E-Katalog V6 Anda",
+      subtitle: "Promo berlaku untuk 10 klien pertama di bulan April 2026!",
     },
     services_section: {
       title: "Layanan Kami",
       subtitle: "Solusi lengkap untuk pertumbuhan bisnis Anda",
       cta: "Konsultasi Sekarang",
       item1: {
-        title: "Penerbitan Legalitas",
-        desc: "Terbitkan usaha kamu mulai dari CV, PT, Koperasi, Yayasan, PMA, hingga Firma"
+        title: "Konsultasi & Kepengurusan E-katalog LKPP",
+        desc: "Dapatkan pendampingan profesional untuk mempermudah pendaftaran dan tata kelola E-katalog LKPP usaha Anda."
       },
       item2: {
-        title: "Virtual Office",
-        desc: "Hadirkan kantor non fisik dengan biaya terjangkau dan profesional untuk membantu mendirikan dan mengembangkan bisnis Anda."
+        title: "Kepengurusan Perizinan & Sertifikasi (OSS, NIB, PKKPR, TKDN, Merk Dagang, dll)",
+        desc: "Kami bantu urus semua izin dasar dan sertifikasi tambahan agar usaha Anda sah dan siap berkembang."
       },
       item3: {
-        title: "Konsultasi Pajak & Akuntansi",
-        desc: "Layanan penyusunan laporan perpajakan dan keuangan, baik perorangan maupun perusahaan"
+        title: "Penerbitan Legalitas Usaha (PT / CV / Koperasi / Yayasan / Organisasi, dll)",
+        desc: "Layanan pendirian dan pengesahan badan usaha resmi, cepat, dan sepenuhnya sesuai dengan regulasi hukum yang berlaku."
       },
       item4: {
-        title: "Branding Usaha",
-        desc: "Layanan yang komprehensif untuk membantu Anda membangun identitas merek yang efektif dan menarik."
+        title: "Konsultasi & Pelaporan Pajak Profesional",
+        desc: "Kami membantu manajemen perpajakan dan pelaporan secara akurat untuk meminimalkan risiko denda serta memaksimalkan efisiensi keuangan."
       }
     },
     virtual_office: {
@@ -310,27 +310,27 @@ const translations: Record<Language, any> = {
     },
     promo: {
       title: "Limited Promo",
-      subtitle: "Don't miss out on special offers for your E-Catalog V6 registration",
+      subtitle: "Limited promo for the first 10 clients in April 2026!",
     },
     services_section: {
       title: "Our Services",
       subtitle: "Complete solutions for your business growth",
       cta: "Consult Now",
       item1: {
-        title: "Legality Issuance",
-        desc: "Publish your business starting from CV, PT, Cooperative, Foundation, PMA, to Firm"
+        title: "Consultation & Management of LKPP E-catalog",
+        desc: "Get professional assistance to simplify the registration and management of your business's LKPP E-catalog."
       },
       item2: {
-        title: "Virtual Office",
-        desc: "Bring non-physical offices with affordable and professional costs to help set up and develop your business."
+        title: "Licensing & Certification Management (OSS, NIB, PKKPR, TKDN, Trademark, etc)",
+        desc: "We help manage all basic permits and additional certifications to ensure your business is legal and ready to grow."
       },
       item3: {
-        title: "Tax & Accounting Consultation",
-        desc: "Tax and financial report preparation services, both individual and corporate"
+        title: "Business Legality Issuance (PT / CV / Cooperative / Foundation / Organization, etc)",
+        desc: "Establishment and validation services for official business entities, fast and fully compliant with applicable legal regulations."
       },
       item4: {
-        title: "Business Branding",
-        desc: "Comprehensive services to help you build an effective and attractive brand identity."
+        title: "Professional Tax Consultation & Reporting",
+        desc: "We assist with accurate tax management and reporting to minimize penalty risks and maximize financial efficiency."
       }
     },
     virtual_office: {

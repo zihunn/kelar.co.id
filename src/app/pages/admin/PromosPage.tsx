@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AdminLayout } from "../../components/admin/AdminLayout";
 import { useLanguage } from "../../context/LanguageContext";
+import { useData, Promo } from "../../context/DataContext";
 import { 
   Plus, 
   Search, 
@@ -16,55 +17,34 @@ import {
 import { toast } from "sonner";
 import { DeleteConfirmModal } from "../../components/admin/DeleteConfirmModal";
 
-interface Promo {
-  id: number;
-  name: string;
-  image: string;
-  status: "published" | "draft";
-}
+// Promo interface is now imported from DataContext
 
 export function PromosPage() {
   const { t } = useLanguage();
-  const [promos, setPromos] = useState<Promo[]>([]);
+  const { promos, addPromo, updatePromo, deletePromo } = useData();
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [promoToDelete, setPromoToDelete] = useState<number | null>(null);
+  const [promoToDelete, setPromoToDelete] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [useStateActive, setUseStateActive] = useState(false); // dummy for useState import if needed, but I'll use React.useState if I don't import it. Wait, I should import useState.
 
   // Form states
   const [formData, setFormData] = useState<Omit<Promo, "id">>({
     name: "",
-    image: "",
+    content: "",
     status: "draft",
   });
 
-  // Dummy Data initialization
-  useEffect(() => {
-    const dummyPromos: Promo[] = [
-      {
-        id: 1,
-        name: "Promo Ramadhan Hemat 50%",
-        image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=800&auto=format&fit=crop",
-        status: "published",
-      },
-      {
-        id: 2,
-        name: "Gratis Konsultasi E-Katalog V6",
-        image: "https://images.unsplash.com/photo-1607082349566-187342175e2f?q=80&w=800&auto=format&fit=crop",
-        status: "draft",
-      },
-    ];
-    setPromos(dummyPromos);
-  }, []);
+  // Data is now handled by DataContext
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: string) => {
     const promo = promos.find((p) => p.id === id);
     if (promo) {
       setFormData({
         name: promo.name,
-        image: promo.image,
+        content: promo.content,
         status: promo.status,
       });
       setEditingId(id);
@@ -72,14 +52,14 @@ export function PromosPage() {
     }
   };
 
-  const handleDeleteClick = (id: number) => {
+  const handleDeleteClick = (id: string) => {
     setPromoToDelete(id);
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (promoToDelete) {
-      setPromos(promos.filter((p) => p.id !== promoToDelete));
+      await deletePromo(promoToDelete);
       toast.success(t("admin.promo") + " berhasil dihapus");
     }
   };
@@ -88,28 +68,24 @@ export function PromosPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      if (editingId) {
-        setPromos(
-          promos.map((p) =>
-            p.id === editingId ? { ...formData, id: editingId } : p
-          )
-        );
+    // Use context functions
+    if (editingId) {
+      updatePromo(editingId, formData).then(() => {
         toast.success(t("admin.promo") + " berhasil diupdate");
-      } else {
-        const newPromo: Promo = {
-          ...formData,
-          id: Math.max(0, ...promos.map((p) => p.id)) + 1,
-        };
-        setPromos([newPromo, ...promos]);
+        setIsSubmitting(false);
+        setShowForm(false);
+        setEditingId(null);
+        setFormData({ name: "", content: "", status: "draft" });
+      });
+    } else {
+      addPromo(formData).then(() => {
         toast.success(t("admin.promo") + " berhasil ditambahkan");
-      }
-      setIsSubmitting(false);
-      setShowForm(false);
-      setEditingId(null);
-      setFormData({ name: "", image: "", status: "draft" });
-    }, 1000);
+        setIsSubmitting(false);
+        setShowForm(false);
+        setEditingId(null);
+        setFormData({ name: "", content: "", status: "draft" });
+      });
+    }
   };
 
   const getStatusBadge = (status: Promo["status"]) => {
@@ -153,7 +129,7 @@ export function PromosPage() {
           <button
             onClick={() => {
               setEditingId(null);
-              setFormData({ name: "", image: "", status: "draft" });
+              setFormData({ name: "", content: "", status: "draft" });
               setShowForm(true);
             }}
             className="flex items-center gap-3 px-8 py-4 bg-white text-[var(--background)] rounded-2xl font-black transition-all shadow-2xl hover:bg-white/90 active:scale-95 self-start md:self-auto"
@@ -243,11 +219,9 @@ export function PromosPage() {
                   {filteredPromos.map((promo) => (
                     <div key={promo.id} className="p-6 hover:bg-white/5 transition-colors">
                       <div className="flex gap-6">
-                        <img
-                          src={promo.image}
-                          alt={promo.name}
-                          className="w-24 h-24 object-cover rounded-2xl flex-shrink-0 shadow-lg border border-white/10"
-                        />
+                        <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 flex-shrink-0">
+                          <TagIcon className="text-white/40" size={24} />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">{promo.name}</h3>
                           <div className="flex items-center justify-between mt-auto">
@@ -278,8 +252,8 @@ export function PromosPage() {
                   <table className="w-full">
                     <thead className="bg-white/5 border-b border-white/10">
                       <tr>
-                        <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">Thumbnail</th>
                         <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">{t("admin.promoName")}</th>
+                        <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em]">{t("admin.content")}</th>
                         <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">{t("admin.status")}</th>
                         <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">{t("admin.actions")}</th>
                       </tr>
@@ -287,16 +261,14 @@ export function PromosPage() {
                     <tbody className="divide-y divide-white/10">
                       {filteredPromos.map((promo) => (
                         <tr key={promo.id} className="hover:bg-white/10 transition-all duration-300 group border-b border-white/5 last:border-0">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              src={promo.image}
-                              alt={promo.name}
-                              className="w-32 h-20 object-cover rounded-xl shadow-lg border border-white/10 group-hover:scale-105 transition-transform duration-500"
-                            />
+                          <td className="px-6 py-4">
+                            <div className="text-lg font-bold text-white max-w-sm tracking-tight group-hover:text-blue-400 transition-colors">
+                              {promo.name}
+                            </div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="text-lg font-bold text-white max-w-md tracking-tight group-hover:text-blue-400 transition-colors">
-                              {promo.name}
+                            <div className="text-white/60 text-sm line-clamp-2 max-w-xl whitespace-pre-wrap">
+                              {promo.content}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -371,49 +343,16 @@ export function PromosPage() {
 
               <div className="space-y-4">
                 <label className="text-xs font-black text-white/40 uppercase tracking-widest pl-2">
-                  {t("admin.promoImage")}
+                  {t("admin.content")}
                 </label>
-                <div className="flex flex-col gap-6">
-                  {formData.image ? (
-                    <div className="relative aspect-video rounded-3xl overflow-hidden border-2 border-white/10 shadow-2xl group/img">
-                      <img
-                        src={formData.image}
-                        alt="Preview"
-                        className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-700"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setFormData({ ...formData, image: "" })}
-                        className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-xl shadow-xl hover:scale-110 active:scale-95 transition-all"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  ) : (
-                    <label className="relative flex flex-col items-center justify-center w-full py-16 bg-white/5 border-2 border-dashed border-white/10 rounded-[2rem] cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all group/upload shadow-inner">
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <Upload size={40} className="text-white/30 group-hover/upload:text-white mb-4 transition-colors group-hover/upload:scale-110 duration-500" />
-                        <p className="mb-2 text-sm text-white/60 font-medium tracking-wide">
-                          <span className="text-white font-bold">Klik untuk upload</span> atau drag and drop gambar
-                        </p>
-                        <p className="text-xs text-white/40 tracking-widest uppercase mt-2">SVG, PNG, JPG atau GIF (MAX. 2MB)</p>
-                      </div>
-                      <input 
-                        type="file" 
-                        required={!editingId}
-                        className="hidden" 
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const url = URL.createObjectURL(file);
-                            setFormData({ ...formData, image: url });
-                          }
-                        }}
-                      />
-                    </label>
-                  )}
-                </div>
+                <textarea
+                  required
+                  value={formData.content}
+                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                  placeholder="Isi deskripsi dan fasilitas promo disini..."
+                  rows={6}
+                  className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-[2rem] text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium placeholder:text-white/10 shadow-inner resize-y min-h-[150px]"
+                />
               </div>
 
               <div className="space-y-4">

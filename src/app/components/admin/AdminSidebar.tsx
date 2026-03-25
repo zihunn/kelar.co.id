@@ -8,6 +8,7 @@ import {
   Menu,
   X,
   Tag,
+  ShieldCheck,
 } from "lucide-react";
 import { useSidebar } from "../../context/SidebarContext";
 import { useLanguage } from "../../context/LanguageContext";
@@ -27,6 +28,7 @@ export function AdminSidebar() {
     { path: "/admin/hero-slider", icon: Image, label: t("admin.heroSlider") },
     { path: "/admin/articles", icon: FileText, label: t("admin.articles") },
     { path: "/admin/promos", icon: Tag, label: t("admin.promos") },
+    { path: "/admin/services", icon: ShieldCheck, label: "Layanan" },
     { path: "/admin/about", icon: Info, label: t("admin.aboutUs") },
   ];
 

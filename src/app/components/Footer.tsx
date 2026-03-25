@@ -24,7 +24,7 @@ export function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-black/20 backdrop-blur-3xl border-t border-white/5 text-white py-16">
+    <footer className="bg-[#002d4f] dark:bg-black/20 backdrop-blur-3xl border-t border-white/5 text-white py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Logo & Description */}

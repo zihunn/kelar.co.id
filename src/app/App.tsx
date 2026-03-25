@@ -18,6 +18,9 @@ const VirtualOfficePage = lazy(() =>
 const VirtualOfficeDetailPage = lazy(() =>
   import("./pages/VirtualOfficeDetailPage").then((m) => ({ default: m.VirtualOfficeDetailPage })),
 );
+const ServiceDetailPage = lazy(() =>
+  import("./pages/ServiceDetailPage").then((m) => ({ default: m.ServiceDetailPage })),
+);
 const LoginPage = lazy(() =>
   import("./pages/admin/LoginPage").then((m) => ({ default: m.LoginPage })),
 );
@@ -34,6 +37,7 @@ const HeroSliderPage = lazy(() =>
 const ArticlesPage = lazy(() => import("./pages/admin/ArticlesPage").then((m) => ({ default: m.ArticlesPage })));
 const AboutUsPage = lazy(() => import("./pages/admin/AboutUsPage").then((m) => ({ default: m.AboutUsPage })));
 const PromosPage = lazy(() => import("./pages/admin/PromosPage").then((m) => ({ default: m.PromosPage })));
+const ServicesPage = lazy(() => import("./pages/admin/ServicesPage").then((m) => ({ default: m.ServicesPage })));
 
 function NotFound() {
   const { t } = useLanguage();
@@ -103,6 +107,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/layanan/:id",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <ServiceDetailPage />
+      </Suspense>
+    ),
+  },
+  {
     path: "/admin/login",
     element: (
       <Suspense fallback={<LoadingFallback />}>
@@ -147,6 +159,14 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<LoadingFallback />}>
         <PromosPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/admin/services",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <ServicesPage />
       </Suspense>
     ),
   },

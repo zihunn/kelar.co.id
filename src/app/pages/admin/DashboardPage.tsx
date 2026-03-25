@@ -1,10 +1,11 @@
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { useData } from '../../context/DataContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { Image, FileText, CheckCircle, Clock, Info, Tag as TagIcon } from 'lucide-react';
+import { Image, FileText, CheckCircle, Clock, Info, Tag as TagIcon, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router';
 
 export function DashboardPage() {
-  const { heroSlides, articles } = useData();
+  const { heroSlides, articles, promos, services } = useData();
   const { t } = useLanguage();
 
   const publishedArticles = articles.filter(a => a.status === 'published');
@@ -30,11 +31,23 @@ export function DashboardPage() {
       color: 'bg-purple-500'
     },
     {
-      label: t('admin.stats.draft'),
+      label: t("admin.promos"),
+      value: promos.length,
+      icon: TagIcon,
+      color: "bg-pink-500",
+    },
+    {
+      label: t("admin.stats.draft"),
       value: draftArticles.length,
       icon: Clock,
-      color: 'bg-orange-500'
-    }
+      color: "bg-orange-500",
+    },
+    {
+      label: "Total Layanan",
+      value: services.length,
+      icon: ShieldCheck,
+      color: "bg-indigo-500",
+    },
   ];
 
   return (
@@ -48,7 +61,7 @@ export function DashboardPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
@@ -79,42 +92,51 @@ export function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
-            <a
-              href="/admin/hero-slider"
+            <Link
+              to="/admin/hero-slider"
               className="group/btn p-8 bg-white/5 border border-white/10 rounded-[2.5rem] hover:bg-white text-white hover:text-[var(--background)] transition-all duration-500 text-center shadow-lg active:scale-[0.98]"
             >
               <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover/btn:bg-[var(--background)]/10 transition-colors">
                 <Image className="group-hover/btn:scale-110 transition-transform" size={32} />
               </div>
               <span className="text-lg font-black tracking-tight">{t('admin.manageSlider')}</span>
-            </a>
-            <a
-              href="/admin/articles"
+            </Link>
+            <Link
+              to="/admin/articles"
               className="group/btn p-8 bg-white/5 border border-white/10 rounded-[2.5rem] hover:bg-white text-white hover:text-[var(--background)] transition-all duration-500 text-center shadow-lg active:scale-[0.98]"
             >
               <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover/btn:bg-[var(--background)]/10 transition-colors">
                 <FileText className="group-hover/btn:scale-110 transition-transform" size={32} />
               </div>
               <span className="text-lg font-black tracking-tight">{t('admin.manageArticles')}</span>
-            </a>
-            <a
-              href="/admin/about"
-              className="group/btn p-8 bg-white/5 border border-white/10 rounded-[2.5rem] hover:bg-white text-white hover:text-[var(--background)] transition-all duration-500 text-center shadow-lg active:scale-[0.98]"
-            >
-              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover/btn:bg-[var(--background)]/10 transition-colors">
-                <Info className="group-hover/btn:scale-110 transition-transform" size={32} />
-              </div>
-              <span className="text-lg font-black tracking-tight">{t('admin.aboutUs')}</span>
-            </a>
-            <a
-              href="/admin/promos"
+            </Link>
+            <Link
+              to="/admin/promos"
               className="group/btn p-8 bg-white/5 border border-white/10 rounded-[2.5rem] hover:bg-white text-white hover:text-[var(--background)] transition-all duration-500 text-center shadow-lg active:scale-[0.98]"
             >
               <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover/btn:bg-[var(--background)]/10 transition-colors">
                 <TagIcon className="group-hover/btn:scale-110 transition-transform" size={32} />
               </div>
               <span className="text-lg font-black tracking-tight">{t('admin.managePromos')}</span>
-            </a>
+            </Link>
+            <Link
+              to="/admin/services"
+              className="group/btn p-8 bg-white/5 border border-white/10 rounded-[2.5rem] hover:bg-white text-white hover:text-[var(--background)] transition-all duration-500 text-center shadow-lg active:scale-[0.98]"
+            >
+              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover/btn:bg-[var(--background)]/10 transition-colors">
+                <ShieldCheck className="group-hover/btn:scale-110 transition-transform" size={32} />
+              </div>
+              <span className="text-lg font-black tracking-tight">Manajemen Layanan</span>
+            </Link>
+            <Link
+              to="/admin/about"
+              className="group/btn p-8 bg-white/5 border border-white/10 rounded-[2.5rem] hover:bg-white text-white hover:text-[var(--background)] transition-all duration-500 text-center shadow-lg active:scale-[0.98]"
+            >
+              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover/btn:bg-[var(--background)]/10 transition-colors">
+                <Info className="group-hover/btn:scale-110 transition-transform" size={32} />
+              </div>
+              <span className="text-lg font-black tracking-tight">{t('admin.aboutUs')}</span>
+            </Link>
           </div>
         </div>
 

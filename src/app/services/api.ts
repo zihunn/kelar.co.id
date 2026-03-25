@@ -1,4 +1,5 @@
-const API_BASE_URL = "https://api.kelar.co.id/api";
+// const API_BASE_URL = "https://api.kelar.co.id/api";
+const API_BASE_URL = "http://localhost:8000/api";
 
 export const api = {
   async login(email: string, password: string) {
@@ -218,5 +219,123 @@ export const api = {
     if (!response.ok)
       throw new Error(data.meta?.message || "Gagal mengubah urutan.");
     return data;
+  },
+
+  async getPromos() {
+    const response = await fetch(`${API_BASE_URL}/promos`, {
+      headers: { Accept: "application/json" },
+    });
+    const data = await response.json();
+    if (!response.ok)
+      throw new Error(data.meta?.message || "Gagal mengambil promo.");
+    return data;
+  },
+
+  async createPromo(promoData: any) {
+    const response = await fetch(`${API_BASE_URL}/promos`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${this.getToken()}`,
+      },
+      body: JSON.stringify(promoData),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Gagal membuat promo.");
+    }
+    return data.data;
+  },
+
+  async updatePromo(id: string, promoData: any) {
+    const response = await fetch(`${API_BASE_URL}/promos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${this.getToken()}`,
+      },
+      body: JSON.stringify(promoData),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Gagal memperbarui promo.");
+    }
+    return data.data;
+  },
+
+  async deletePromo(id: string) {
+    const response = await fetch(`${API_BASE_URL}/promos/${id}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${this.getToken()}`,
+      },
+    });
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || "Gagal menghapus promo.");
+    }
+    return true;
+  },
+
+  async getServices() {
+    const response = await fetch(`${API_BASE_URL}/services`, {
+      headers: { Accept: "application/json" },
+    });
+    const data = await response.json();
+    if (!response.ok)
+      throw new Error(data.meta?.message || "Gagal mengambil layanan.");
+    return data;
+  },
+
+  async createService(serviceData: any) {
+    const response = await fetch(`${API_BASE_URL}/services`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${this.getToken()}`,
+      },
+      body: JSON.stringify(serviceData),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Gagal membuat layanan.");
+    }
+    return data.data;
+  },
+
+  async updateService(id: string, serviceData: any) {
+    const response = await fetch(`${API_BASE_URL}/services/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${this.getToken()}`,
+      },
+      body: JSON.stringify(serviceData),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Gagal memperbarui layanan.");
+    }
+    return data.data;
+  },
+
+  async deleteService(id: string) {
+    const response = await fetch(`${API_BASE_URL}/services/${id}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${this.getToken()}`,
+      },
+    });
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || "Gagal menghapus layanan.");
+    }
+    return true;
   },
 };
