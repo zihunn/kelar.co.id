@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://192.168.1.36:8000/api";
+// const API_BASE_URL = "http://192.168.1.36:8000/api";
+const API_BASE_URL = "https://api.kelar.co.id/api";
 
 export const api = {
   async login(email: string, password: string) {
