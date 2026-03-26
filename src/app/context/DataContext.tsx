@@ -9,7 +9,6 @@ import React, {
 export interface HeroSlide {
   id: string;
   title: string;
-  titleFontSize?: string;
   description: string;
   image: string;
   bgPosition?: string;
@@ -381,7 +380,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
           response.data.map((item: any) => ({
             id: item.id.toString(),
             title: item.title,
-            titleFontSize: item.title_font_size,
             description: item.description,
             image: item.image,
             bgPosition: item.bg_position || "center",
@@ -479,7 +477,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
           {
             id: data.id.toString(),
             title: data.title,
-            titleFontSize: data.title_font_size,
             description: data.description,
             image: data.image,
             bgPosition: data.bg_position || "center",
@@ -505,7 +502,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
               ? {
                   ...s,
                   title: data.title,
-                  titleFontSize: data.title_font_size,
                   description: data.description,
                   image: data.image,
                   bgPosition: data.bg_position || "center",

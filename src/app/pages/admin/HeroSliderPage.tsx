@@ -43,7 +43,6 @@ export function HeroSliderPage() {
   });
   const [formData, setFormData] = useState({
     title: "",
-    titleFontSize: "text-3xl md:text-5xl lg:text-6xl",
     description: "",
     image: "",
     redirectUrl: "",
@@ -70,7 +69,6 @@ export function HeroSliderPage() {
     try {
       const fd = new FormData();
       fd.append("title", formData.title);
-      fd.append("title_font_size", formData.titleFontSize);
       fd.append("description", formData.description);
       fd.append("redirect_url", formData.redirectUrl);
       fd.append("status", formData.status);
@@ -102,7 +100,6 @@ export function HeroSliderPage() {
       const isSection = slide.redirectUrl?.startsWith("/#");
       setFormData({
         title: slide.title || "",
-        titleFontSize: slide.titleFontSize || "text-3xl md:text-5xl lg:text-6xl",
         description: slide.description || "",
         image: slide.image || "",
         redirectUrl: slide.redirectUrl || "",
@@ -134,7 +131,6 @@ export function HeroSliderPage() {
   const resetForm = () => {
     setFormData({
       title: "",
-      titleFontSize: "text-3xl md:text-5xl lg:text-6xl",
       description: "",
       image: "",
       redirectUrl: "",
@@ -211,40 +207,19 @@ export function HeroSliderPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
-                      {t("admin.title")}
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.title || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, title: e.target.value })
-                      }
-                      className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
-                      Ukuran Font Judul
-                    </label>
-                    <select
-                      value={formData.titleFontSize}
-                      onChange={(e) =>
-                        setFormData({ ...formData, titleFontSize: e.target.value })
-                      }
-                      className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none cursor-pointer"
-                    >
-                      <option value="text-xl sm:text-2xl md:text-3xl lg:text-4xl" className="bg-blue-950">Kecil (Teks Panjang)</option>
-                      <option value="text-2xl sm:text-3xl md:text-4xl lg:text-5xl" className="bg-blue-950">Sedang</option>
-                      <option value="text-3xl sm:text-4xl md:text-5xl lg:text-6xl" className="bg-blue-950">Normal (Default)</option>
-                      <option value="text-4xl sm:text-5xl md:text-6xl lg:text-7xl" className="bg-blue-950">Besar</option>
-                      <option value="text-5xl sm:text-6xl md:text-7xl lg:text-8xl" className="bg-blue-950">Sangat Besar (Judul Pendek)</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
+                    {t("admin.title")}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.title || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
+                    required
+                  />
                 </div>
 
                 <div>

@@ -85,56 +85,60 @@ export function HeroSlider() {
       >
         {publishedSlides.map((slide) => (
           <div key={slide.id} className="w-full flex-shrink-0">
-            <div className="relative h-[400px] md:h-[700px]">
+            <div className="flex flex-col md:block relative h-auto md:h-[700px] bg-background overflow-hidden group">
+              {/* Image Layer - Stacked on Mobile, Absolute on Desktop */}
               <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                className="relative md:absolute inset-0 w-full aspect-video md:aspect-auto h-auto md:h-full bg-cover bg-center md:bg-right bg-no-repeat transition-transform duration-700 md:group-hover:scale-105"
                 style={{ backgroundImage: `url(${slide.image})` }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent dark:from-black/90 dark:via-black/50 dark:to-transparent" />
+                {/* Dark Overlay for readability - Only on Desktop */}
+                <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent dark:from-black/95 dark:via-black/60 dark:to-transparent" />
               </div>
 
-              {/* Content - Increased z-index for visibility */}
-              <div className="relative z-20 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-                <div className="max-w-2xl text-white">
-                  <h1 className={`${slide.titleFontSize || 'text-3xl md:text-5xl lg:text-6xl'} font-black mb-8 leading-tight tracking-tight`}>
-                    {slide.title}
-                  </h1>
-                  <p className="text-xl md:text-2xl mb-10 text-white/80 font-light leading-relaxed">
-                    {slide.description}
-                  </p>
-                  <button
-                    onClick={() => {
-                      if (slide.redirectUrl.startsWith("/#")) {
-                        const sectionId = slide.redirectUrl.replace("/#", "");
-                        if (location.pathname === "/") {
-                          const element = document.getElementById(sectionId);
-                          if (element) {
-                            const navbarElement = document.querySelector("nav");
-                            const navbarHeight =
-                              navbarElement?.offsetHeight || 96;
-                            const elementPosition =
-                              element.getBoundingClientRect().top;
-                            const offsetPosition =
-                              elementPosition +
-                              window.pageYOffset -
-                              navbarHeight;
+              {/* Content Layer - Below image on Mobile, Overlays image on Desktop */}
+              <div className="relative md:absolute inset-0 z-20 flex items-center">
+                <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-0">
+                  <div className="max-w-2xl text-white md:text-white">
+                    <h1 className="text-3xl sm:text-3xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-8 leading-tight tracking-tight text-white">
+                      {slide.title}
+                    </h1>
+                    <p className="text-base sm:text-xl md:text-2xl mb-6 sm:mb-10 text-white/70 md:text-white/80 font-light leading-relaxed line-clamp-3 sm:line-clamp-none">
+                      {slide.description}
+                    </p>
+                    <button
+                      onClick={() => {
+                        if (slide.redirectUrl.startsWith("/#")) {
+                          const sectionId = slide.redirectUrl.replace("/#", "");
+                          if (location.pathname === "/") {
+                            const element = document.getElementById(sectionId);
+                            if (element) {
+                              const navbarElement = document.querySelector("nav");
+                              const navbarHeight =
+                                navbarElement?.offsetHeight || 96;
+                              const elementPosition =
+                                element.getBoundingClientRect().top;
+                              const offsetPosition =
+                                elementPosition +
+                                window.pageYOffset -
+                                navbarHeight;
 
-                            window.scrollTo({
-                              top: offsetPosition,
-                              behavior: "smooth",
-                            });
+                              window.scrollTo({
+                                top: offsetPosition,
+                                behavior: "smooth",
+                              });
+                            }
+                          } else {
+                            navigate(slide.redirectUrl);
                           }
                         } else {
                           navigate(slide.redirectUrl);
                         }
-                      } else {
-                        navigate(`/artikel/${slide.redirectUrl}`);
-                      }
-                    }}
-                    className="px-10 py-5 bg-white text-[#005696] rounded-full hover:bg-white/90 transition-all font-bold shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
-                  >
-                    {t("hero.readMore")}
-                  </button>
+                      }}
+                      className="px-8 py-3.5 sm:px-10 sm:py-5 bg-white text-[var(--background)] rounded-xl sm:rounded-2xl font-black transition-all shadow-2xl hover:bg-white/90 active:scale-95 text-sm sm:text-lg uppercase tracking-wider sm:normal-case sm:tracking-normal w-full sm:w-auto text-center"
+                    >
+                      {t("hero.readMore")}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -164,7 +168,7 @@ export function HeroSlider() {
 
       {/* Dots Indicator */}
       {publishedSlides.length > 1 && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2">
           {publishedSlides.map((_, index) => (
             <button
               key={index}

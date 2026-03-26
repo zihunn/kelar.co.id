@@ -248,7 +248,7 @@ export function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section ref={featureSectionRef} className="py-24 bg-background relative overflow-hidden">
+        <section ref={featureSectionRef} className="pt-12 pb-16 sm:py-24 bg-background relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <motion.div
@@ -257,7 +257,7 @@ export function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="text-center mb-16"
+              className="text-center mb-10 sm:mb-16"
             >
               <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">
                 {t("features.sectionTitle")}
