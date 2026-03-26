@@ -87,10 +87,21 @@ export function HeroSlider() {
           <div key={slide.id} className="w-full flex-shrink-0">
             <div className="flex flex-col md:block relative h-auto md:h-[700px] bg-background overflow-hidden group">
               {/* Image Layer - Stacked on Mobile, Absolute on Desktop */}
-              <div
-                className="relative md:absolute inset-0 w-full aspect-video md:aspect-auto h-auto md:h-full bg-cover bg-center md:bg-right bg-no-repeat transition-transform duration-700 md:group-hover:scale-105"
-                style={{ backgroundImage: `url(${slide.image})` }}
-              >
+              <div className="relative md:absolute inset-0 w-full aspect-video md:aspect-auto h-auto md:h-full transition-transform duration-700 md:group-hover:scale-105 overflow-hidden">
+                {/* Desktop Image (Fall-through if no mobile image) */}
+                <div 
+                  className={`absolute inset-0 bg-cover bg-center md:bg-right bg-no-repeat ${slide.mobile_image ? 'hidden md:block' : 'block'}`}
+                  style={{ backgroundImage: `url(${slide.image})` }}
+                />
+                
+                {/* Mobile Image */}
+                {slide.mobile_image && (
+                  <div 
+                    className="md:hidden absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style={{ backgroundImage: `url(${slide.mobile_image})` }}
+                  />
+                )}
+
                 {/* Dark Overlay for readability - Only on Desktop */}
                 <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent dark:from-black/95 dark:via-black/60 dark:to-transparent" />
               </div>

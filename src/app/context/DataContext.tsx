@@ -11,6 +11,7 @@ export interface HeroSlide {
   title: string;
   description: string;
   image: string;
+  mobile_image?: string;
   bgPosition?: string;
   redirectUrl: string;
   status: "published" | "draft" | "takedown";
@@ -382,6 +383,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
             title: item.title,
             description: item.description,
             image: item.image,
+            mobile_image: item.mobile_image,
             bgPosition: item.bg_position || "center",
             redirectUrl: item.redirect_url || "",
             status: item.status,
@@ -479,6 +481,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
             title: data.title,
             description: data.description,
             image: data.image,
+            mobile_image: data.mobile_image,
             bgPosition: data.bg_position || "center",
             redirectUrl: data.redirect_url || "",
             status: data.status,
@@ -504,6 +507,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
                   title: data.title,
                   description: data.description,
                   image: data.image,
+                  mobile_image: data.mobile_image,
                   bgPosition: data.bg_position || "center",
                   redirectUrl: data.redirect_url || "",
                   status: data.status,

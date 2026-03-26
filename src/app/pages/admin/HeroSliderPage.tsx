@@ -30,7 +30,9 @@ export function HeroSliderPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [imageSource, setImageSource] = useState<"url" | "upload">("url");
+  const [mobileImageSource, setMobileImageSource] = useState<"url" | "upload">("url");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedMobileFile, setSelectedMobileFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -45,6 +47,7 @@ export function HeroSliderPage() {
     title: "",
     description: "",
     image: "",
+    mobileImage: "",
     redirectUrl: "",
     linkType: "article" as "article" | "section",
     status: "draft" as "published" | "draft" | "takedown",
@@ -57,6 +60,18 @@ export function HeroSliderPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData({ ...formData, image: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMobileImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedMobileFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, mobileImage: reader.result as string });
       };
       reader.readAsDataURL(file);
     }
@@ -77,6 +92,12 @@ export function HeroSliderPage() {
         fd.append("image", selectedFile);
       } else if (imageSource === "url" && formData.image) {
         fd.append("image", formData.image);
+      }
+
+      if (mobileImageSource === "upload" && selectedMobileFile) {
+        fd.append("mobile_image", selectedMobileFile);
+      } else if (mobileImageSource === "url" && formData.mobileImage) {
+        fd.append("mobile_image", formData.mobileImage);
       }
 
       if (editingId) {
@@ -102,6 +123,7 @@ export function HeroSliderPage() {
         title: slide.title || "",
         description: slide.description || "",
         image: slide.image || "",
+        mobileImage: slide.mobile_image || "",
         redirectUrl: slide.redirectUrl || "",
         linkType: isSection ? "section" : "article",
         status: slide.status || "draft",
@@ -113,7 +135,13 @@ export function HeroSliderPage() {
           ? "url"
           : "upload",
       );
+      setMobileImageSource(
+        slide.mobile_image && (slide.mobile_image.startsWith("http") || !slide.mobile_image)
+          ? "url"
+          : "upload",
+      );
       setSelectedFile(null);
+      setSelectedMobileFile(null);
     }
   };
 
@@ -133,6 +161,7 @@ export function HeroSliderPage() {
       title: "",
       description: "",
       image: "",
+      mobileImage: "",
       redirectUrl: "",
       linkType: "article",
       status: "draft",
@@ -140,7 +169,9 @@ export function HeroSliderPage() {
     setEditingId(null);
     setShowForm(false);
     setImageSource("url");
+    setMobileImageSource("url");
     setSelectedFile(null);
+    setSelectedMobileFile(null);
     setIsSaving(false);
   };
 
@@ -299,6 +330,72 @@ export function HeroSliderPage() {
                     <img
                       src={formData.image}
                       alt="Preview"
+                      className="mt-2 w-full h-48 object-cover rounded-lg"
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
+                    {t("admin.image")} (Mobile)
+                  </label>
+                  <div className="flex gap-2 mb-3">
+                    <button
+                      type="button"
+                      onClick={() => setMobileImageSource("url")}
+                      className={`flex items-center gap-2 px-6 py-3 rounded-xl border transition-all font-black text-xs uppercase tracking-widest ${
+                        mobileImageSource === "url"
+                          ? "bg-white text-[var(--background)] border-white shadow-xl"
+                          : "bg-white/5 text-white/40 border-white/10 hover:bg-white/10"
+                      }`}
+                    >
+                      <LinkIcon size={16} />
+                      URL Link
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMobileImageSource("upload")}
+                      className={`flex items-center gap-2 px-6 py-3 rounded-xl border transition-all font-black text-xs uppercase tracking-widest ${
+                        mobileImageSource === "upload"
+                          ? "bg-white text-[var(--background)] border-white shadow-xl"
+                          : "bg-white/5 text-white/40 border-white/10 hover:bg-white/10"
+                      }`}
+                    >
+                      <Upload size={16} />
+                      Upload File
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                       {mobileImageSource === "url" ? (
+                        <input
+                          type="url"
+                          value={
+                            (formData.mobileImage || "").startsWith("data:")
+                              ? ""
+                              : formData.mobileImage || ""
+                          }
+                          onChange={(e) =>
+                            setFormData({ ...formData, mobileImage: e.target.value })
+                          }
+                          className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
+                          placeholder="https://example.com/mobile-image.jpg"
+                        />
+                      ) : (
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleMobileImageUpload}
+                          className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20"
+                        />
+                      )}
+                    </div>
+                  </div>
+                  {formData.mobileImage && (
+                    <img
+                      src={formData.mobileImage}
+                      alt="Preview Mobile"
                       className="mt-2 w-full h-48 object-cover rounded-lg"
                     />
                   )}

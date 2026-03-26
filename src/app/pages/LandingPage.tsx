@@ -68,6 +68,102 @@ function useInView(threshold = 0.1) {
   return [setRef, inView] as const;
 }
 
+// Promo Card Component with Overflow Detection
+function PromoCard({ promo, index, isInView, isGridItem, whatsapp }: any) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (contentRef.current) {
+        setIsOverflowing(contentRef.current.scrollHeight > contentRef.current.clientHeight);
+      }
+    };
+    
+    checkOverflow();
+    // Use a small timeout to ensure content is fully rendered
+    const timeoutId = setTimeout(checkOverflow, 100);
+    
+    window.addEventListener('resize', checkOverflow);
+    return () => {
+      window.removeEventListener('resize', checkOverflow);
+      clearTimeout(timeoutId);
+    };
+  }, [promo.content]);
+
+  return (
+    <motion.a
+      key={promo.id}
+      href={`https://wa.me/62${whatsapp.replace(/^0/, "")}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`flex-shrink-0 ${isGridItem ? "w-full" : "w-[85vw] sm:w-[500px]"} h-[600px] bg-white/5 rounded-[3rem] p-8 md:p-12 border border-white/10 group snap-center relative shadow-2xl hover:bg-white/10 transition-colors flex flex-col`}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={isInView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ duration: 0.8, delay: index * 0.15 }}
+      whileHover={{ y: -15, transition: { duration: 0.4 } }}
+    >
+      <div className="absolute top-8 right-8 w-14 h-14 bg-gradient-to-br from-yellow-400 to-orange-500 text-[var(--background)] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-[0_0_30px_rgba(250,204,21,0.4)] z-10">
+        <Tag size={28} />
+      </div>
+
+      <div className="mb-6 flex-grow overflow-hidden relative z-10 flex flex-col">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/10 border border-yellow-400/20 rounded-full mb-6 w-fit">
+          <Zap size={16} className="text-yellow-400" />
+          <span className="text-[10px] font-black text-yellow-400 uppercase tracking-[0.2em] pt-0.5">Special Offer</span>
+        </div>
+        <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-8 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-orange-500 transition-all duration-300">
+          {promo.name}
+        </h3>
+
+        <div className="relative flex-grow overflow-hidden flex flex-col">
+          {/* Decorative Line */}
+          <div className="absolute left-0 top-2 bottom-4 w-[2px] bg-gradient-to-b from-yellow-400/50 to-transparent" />
+
+          <div 
+            ref={contentRef}
+            className="text-white/80 text-[15px] leading-relaxed whitespace-pre-wrap font-medium overflow-y-auto pl-6 pr-4 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20"
+          >
+            {promo.content}
+          </div>
+          
+          {/* Scroll indicator overlay - Only show if overflowing */}
+          {isOverflowing && (
+            <div className="absolute bottom-0 left-6 right-4 h-12 bg-gradient-to-t from-[#0d1b2a]/40 to-transparent pointer-events-none flex items-end justify-center pb-1">
+              <div className="flex flex-col items-center gap-0.5 opacity-50 group-hover:opacity-100 transition-opacity">
+                <span className="text-[9px] font-black text-yellow-400 uppercase tracking-widest">Scroll kebawah</span>
+                <ChevronDown size={14} className="text-yellow-400 animate-bounce" />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="relative z-10 mt-auto pt-6 border-t border-white/10 flex items-center justify-between group/cta">
+        <div className="flex items-center gap-3 text-white group-hover:text-yellow-400 transition-colors">
+          <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-yellow-400/10 transition-colors">
+            <Phone size={18} />
+          </div>
+          <span className="text-sm font-black uppercase tracking-widest relative">
+            Klaim Promo
+            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-yellow-400 transition-all duration-300 group-hover/cta:w-full" />
+          </span>
+        </div>
+
+        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center -rotate-45 group-hover:bg-yellow-400 group-hover:border-yellow-400 group-hover:text-[var(--background)] transition-all duration-300">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        </div>
+      </div>
+
+      {/* Hover Glow Effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/0 via-transparent to-yellow-400/0 group-hover:from-yellow-400/5 group-hover:to-orange-500/10 transition-all duration-500 pointer-events-none" />
+    </motion.a>
+  );
+}
+
 export function LandingPage() {
   const { articles, aboutUs, socialMedia, promos, services } = useData();
   const { t } = useLanguage();
@@ -326,75 +422,29 @@ export function LandingPage() {
                 </p>
               </motion.div>
 
-              {/* Horizontal Scroll Container */}
+              {/* Horizontal Scroll Container or Static Grid */}
               <motion.div
                 style={{ y: promoY }}
-                className="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar"
+                className={publishedPromos.length <= 3 
+                  ? "grid grid-cols-1 md:grid-cols-3 gap-8 mb-12" 
+                  : "flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar"
+                }
               >
                 {publishedPromos.map((promo, index) => (
-                  <motion.a
-                    key={promo.id}
-                    href="https://wa.me/6281122218988"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-shrink-0 w-[85vw] sm:w-[500px] h-[550px] bg-white/5 rounded-[3rem] p-8 md:p-12 border border-white/10 group snap-center relative shadow-2xl hover:bg-white/10 transition-colors flex flex-col"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={promoInView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ duration: 0.8, delay: index * 0.15 }}
-                    whileHover={{ y: -15, transition: { duration: 0.4 } }}
-                  >
-                    <div className="absolute top-8 right-8 w-14 h-14 bg-gradient-to-br from-yellow-400 to-orange-500 text-[var(--background)] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-[0_0_30px_rgba(250,204,21,0.4)] z-10">
-                      <Tag size={28} />
-                    </div>
-
-                    <div className="mb-6 flex-grow overflow-hidden relative z-10">
-                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/10 border border-yellow-400/20 rounded-full mb-6">
-                        <Zap size={16} className="text-yellow-400" />
-                        <span className="text-[10px] font-black text-yellow-400 uppercase tracking-[0.2em] pt-0.5">Special Offer</span>
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-8 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-orange-500 transition-all duration-300">
-                        {promo.name}
-                      </h3>
-
-                      <div className="relative">
-                        {/* Decorative Line */}
-                        <div className="absolute left-0 top-2 bottom-4 w-[2px] bg-gradient-to-b from-yellow-400/50 to-transparent" />
-
-                        <div className="text-white/80 text-[15px] leading-relaxed whitespace-pre-wrap font-medium h-[220px] overflow-y-auto pl-6 pr-4 custom-scrollbar">
-                          {promo.content}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="relative z-10 mt-auto pt-6 border-t border-white/10 flex items-center justify-between group/cta">
-                      <div className="flex items-center gap-3 text-white group-hover:text-yellow-400 transition-colors">
-                        <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-yellow-400/10 transition-colors">
-                          <Phone size={18} />
-                        </div>
-                        <span className="text-sm font-black uppercase tracking-widest relative">
-                          Klaim Promo
-                          <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-yellow-400 transition-all duration-300 group-hover/cta:w-full" />
-                        </span>
-                      </div>
-
-                      <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center -rotate-45 group-hover:bg-yellow-400 group-hover:border-yellow-400 group-hover:text-[var(--background)] transition-all duration-300">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M5 12h14"></path>
-                          <path d="m12 5 7 7-7 7"></path>
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Hover Glow Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/0 via-transparent to-yellow-400/0 group-hover:from-yellow-400/5 group-hover:to-orange-500/10 transition-all duration-500 pointer-events-none" />
-                  </motion.a>
+                  <PromoCard 
+                    key={promo.id} 
+                    promo={promo} 
+                    index={index} 
+                    isInView={promoInView}
+                    isGridItem={publishedPromos.length <= 3}
+                    whatsapp={aboutUs.whatsapp}
+                  />
                 ))}
               </motion.div>
 
             </div>
           </section>
         )}
-
         {/* Services Section - Horizontal Scroll */}
         <section
           id="layanan"
