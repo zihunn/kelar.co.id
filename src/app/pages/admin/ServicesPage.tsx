@@ -12,14 +12,16 @@ import {
   ShieldCheck,
   Building2,
   Award,
-  Trash
+  Trash,
+  ChevronUp,
+  ChevronDown
 } from "lucide-react";
 import { toast } from "sonner";
 import { DeleteConfirmModal } from "../../components/admin/DeleteConfirmModal";
 
 export function ServicesPage() {
   const { t } = useLanguage();
-  const { services, addService, updateService, deleteService } = useData();
+  const { services, addService, updateService, deleteService, moveService } = useData();
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -286,6 +288,24 @@ export function ServicesPage() {
                       </td>
                       <td className="px-6 py-6 text-right">
                         <div className="flex items-center justify-end gap-2">
+                          <div className="flex items-center bg-white/5 rounded-lg border border-white/10 mr-2">
+                            <button
+                              onClick={() => moveService(service.id, "up")}
+                              disabled={services.findIndex(s => s.id === service.id) === 0}
+                              className="p-2 text-white/40 hover:text-blue-400 disabled:opacity-20 disabled:hover:text-white/40 transition-all border-r border-white/10"
+                              title="Pindah ke Atas"
+                            >
+                              <ChevronUp size={18} />
+                            </button>
+                            <button
+                              onClick={() => moveService(service.id, "down")}
+                              disabled={services.findIndex(s => s.id === service.id) === services.length - 1}
+                              className="p-2 text-white/40 hover:text-blue-400 disabled:opacity-20 disabled:hover:text-white/40 transition-all"
+                              title="Pindah ke Bawah"
+                            >
+                              <ChevronDown size={18} />
+                            </button>
+                          </div>
                           <button
                             onClick={() => handleEdit(service.id)}
                             className="p-2 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white rounded-lg transition-all"

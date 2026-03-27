@@ -336,4 +336,19 @@ export const api = {
     }
     return true;
   },
+  async reorderService(id: string, direction: "up" | "down") {
+    const response = await fetch(`${API_BASE_URL}/services/${id}/reorder`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${this.getToken()}`,
+      },
+      body: JSON.stringify({ direction }),
+    });
+    const data = await response.json();
+    if (!response.ok)
+      throw new Error(data.meta?.message || "Gagal mengubah urutan.");
+    return data;
+  },
 };

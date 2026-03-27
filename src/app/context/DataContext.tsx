@@ -52,6 +52,7 @@ export interface Service {
   color: string;
   bgImage?: string;
   packages: ServicePackage[];
+  order: number;
 }
 
 export interface AboutUs {
@@ -93,6 +94,7 @@ interface DataContextType {
   addService: (service: any) => Promise<void>;
   updateService: (id: string, service: any) => Promise<void>;
   deleteService: (id: string) => Promise<void>;
+  moveService: (id: string, direction: "up" | "down") => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -436,6 +438,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
               isPopular: !!pkg.is_popular,
               features: pkg.features.map((f: any) => f.feature),
             })),
+            order: s.order,
           })),
         );
       }
@@ -725,6 +728,33 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  const moveService = async (id: string, direction: "up" | "down") => {
+    try {
+      const { api } = await import("../services/api");
+      await api.reorderService(id, direction);
+
+      // Update local state by swapping
+      const index = services.findIndex((s) => s.id === id);
+      const newServices = [...services];
+      if (direction === "up" && index > 0) {
+        [newServices[index], newServices[index - 1]] = [
+          newServices[index - 1],
+          newServices[index],
+        ];
+        setServices(newServices);
+      } else if (direction === "down" && index < services.length - 1) {
+        [newServices[index], newServices[index + 1]] = [
+          newServices[index + 1],
+          newServices[index],
+        ];
+        setServices(newServices);
+      }
+    } catch (error) {
+      console.error(`Gagal memindahkan layanan ${id}:`, error);
+      throw error;
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -750,6 +780,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
         addService,
         updateService,
         deleteService,
+        moveService,
       }}
     >
       {children}
