@@ -503,15 +503,15 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
           heroSlides.map((s) =>
             s.id === id
               ? {
-                  ...s,
-                  title: data.title,
-                  description: data.description,
-                  image: data.image,
-                  mobile_image: data.mobile_image,
-                  bgPosition: data.bg_position || "center",
-                  redirectUrl: data.redirect_url || "",
-                  status: data.status,
-                }
+                ...s,
+                title: data.title,
+                description: data.description,
+                image: data.image,
+                mobile_image: data.mobile_image,
+                bgPosition: data.bg_position || "center",
+                redirectUrl: data.redirect_url || "",
+                status: data.status,
+              }
               : s,
           ),
         );
@@ -591,14 +591,14 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
           articles.map((a) =>
             a.id === id
               ? {
-                  ...a,
-                  title: data.title,
-                  thumbnail: data.thumbnail,
-                  excerpt: data.summary,
-                  content: data.content,
-                  date: data.published_at || "",
-                  status: data.status as any,
-                }
+                ...a,
+                title: data.title,
+                thumbnail: data.thumbnail,
+                excerpt: data.summary,
+                content: data.content,
+                date: data.published_at || "",
+                status: data.status as any,
+              }
               : a,
           ),
         );
@@ -673,11 +673,11 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
           promos.map((p) =>
             p.id === id
               ? {
-                  ...p,
-                  name: data.name,
-                  content: data.content,
-                  status: data.status,
-                }
+                ...p,
+                name: data.name,
+                content: data.content,
+                status: data.status,
+              }
               : p,
           ),
         );

@@ -2,12 +2,12 @@ import { useState } from "react";
 import { AdminLayout } from "../../components/admin/AdminLayout";
 import { useLanguage } from "../../context/LanguageContext";
 import { useData, Service, ServicePackage } from "../../context/DataContext";
-import { 
-  Plus, 
-  Search, 
-  Edit2, 
-  Trash2, 
-  X, 
+import {
+  Plus,
+  Search,
+  Edit2,
+  Trash2,
+  X,
   PlusCircle,
   ShieldCheck,
   Building2,
@@ -47,7 +47,7 @@ export function ServicesPage() {
         subtitle: service.subtitle,
         description: service.description,
         slug: service.slug,
-        icons: service.icons || [], 
+        icons: service.icons || [],
         color: service.color,
         bg_image: service.bgImage || "",
         packages: service.packages.map(pkg => ({
@@ -263,9 +263,9 @@ export function ServicesPage() {
                               </div>
                             ))}
                             {(!service.icons || service.icons.length === 0) && (
-                               <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-[#0E1B47] shadow-lg border-2 border-[#002d4f]">
-                                 <ShieldCheck size={20} />
-                               </div>
+                              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-[#0E1B47] shadow-lg border-2 border-[#002d4f]">
+                                <ShieldCheck size={20} />
+                              </div>
                             )}
                           </div>
                           <div>
@@ -338,210 +338,210 @@ export function ServicesPage() {
 
               <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden">
                 <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Nama Layanan</label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="Contoh: Layanan Ekatalog"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Slug URL</label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="Contoh: ekatalog"
-                      value={formData.slug}
-                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50"
-                    />
-                  </div>
-                  <div className="md:col-span-2 space-y-2">
-                    <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Penjelasan Singkat (Subtitle)</label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="Contoh: Konsultasi & Kepengurusan E-katalog LKPP"
-                      value={formData.subtitle}
-                      onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50"
-                    />
-                  </div>
-                  <div className="md:col-span-2 space-y-2">
-                    <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Informasi Lengkap</label>
-                    <textarea
-                      required
-                      rows={3}
-                      placeholder="Masukkan deskripsi lengkap layanan..."
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50 resize-none font-light"
-                    />
-                  </div>
-                  <div className="md:col-span-2 space-y-2">
-                    <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Icons (Multiupload)</label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {formData.icons.map((icon, idx) => (
-                        <div key={idx} className="relative aspect-square rounded-2xl bg-white/5 border border-white/10 overflow-hidden group">
-                          <img 
-                            src={icon instanceof File ? URL.createObjectURL(icon) : icon} 
-                            className="w-full h-full object-contain p-4 opacity-80" 
-                            alt="" 
-                          />
-                          <button 
-                            type="button"
-                            onClick={() => {
-                              const newIcons = [...formData.icons];
-                              newIcons.splice(idx, 1);
-                              setFormData({...formData, icons: newIcons});
-                            }}
-                            className="absolute inset-0 bg-red-500/80 items-center justify-center hidden group-hover:flex transition-all"
-                          >
-                            <Trash2 size={24} className="text-white" />
-                          </button>
-                        </div>
-                      ))}
-                      <label className="aspect-square rounded-2xl bg-white/5 border-2 border-dashed border-white/10 hover:border-[var(--kelar-primary)]/50 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-white/10 text-white/30 hover:text-[var(--kelar-primary)]">
-                        <Plus size={32} />
-                        <span className="text-[10px] font-bold uppercase mt-1">Upload</span>
-                        <input 
-                          type="file" 
-                          multiple 
-                          accept="image/*"
-                          className="hidden" 
-                          onChange={(e) => {
-                            const files = Array.from(e.target.files || []);
-                            setFormData({...formData, icons: [...formData.icons, ...files]});
-                          }}
-                        />
-                      </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Nama Layanan</label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Contoh: Layanan Ekatalog"
+                        value={formData.title}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50"
+                      />
                     </div>
-                    <p className="text-[10px] text-white/30 italic mt-2">* Rekomendasi 2-3 icon per layanan. Ukuran 500x500px.</p>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Warna (Gradient Class)</label>
-                    <input
-                      placeholder="Contoh: from-blue-500 to-indigo-600"
-                      value={formData.color}
-                      onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50 font-mono text-sm"
-                    />
-                  </div>
-                </div>
-
-                {/* Packages Section */}
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                      Paket Layanan
-                      <span className="text-xs px-2 py-0.5 bg-white/10 rounded-md text-white/40">{formData.packages.length}</span>
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={addPackage}
-                      className="text-[var(--kelar-primary)] hover:text-[var(--kelar-primary)]/80 font-bold text-sm flex items-center gap-2 transition-colors"
-                    >
-                      <PlusCircle size={18} />
-                      Tambah Paket
-                    </button>
-                  </div>
-
-                  <div className="space-y-8">
-                    {formData.packages.map((pkg, pIdx) => (
-                      <div key={pIdx} className="p-6 bg-white/5 border border-white/10 rounded-3xl relative animate-in fade-in slide-in-from-top-4 duration-300">
-                        <button
-                          type="button"
-                          onClick={() => removePackage(pIdx)}
-                          className="absolute top-4 right-4 p-2 text-white/20 hover:text-red-500 transition-colors"
-                        >
-                          <Trash size={18} />
-                        </button>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-white/30 ml-1 uppercase">Nama Paket</label>
-                            <input
-                              required
-                              placeholder="Contoh: Paket Basic"
-                              value={pkg.name}
-                              onChange={(e) => updatePackage(pIdx, "name", e.target.value)}
-                              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-[var(--kelar-primary)]"
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Slug URL</label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Contoh: ekatalog"
+                        value={formData.slug}
+                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50"
+                      />
+                    </div>
+                    <div className="md:col-span-2 space-y-2">
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Penjelasan Singkat (Subtitle)</label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Contoh: Konsultasi & Kepengurusan E-katalog LKPP"
+                        value={formData.subtitle}
+                        onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50"
+                      />
+                    </div>
+                    <div className="md:col-span-2 space-y-2">
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Informasi Lengkap</label>
+                      <textarea
+                        required
+                        rows={3}
+                        placeholder="Masukkan deskripsi lengkap layanan..."
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50 resize-none font-light"
+                      />
+                    </div>
+                    <div className="md:col-span-2 space-y-2">
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Icons (Multiupload)</label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {formData.icons.map((icon, idx) => (
+                          <div key={idx} className="relative aspect-square rounded-2xl bg-white/5 border border-white/10 overflow-hidden group">
+                            <img
+                              src={icon instanceof File ? URL.createObjectURL(icon) : icon}
+                              className="w-full h-full object-contain p-4 opacity-80"
+                              alt=""
                             />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-white/30 ml-1 uppercase">Harga (Tampil)</label>
-                            <input
-                              required
-                              placeholder="Contoh: 2.500.000"
-                              value={pkg.price}
-                              onChange={(e) => updatePackage(pIdx, "price", e.target.value)}
-                              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-[var(--kelar-primary)]"
-                            />
-                          </div>
-                          <div className="flex items-center gap-2 ml-1">
-                            <input
-                              type="checkbox"
-                              id={`popular-${pIdx}`}
-                              checked={pkg.is_popular}
-                              onChange={(e) => updatePackage(pIdx, "is_popular", e.target.checked)}
-                              className="w-5 h-5 rounded-md border-white/10 bg-white/5 text-[var(--kelar-primary)] focus:ring-offset-0 focus:ring-0"
-                            />
-                            <label htmlFor={`popular-${pIdx}`} className="text-sm text-white/70 cursor-pointer">Set sebagai Paket Populer</label>
-                          </div>
-                        </div>
-
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between ml-1">
-                            <label className="text-xs font-bold text-white/30 uppercase">Fitur / Keuntungan</label>
                             <button
                               type="button"
-                              onClick={() => addFeature(pIdx)}
-                              className="text-xs text-[var(--kelar-primary)] border border-[var(--kelar-primary)]/30 px-3 py-1 rounded-full hover:bg-[var(--kelar-primary)]/10 transition-all font-bold"
+                              onClick={() => {
+                                const newIcons = [...formData.icons];
+                                newIcons.splice(idx, 1);
+                                setFormData({ ...formData, icons: newIcons });
+                              }}
+                              className="absolute inset-0 bg-red-500/80 items-center justify-center hidden group-hover:flex transition-all"
                             >
-                              + Add Item
+                              <Trash2 size={24} className="text-white" />
                             </button>
                           </div>
-                          <div className="grid grid-cols-1 gap-3">
-                            {pkg.features.map((feature: string, fIdx: number) => (
-                              <div key={fIdx} className="flex gap-2 group/feat">
-                                <input
-                                  required
-                                  placeholder={`Fitur ${fIdx + 1}`}
-                                  value={feature}
-                                  onChange={(e) => updateFeature(pIdx, fIdx, e.target.value)}
-                                  className="flex-grow px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white/80 focus:outline-none focus:border-white/20 transition-all"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => removeFeature(pIdx, fIdx)}
-                                  className="p-2 text-white/10 group-hover/feat:text-red-500/50 hover:!text-red-500 transition-all"
-                                >
-                                  <X size={16} />
-                                </button>
-                              </div>
-                            ))}
+                        ))}
+                        <label className="aspect-square rounded-2xl bg-white/5 border-2 border-dashed border-white/10 hover:border-[var(--kelar-primary)]/50 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-white/10 text-white/30 hover:text-[var(--kelar-primary)]">
+                          <Plus size={32} />
+                          <span className="text-[10px] font-bold uppercase mt-1">Upload</span>
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const files = Array.from(e.target.files || []);
+                              setFormData({ ...formData, icons: [...formData.icons, ...files] });
+                            }}
+                          />
+                        </label>
+                      </div>
+                      <p className="text-[10px] text-white/30 italic mt-2">* Rekomendasi 2-3 icon per layanan. Ukuran 500x500px.</p>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Warna (Gradient Class)</label>
+                      <input
+                        placeholder="Contoh: from-blue-500 to-indigo-600"
+                        value={formData.color}
+                        onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[var(--kelar-primary)]/50 font-mono text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Packages Section */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                      <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                        Paket Layanan
+                        <span className="text-xs px-2 py-0.5 bg-white/10 rounded-md text-white/40">{formData.packages.length}</span>
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={addPackage}
+                        className="text-[var(--kelar-primary)] hover:text-[var(--kelar-primary)]/80 font-bold text-sm flex items-center gap-2 transition-colors"
+                      >
+                        <PlusCircle size={18} />
+                        Tambah Paket
+                      </button>
+                    </div>
+
+                    <div className="space-y-8">
+                      {formData.packages.map((pkg, pIdx) => (
+                        <div key={pIdx} className="p-6 bg-white/5 border border-white/10 rounded-3xl relative animate-in fade-in slide-in-from-top-4 duration-300">
+                          <button
+                            type="button"
+                            onClick={() => removePackage(pIdx)}
+                            className="absolute top-4 right-4 p-2 text-white/20 hover:text-red-500 transition-colors"
+                          >
+                            <Trash size={18} />
+                          </button>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div className="space-y-2">
+                              <label className="text-xs font-bold text-white/30 ml-1 uppercase">Nama Paket</label>
+                              <input
+                                required
+                                placeholder="Contoh: Paket Basic"
+                                value={pkg.name}
+                                onChange={(e) => updatePackage(pIdx, "name", e.target.value)}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-[var(--kelar-primary)]"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-xs font-bold text-white/30 ml-1 uppercase">Harga (Tampil)</label>
+                              <input
+                                required
+                                placeholder="Contoh: 2.500.000"
+                                value={pkg.price}
+                                onChange={(e) => updatePackage(pIdx, "price", e.target.value)}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-[var(--kelar-primary)]"
+                              />
+                            </div>
+                            <div className="flex items-center gap-2 ml-1">
+                              <input
+                                type="checkbox"
+                                id={`popular-${pIdx}`}
+                                checked={pkg.is_popular}
+                                onChange={(e) => updatePackage(pIdx, "is_popular", e.target.checked)}
+                                className="w-5 h-5 rounded-md border-white/10 bg-white/5 text-[var(--kelar-primary)] focus:ring-offset-0 focus:ring-0"
+                              />
+                              <label htmlFor={`popular-${pIdx}`} className="text-sm text-white/70 cursor-pointer">Set sebagai Paket Populer</label>
+                            </div>
+                          </div>
+
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between ml-1">
+                              <label className="text-xs font-bold text-white/30 uppercase">Fitur / Keuntungan</label>
+                              <button
+                                type="button"
+                                onClick={() => addFeature(pIdx)}
+                                className="text-xs text-[var(--kelar-primary)] border border-[var(--kelar-primary)]/30 px-3 py-1 rounded-full hover:bg-[var(--kelar-primary)]/10 transition-all font-bold"
+                              >
+                                + Add Item
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-1 gap-3">
+                              {pkg.features.map((feature: string, fIdx: number) => (
+                                <div key={fIdx} className="flex gap-2 group/feat">
+                                  <input
+                                    required
+                                    placeholder={`Fitur ${fIdx + 1}`}
+                                    value={feature}
+                                    onChange={(e) => updateFeature(pIdx, fIdx, e.target.value)}
+                                    className="flex-grow px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white/80 focus:outline-none focus:border-white/20 transition-all"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => removeFeature(pIdx, fIdx)}
+                                    className="p-2 text-white/10 group-hover/feat:text-red-500/50 hover:!text-red-500 transition-all"
+                                  >
+                                    <X size={16} />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
 
-                    {formData.packages.length === 0 && (
-                      <div className="py-12 border-2 border-dashed border-white/5 rounded-3xl flex flex-col items-center justify-center text-white/20">
-                        <PlusCircle size={40} className="mb-4" />
-                        <p className="font-medium">Belum ada paket ditambahkan</p>
-                        <button type="button" onClick={addPackage} className="mt-4 text-sm text-[var(--kelar-primary)] font-bold underline">Tambah paket pertama</button>
-                      </div>
-                    )}
+                      {formData.packages.length === 0 && (
+                        <div className="py-12 border-2 border-dashed border-white/5 rounded-3xl flex flex-col items-center justify-center text-white/20">
+                          <PlusCircle size={40} className="mb-4" />
+                          <p className="font-medium">Belum ada paket ditambahkan</p>
+                          <button type="button" onClick={addPackage} className="mt-4 text-sm text-[var(--kelar-primary)] font-bold underline">Tambah paket pertama</button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
 
                 </div>
-                
+
                 <div className="p-8 border-t border-white/10 flex items-center justify-end gap-4 bg-white/5 backdrop-blur-md">
                   <button
                     type="button"

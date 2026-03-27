@@ -27,6 +27,8 @@ import {
   BarChart3,
   Palette,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Award,
   Tag,
   Zap,
@@ -69,7 +71,7 @@ function useInView(threshold = 0.1) {
 }
 
 // Promo Card Component with Overflow Detection
-function PromoCard({ promo, index, isInView, isGridItem, whatsapp }: any) {
+function PromoCard({ promo, index, isInView, isGridItem, whatsapp, isMobile }: any) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
 
@@ -98,27 +100,27 @@ function PromoCard({ promo, index, isInView, isGridItem, whatsapp }: any) {
       target="_blank"
       rel="noopener noreferrer"
       className={`flex-shrink-0 ${isGridItem ? "w-full" : "w-[85vw] sm:w-[500px]"} h-[600px] bg-white/5 rounded-[3rem] p-8 md:p-12 border border-white/10 group snap-center relative shadow-2xl hover:bg-white/10 transition-colors flex flex-col`}
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={isInView ? { opacity: 1, scale: 1 } : {}}
-      transition={{ duration: 0.8, delay: index * 0.15 }}
-      whileHover={{ y: -15, transition: { duration: 0.4 } }}
+      initial={isMobile ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+      animate={isInView || isMobile ? { opacity: 1, scale: 1 } : {}}
+      transition={isMobile ? { duration: 0 } : { duration: 0.8, delay: index * 0.15 }}
+      whileHover={isMobile ? {} : { y: -15, transition: { duration: 0.4 } }}
     >
-      <div className="absolute top-8 right-8 w-14 h-14 bg-gradient-to-br from-yellow-400 to-orange-500 text-[var(--background)] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-[0_0_30px_rgba(250,204,21,0.4)] z-10">
+      <div className="absolute top-8 right-8 w-14 h-14 bg-gradient-to-br from-blue-400 to-indigo-500 text-[var(--background)] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-[0_0_30px_rgba(59,130,246,0.4)] z-10">
         <Tag size={28} />
       </div>
 
       <div className="mb-6 flex-grow overflow-hidden relative z-10 flex flex-col">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/10 border border-yellow-400/20 rounded-full mb-6 w-fit">
-          <Zap size={16} className="text-yellow-400" />
-          <span className="text-[10px] font-black text-yellow-400 uppercase tracking-[0.2em] pt-0.5">Special Offer</span>
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-400/10 border border-blue-400/20 rounded-full mb-6 w-fit">
+          <Zap size={16} className="text-blue-400" />
+          <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] pt-0.5">Special Offer</span>
         </div>
-        <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-8 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-orange-500 transition-all duration-300">
+        <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-8 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-indigo-500 transition-all duration-300">
           {promo.name}
         </h3>
 
         <div className="relative flex-grow overflow-hidden flex flex-col">
           {/* Decorative Line */}
-          <div className="absolute left-0 top-2 bottom-4 w-[2px] bg-gradient-to-b from-yellow-400/50 to-transparent" />
+          <div className="absolute left-0 top-2 bottom-4 w-[2px] bg-gradient-to-b from-blue-400/50 to-transparent" />
 
           <div 
             ref={contentRef}
@@ -131,8 +133,8 @@ function PromoCard({ promo, index, isInView, isGridItem, whatsapp }: any) {
           {isOverflowing && (
             <div className="absolute bottom-0 left-6 right-4 h-12 bg-gradient-to-t from-[#0d1b2a]/40 to-transparent pointer-events-none flex items-end justify-center pb-1">
               <div className="flex flex-col items-center gap-0.5 opacity-50 group-hover:opacity-100 transition-opacity">
-                <span className="text-[9px] font-black text-yellow-400 uppercase tracking-widest">Scroll kebawah</span>
-                <ChevronDown size={14} className="text-yellow-400 animate-bounce" />
+                <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Scroll kebawah</span>
+                <ChevronDown size={14} className="text-blue-400 animate-bounce" />
               </div>
             </div>
           )}
@@ -140,17 +142,17 @@ function PromoCard({ promo, index, isInView, isGridItem, whatsapp }: any) {
       </div>
 
       <div className="relative z-10 mt-auto pt-6 border-t border-white/10 flex items-center justify-between group/cta">
-        <div className="flex items-center gap-3 text-white group-hover:text-yellow-400 transition-colors">
-          <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-yellow-400/10 transition-colors">
+        <div className="flex items-center gap-3 text-white group-hover:text-blue-400 transition-colors">
+          <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-blue-400/10 transition-colors">
             <Phone size={18} />
           </div>
           <span className="text-sm font-black uppercase tracking-widest relative">
             Klaim Promo
-            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-yellow-400 transition-all duration-300 group-hover/cta:w-full" />
+            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-blue-400 transition-all duration-300 group-hover/cta:w-full" />
           </span>
         </div>
 
-        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center -rotate-45 group-hover:bg-yellow-400 group-hover:border-yellow-400 group-hover:text-[var(--background)] transition-all duration-300">
+        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center -rotate-45 group-hover:bg-blue-400 group-hover:border-blue-400 group-hover:text-[var(--background)] transition-all duration-300">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14"></path>
             <path d="m12 5 7 7-7 7"></path>
@@ -159,7 +161,7 @@ function PromoCard({ promo, index, isInView, isGridItem, whatsapp }: any) {
       </div>
 
       {/* Hover Glow Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/0 via-transparent to-yellow-400/0 group-hover:from-yellow-400/5 group-hover:to-orange-500/10 transition-all duration-500 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-400/0 via-transparent to-blue-400/0 group-hover:from-blue-400/5 group-hover:to-indigo-500/10 transition-all duration-500 pointer-events-none" />
     </motion.a>
   );
 }
@@ -168,6 +170,15 @@ export function LandingPage() {
   const { articles, aboutUs, socialMedia, promos, services } = useData();
   const { t } = useLanguage();
   const location = useLocation();
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Handle scroll to hash or top on refresh
   useEffect(() => {
@@ -196,8 +207,35 @@ export function LandingPage() {
     }
   }, [location.hash]);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const ARTICLES_PER_PAGE = 6;
+
   // Only show published content
   const publishedArticles = articles.filter((a) => a.status === "published");
+
+  // Pagination logic
+  const totalPages = Math.ceil(publishedArticles.length / ARTICLES_PER_PAGE);
+  const paginatedArticles = publishedArticles.slice(
+    (currentPage - 1) * ARTICLES_PER_PAGE,
+    currentPage * ARTICLES_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Smooth scroll to articles section
+    const element = document.getElementById("artikel");
+    if (element) {
+      const navbarElement = document.querySelector("nav");
+      const navbarHeight = navbarElement?.offsetHeight || 96;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - (navbarHeight - 20);
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
   const publishedPromos = promos.filter((p) => p.status === "published");
 
   // Refs for scroll animations
@@ -222,12 +260,12 @@ export function LandingPage() {
   const { scrollYProgress: aboutProgress } = useScroll({ target: aboutSectionRef, offset: ["start end", "end start"] });
   const { scrollYProgress: articleProgress } = useScroll({ target: articleSectionRef, offset: ["start end", "end start"] });
 
-  const featureY = useTransform(featureProgress, [0, 1], [100, -100]);
-  const promoY = useTransform(promoProgress, [0, 1], [80, -80]);
-  const servicesYProgressTransform = useTransform(servicesProgress, [0, 1], [120, -120]);
-  const aboutY = useTransform(aboutProgress, [0, 1], [150, -150]);
-  const articleY = useTransform(articleProgress, [0, 1], [120, -120]);
-  const headerY = useTransform(aboutProgress, [0, 1], [-50, 50]);
+  const featureY = useTransform(featureProgress, [0, 1], isMobile ? [0, 0] : [100, -100]);
+  const promoY = useTransform(promoProgress, [0, 1], isMobile ? [0, 0] : [80, -80]);
+  const servicesYProgressTransform = useTransform(servicesProgress, [0, 1], isMobile ? [0, 0] : [120, -120]);
+  const aboutY = useTransform(aboutProgress, [0, 1], isMobile ? [0, 0] : [150, -150]);
+  const articleY = useTransform(articleProgress, [0, 1], isMobile ? [0, 0] : [120, -120]);
+  const headerY = useTransform(aboutProgress, [0, 1], isMobile ? [0, 0] : [-50, 50]);
 
   // Hardcoded services with new icons support for initial view or offline
   const servicesData = [
@@ -235,25 +273,33 @@ export function LandingPage() {
       id: 1,
       slug: "ekatalog",
       icons: ["/icons/services/logo layanan 1a.png", "/icons/services/logo layanan 1b.png"],
-      title: t("services_section.item1.title"),
-      desc: t("services_section.item1.desc"),
+      title: "E-Katalog LKPP",
+      desc: "Pendampingan pendaftaran dan tata kelola E-Katalog V6 untuk vendor dan UMKM.",
       color: "from-blue-600 to-indigo-700"
     },
     {
       id: 2,
       slug: "perizinan",
       icons: ["/icons/services/logo layanan 2a.png", "/icons/services/logo layanan 2b.png"],
-      title: t("services_section.item2.title"),
-      desc: t("services_section.item2.desc"),
+      title: "Perizinan & Sertifikasi",
+      desc: "Urus izin OSS, NIB, Sertifikasi TKDN, dan Merk Dagang dengan proses cepat.",
       color: "from-sky-500 to-blue-600"
     },
     {
       id: 3,
       slug: "legalitas",
-      icons: ["/icons/services/logo layanan 3a.png", "/icons/services/logo layanan 4a.png"],
-      title: t("services_section.item3.title"),
-      desc: t("services_section.item3.desc"),
+      icons: ["/icons/services/logo layanan 3a.png", "/icons/services/logo layanan 1b.png"],
+      title: "Legalitas Badan Usaha",
+      desc: "Layanan pendirian dan pengesahan PT, CV, serta Yayasan secara resmi dan transparan.",
       color: "from-blue-400 to-cyan-500"
+    },
+    {
+      id: 4,
+      slug: "pajak-keuangan",
+      icons: ["/icons/services/logo layanan 4a.png", "/icons/services/logo layanan 4b.png"],
+      title: "Pajak & Keuangan",
+      desc: "Pengurusan NPWP, laporan perpajakan rutin, dan penyusunan laporan keuangan profesional.",
+      color: "from-cyan-500 to-blue-600"
     }
   ];
 
@@ -319,15 +365,15 @@ export function LandingPage() {
       {/* Parallax Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <motion.div
-          style={{ y: y1, rotate: rotate1 }}
+          style={isMobile ? {} : { y: y1, rotate: rotate1 }}
           className="absolute top-[10%] -left-20 w-[500px] h-[500px] bg-white opacity-[0.03] rounded-full blur-[100px]"
         />
         <motion.div
-          style={{ y: y2, rotate: rotate2 }}
+          style={isMobile ? {} : { y: y2, rotate: rotate2 }}
           className="absolute top-[40%] -right-40 w-[600px] h-[600px] bg-white opacity-[0.05] rounded-full blur-[120px]"
         />
         <motion.div
-          style={{ y: y3 }}
+          style={isMobile ? {} : { y: y3 }}
           className="absolute bottom-[10%] left-[20%] w-[400px] h-[400px] bg-white opacity-[0.02] rounded-full blur-[80px]"
         />
 
@@ -349,9 +395,9 @@ export function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <motion.div
               style={{ y: featureY }}
-              initial={{ opacity: 0, y: 30 }}
+              initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: isMobile ? 0 : 0.6 }}
               viewport={{ once: true }}
               className="text-center mb-10 sm:mb-16"
             >
@@ -364,18 +410,18 @@ export function LandingPage() {
             <motion.div
               style={{ y: featureY }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-              initial={{ opacity: 0, y: 30 }}
+              initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: isMobile ? 0 : 0.6 }}
               viewport={{ once: true }}
             >
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
                   className="text-center p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-500 group backdrop-blur-sm"
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: isMobile ? 0 : 0.5, delay: isMobile ? 0 : index * 0.1 }}
                   viewport={{ once: true }}
                 >
                   <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[var(--kelar-primary)] to-[var(--kelar-secondary)] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -406,12 +452,12 @@ export function LandingPage() {
               <motion.div
                 ref={promoRef}
                 className="text-center mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                animate={promoInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6 }}
+                initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                animate={promoInView || isMobile ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: isMobile ? 0 : 0.6 }}
               >
                 <div className="inline-flex items-center gap-2 px-6 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white text-xs font-black uppercase tracking-widest mb-6 animate-pulse">
-                  <Zap size={14} className="text-yellow-400" />
+                  <Zap size={14} className="text-blue-400" />
                   <span>{t("promo.title")}</span>
                 </div>
                 <h2 className="text-4xl md:text-6xl font-black mb-6 text-white tracking-tight">
@@ -438,6 +484,7 @@ export function LandingPage() {
                     isInView={promoInView}
                     isGridItem={publishedPromos.length <= 3}
                     whatsapp={aboutUs.whatsapp}
+                    isMobile={isMobile}
                   />
                 ))}
               </motion.div>
@@ -457,10 +504,10 @@ export function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <motion.div
               ref={servicesSectionRefView}
-              className="text-center mb-20"
-              initial={{ opacity: 0, y: 30 }}
-              animate={servicesSectionInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
+              initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              animate={servicesSectionInView || isMobile ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: isMobile ? 0 : 0.6 }}
             >
               <h2 className="text-4xl md:text-6xl font-black mb-6 text-white tracking-tight">
                 {t("services_section.title")}
@@ -472,54 +519,54 @@ export function LandingPage() {
 
             <motion.div
               style={{ y: servicesYProgressTransform }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 pb-12"
             >
               {servicesData.map((service, index) => (
                 <motion.div
                   key={service.id}
-                  className="bg-[#004e89] dark:bg-slate-800/80 text-white rounded-[3rem] p-8 md:p-10 flex flex-col relative group overflow-hidden shadow-2xl h-full border border-white/10 dark:border-white/5"
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={servicesSectionInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  whileHover={{ y: -8 }}
+                  className="bg-[#004e89] dark:bg-slate-800/80 text-white rounded-3xl p-6 md:p-7 flex flex-col relative group overflow-hidden shadow-xl h-full border border-white/10 dark:border-white/5"
+                  initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+                  animate={servicesSectionInView || isMobile ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: isMobile ? 0 : 0.6, delay: isMobile ? 0 : index * 0.1 }}
+                  whileHover={isMobile ? {} : { y: -8 }}
                 >
                   {/* Decorative background number */}
-                  <div className="absolute -top-10 -right-10 text-[10rem] font-black opacity-[0.03] dark:opacity-5 group-hover:opacity-[0.05] dark:group-hover:opacity-10 transition-opacity pointer-events-none text-black dark:text-white leading-none">
+                  <div className="absolute -top-6 -right-6 text-7xl font-black opacity-[0.05] dark:opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none text-black dark:text-white leading-none">
                     0{service.id}
                   </div>
 
-                  <div className="flex flex-wrap gap-5 mb-10">
+                  <div className="flex flex-wrap gap-4 mb-6">
                     {service.icons.map((Icon: any, idx) => (
-                      <div key={idx} className={`w-24 h-24 rounded-[1.5rem] bg-white flex-shrink-0 flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-500`}>
+                      <div key={idx} className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white flex-shrink-0 flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-500`}>
                         {typeof Icon === 'string' ? (
                           <img 
-                            src={Icon.startsWith('http') ? Icon : Icon} 
+                            src={Icon} 
                             alt={`${service.title} icon ${idx}`}
-                            className="w-18 h-18 object-contain p-1" 
+                            className="w-10 h-10 sm:w-14 sm:h-14 object-contain p-0.5" 
                           />
                         ) : (
-                          <Icon size={40} className="text-[#0E1B47]" />
+                          <Icon size={32} className="text-[#0E1B47]" />
                         )}
                       </div>
                     ))}
                   </div>
 
-                  <h3 className="text-xl md:text-2xl font-black mb-6 leading-relaxed relative break-words dark:text-white">
+                  <h3 className="text-lg md:text-xl font-black mb-3 leading-tight tracking-tight relative break-words dark:text-white min-h-[3rem]">
                     {service.title}
                   </h3>
 
-                  <div className="relative flex-grow mb-10">
-                    <p className="text-white/70 text-base md:text-lg font-medium leading-relaxed">
+                  <div className="relative flex-grow mb-6">
+                    <p className="text-white/70 text-sm md:text-base font-light leading-snug line-clamp-4">
                       {service.desc}
                     </p>
                   </div>
 
                    <Link
                     to={`/layanan/${service.slug}`}
-                    className="relative mt-auto px-6 py-4 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white font-black text-center transition-all flex items-center justify-center gap-3 overflow-hidden group/btn hover:scale-105 active:scale-95 duration-200"
+                    className="relative mt-auto px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white font-black text-center transition-all flex items-center justify-center gap-2 overflow-hidden group/btn hover:scale-105 active:scale-95 duration-200 text-sm"
                   >
                     <span className="relative z-10">{t("services_section.cta")}</span>
-                    <Phone size={18} className="relative z-10 group-hover/btn:rotate-12 transition-transform" />
+                    <Phone size={16} className="relative z-10 group-hover/btn:rotate-12 transition-transform" />
                   </Link>
 
                   <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 dark:group-hover:opacity-20 blur-3xl transition-opacity duration-700 pointer-events-none rounded-full`} />
@@ -540,9 +587,9 @@ export function LandingPage() {
               ref={aboutRef}
               style={{ y: headerY }}
               className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              animate={aboutInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
+              initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              animate={aboutInView || isMobile ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: isMobile ? 0 : 0.6 }}
             >
               <h2 className="text-4xl md:text-6xl font-black mb-6 text-white text-shadow-sm">
                 {t("about.title_alt")}
@@ -554,9 +601,9 @@ export function LandingPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-24">
               <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={aboutInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.2 }}
+                initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
+                animate={aboutInView || isMobile ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: isMobile ? 0 : 0.6, delay: isMobile ? 0 : 0.2 }}
                 className="bg-white/5 border border-white/10 rounded-[2.5rem] p-10 hover:bg-white/10 transition-colors"
               >
                 <div className="flex items-center gap-4 mb-8">
@@ -577,9 +624,9 @@ export function LandingPage() {
 
               <motion.div
                 className="bg-white/5 backdrop-blur-2xl rounded-[2.5rem] p-10 border border-white/10 shadow-2xl relative overflow-hidden group"
-                initial={{ opacity: 0, x: 50 }}
-                animate={aboutInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.3 }}
+                initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
+                animate={aboutInView || isMobile ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: isMobile ? 0 : 0.8, delay: isMobile ? 0 : 0.3 }}
               >
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--kelar-primary)] opacity-20 rounded-full blur-3xl group-hover:opacity-30 transition-all duration-700" />
                 <div className="flex items-center gap-4 mb-8">
@@ -642,9 +689,9 @@ export function LandingPage() {
               ref={articlesRef}
               style={{ y: headerY }}
               className="text-center mb-24"
-              initial={{ opacity: 0, y: 30 }}
-              animate={articlesInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
+              initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              animate={articlesInView || isMobile ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: isMobile ? 0 : 0.6 }}
             >
               <h2 className="text-4xl md:text-6xl font-black mb-6 text-white">
                 {t("articles.title_alt")}
@@ -657,26 +704,71 @@ export function LandingPage() {
               </p>
             </motion.div>
 
-            {publishedArticles.length === 0 ? (
+            {paginatedArticles.length === 0 ? (
               <div className="text-center text-gray-500 dark:text-gray-400 py-12">
                 {t("articles.noArticles")}
               </div>
             ) : (
-              <motion.div
-                style={{ y: articleY }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-              >
-                {publishedArticles.map((article, index) => (
-                  <motion.div
-                    key={article.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={articlesInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+              <>
+                <motion.div
+                  style={{ y: articleY }}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                >
+                  {paginatedArticles.map((article, index) => (
+                    <motion.div
+                      key={article.id}
+                      initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                      animate={articlesInView || isMobile ? { opacity: 1, y: 0 } : {}}
+                      transition={{ duration: isMobile ? 0 : 0.5, delay: isMobile ? 0 : index * 0.1 }}
+                    >
+                      <ArticleCard article={article} />
+                    </motion.div>
+                  ))}
+                </motion.div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <motion.div 
+                    className="flex justify-center items-center mt-20 gap-3"
+                    initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    animate={articlesInView || isMobile ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: isMobile ? 0 : 0.6, delay: isMobile ? 0 : 0.4 }}
                   >
-                    <ArticleCard article={article} />
+                    <button
+                      disabled={currentPage === 1}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white disabled:opacity-20 transition-all hover:bg-white/10 active:scale-95"
+                      aria-label="Previous page"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    
+                    {/* Page Numbers */}
+                    {[...Array(totalPages)].map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handlePageChange(i + 1)}
+                        className={`w-12 h-12 rounded-2xl border transition-all text-sm font-black active:scale-95 ${
+                          currentPage === i + 1
+                            ? "bg-white text-[var(--background)] border-white shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+                            : "bg-white/5 border-white/10 text-white hover:bg-white/10"
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+
+                    <button
+                      disabled={currentPage === totalPages}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white disabled:opacity-20 transition-all hover:bg-white/10 active:scale-95"
+                      aria-label="Next page"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
                   </motion.div>
-                ))}
-              </motion.div>
+                )}
+              </>
             )}
           </div>
         </section>
@@ -688,9 +780,9 @@ export function LandingPage() {
         >
           <div className="max-w-6xl mx-auto">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: isMobile ? 0 : 0.8 }}
               viewport={{ once: true }}
               className="relative rounded-[3.5rem] overflow-hidden bg-white/10 backdrop-blur-2xl border border-white/20 text-white shadow-2xl group"
             >
@@ -700,36 +792,36 @@ export function LandingPage() {
 
               <div className="relative px-8 py-16 md:px-16 md:py-24 flex flex-col items-center text-center">
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  initial={isMobile ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
+                  transition={{ delay: isMobile ? 0 : 0.2, duration: isMobile ? 0 : 0.6 }}
                   className="w-24 h-24 mb-10 bg-white text-[var(--background)] rounded-3xl flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500"
                 >
                   <TrendingUp size={40} />
                 </motion.div>
 
                 <motion.h2
-                  initial={{ opacity: 0, y: 15 }}
+                  initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
+                  transition={{ delay: isMobile ? 0 : 0.3, duration: isMobile ? 0 : 0.6 }}
                   className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tighter text-shadow-lg"
                 >
                   {t("cta.title")}
                 </motion.h2>
 
                 <motion.p
-                  initial={{ opacity: 0, y: 15 }}
+                  initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.6 }}
+                  transition={{ delay: isMobile ? 0 : 0.4, duration: isMobile ? 0 : 0.6 }}
                   className="text-xl md:text-2xl mb-14 text-white/70 max-w-2xl font-light leading-relaxed"
                 >
                   {t("cta.subtitle")}
                 </motion.p>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 15 }}
+                  initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.6 }}
+                  transition={{ delay: isMobile ? 0 : 0.5, duration: isMobile ? 0 : 0.6 }}
                   className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto"
                 >
                   <motion.a

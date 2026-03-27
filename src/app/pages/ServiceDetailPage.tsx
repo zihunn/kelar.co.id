@@ -10,9 +10,9 @@ import { useData } from "../context/DataContext";
 export function ServiceDetailPage() {
   const { id: slug } = useParams<{ id: string }>();
   const { services, aboutUs } = useData();
-  
+
   const service = services.find((s) => s.slug === slug);
-  
+
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case "ShieldCheck": return ShieldCheck;
