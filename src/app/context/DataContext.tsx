@@ -29,8 +29,13 @@ export interface Article {
 
 export interface Promo {
   id: string;
+  badge?: string;
+  title?: string;
+  subtitle?: string;
   name: string;
+  subheader?: string;
   content: string;
+  whatsapp_message?: string;
   status: "published" | "draft";
 }
 
@@ -39,6 +44,7 @@ export interface ServicePackage {
   name: string;
   price: string;
   isPopular?: boolean;
+  whatsapp_message?: string;
   features: string[];
 }
 
@@ -61,6 +67,9 @@ export interface AboutUs {
   email: string;
   phone: string;
   whatsapp: string;
+  promo_badge?: string;
+  promo_title?: string;
+  promo_subtitle?: string;
 }
 
 export interface SocialMedia {
@@ -339,6 +348,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
           email: data.email || "",
           phone: data.phone || "",
           whatsapp: data.whatsapp || "",
+          promo_badge: data.promo_badge || "PROMO TERBATAS",
+          promo_title: data.promo_title || "E-Katalog V6 Offers",
+          promo_subtitle: data.promo_subtitle || "Promo berlaku untuk 10 klien pertama di bulan April 2026!",
         });
         setSocialMedia({
           instagram: data.instagram_link || "",
@@ -405,8 +417,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
         setPromos(
           res.data.map((p: any) => ({
             id: p.id.toString(),
+            badge: p.badge,
+            title: p.title,
+            subtitle: p.subtitle,
             name: p.name,
+            subheader: p.subheader,
             content: p.content,
+            whatsapp_message: p.whatsapp_message,
             status: p.status,
           })),
         );
@@ -436,6 +453,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
               name: pkg.name,
               price: pkg.price,
               isPopular: !!pkg.is_popular,
+              whatsapp_message: pkg.whatsapp_message,
               features: pkg.features.map((f: any) => f.feature),
             })),
             order: s.order,
@@ -623,8 +641,31 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const updateAboutUs = (about: Partial<AboutUs>) => {
-    setAboutUs({ ...aboutUs, ...about });
+  const updateAboutUs = async (about: Partial<AboutUs>) => {
+    try {
+      const { api } = await import("../services/api");
+      // Map frontend fields to backend fields if necessary (already pretty much match)
+      const submitData = {
+        ...about,
+        // Backend expects specific names if they differ
+      };
+      const data = await api.updateCompanySettings(submitData);
+      if (data) {
+        setAboutUs({
+          description: data.description || "",
+          address: data.address || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          whatsapp: data.whatsapp || "",
+          promo_badge: data.promo_badge || "",
+          promo_title: data.promo_title || "",
+          promo_subtitle: data.promo_subtitle || "",
+        });
+      }
+    } catch (error) {
+      console.error("Gagal update profil perusahaan:", error);
+      throw error;
+    }
   };
 
   const updateSocialMedia = (social: Partial<SocialMedia>) => {
@@ -655,8 +696,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
           ...promos,
           {
             id: data.id.toString(),
+            badge: data.badge,
+            title: data.title,
+            subtitle: data.subtitle,
             name: data.name,
+            subheader: data.subheader,
             content: data.content,
+            whatsapp_message: data.whatsapp_message,
             status: data.status,
           },
         ]);
@@ -677,8 +723,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
             p.id === id
               ? {
                 ...p,
+                badge: data.badge,
+                title: data.title,
+                subtitle: data.subtitle,
                 name: data.name,
+                subheader: data.subheader,
                 content: data.content,
+                whatsapp_message: data.whatsapp_message,
                 status: data.status,
               }
               : p,

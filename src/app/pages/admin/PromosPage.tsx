@@ -8,43 +8,54 @@ import {
   Edit2, 
   Trash2, 
   X, 
-  Upload, 
   Tag as TagIcon,
   CheckCircle2,
   Clock,
-  AlertCircle
+  Settings,
+  Layout,
+  Save,
+  Zap
 } from "lucide-react";
 import { toast } from "sonner";
 import { DeleteConfirmModal } from "../../components/admin/DeleteConfirmModal";
 
-// Promo interface is now imported from DataContext
-
 export function PromosPage() {
   const { t } = useLanguage();
-  const { promos, addPromo, updatePromo, deletePromo } = useData();
+  const { promos, addPromo, updatePromo, deletePromo, aboutUs, updateAboutUs } = useData();
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [promoToDelete, setPromoToDelete] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [useStateActive, setUseStateActive] = useState(false); // dummy for useState import if needed, but I'll use React.useState if I don't import it. Wait, I should import useState.
 
-  // Form states
+  // Form states for individual promo cards
   const [formData, setFormData] = useState<Omit<Promo, "id">>({
     name: "",
+    badge: "",
+    subheader: "",
     content: "",
+    whatsapp_message: "",
     status: "draft",
   });
 
-  // Data is now handled by DataContext
+  // Form states for Global Section Settings
+  const [settingsData, setSettingsData] = useState({
+    promo_badge: aboutUs.promo_badge || "PROMO TERBATAS",
+    promo_title: aboutUs.promo_title || "E-Katalog V6 Offers",
+    promo_subtitle: aboutUs.promo_subtitle || "Promo berlaku untuk 10 klien pertama di bulan April 2026!",
+  });
 
   const handleEdit = (id: string) => {
     const promo = promos.find((p) => p.id === id);
     if (promo) {
       setFormData({
         name: promo.name,
+        badge: promo.badge || "",
+        subheader: promo.subheader || "",
         content: promo.content,
+        whatsapp_message: promo.whatsapp_message || "",
         status: promo.status,
       });
       setEditingId(id);
@@ -68,14 +79,13 @@ export function PromosPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Use context functions
     if (editingId) {
       updatePromo(editingId, formData).then(() => {
         toast.success(t("admin.promo") + " berhasil diupdate");
         setIsSubmitting(false);
         setShowForm(false);
         setEditingId(null);
-        setFormData({ name: "", content: "", status: "draft" });
+        setFormData({ name: "", badge: "", subheader: "", content: "", whatsapp_message: "", status: "draft" });
       });
     } else {
       addPromo(formData).then(() => {
@@ -83,8 +93,22 @@ export function PromosPage() {
         setIsSubmitting(false);
         setShowForm(false);
         setEditingId(null);
-        setFormData({ name: "", content: "", status: "draft" });
+        setFormData({ name: "", badge: "", subheader: "", content: "", whatsapp_message: "", status: "draft" });
       });
+    }
+  };
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await updateAboutUs(settingsData);
+      toast.success("Header Section berhasil diperbarui!");
+      setShowSettingsModal(false);
+    } catch (error) {
+      toast.error("Gagal memperbarui header section");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -126,53 +150,32 @@ export function PromosPage() {
               Kelola penawaran dan promosi yang tampil di landing page
             </p>
           </div>
-          <button
-            onClick={() => {
-              setEditingId(null);
-              setFormData({ name: "", content: "", status: "draft" });
-              setShowForm(true);
-            }}
-            className="flex items-center gap-3 px-8 py-4 bg-white text-[var(--background)] rounded-2xl font-black transition-all shadow-2xl hover:bg-white/90 active:scale-95 self-start md:self-auto"
-          >
-            <Plus size={24} />
-            {t("admin.addPromo")}
-          </button>
-        </div>
-
-        {/* Stats Summary - Fast insight */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="bg-white/5 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-500/30">
-                <TagIcon className="text-blue-400" size={24} />
-              </div>
-              <div>
-                <p className="text-white/40 text-xs font-black uppercase tracking-widest">Total Promo</p>
-                <p className="text-2xl font-black text-white">{promos.length}</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/5 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-green-500/20 rounded-2xl flex items-center justify-center border border-green-500/30">
-                <CheckCircle2 className="text-green-400" size={24} />
-              </div>
-              <div>
-                <p className="text-white/40 text-xs font-black uppercase tracking-widest">Published</p>
-                <p className="text-2xl font-black text-white">{promos.filter(p => p.status === 'published').length}</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/5 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-orange-500/20 rounded-2xl flex items-center justify-center border border-orange-500/30">
-                <Clock className="text-orange-400" size={24} />
-              </div>
-              <div>
-                <p className="text-white/40 text-xs font-black uppercase tracking-widest">Draft</p>
-                <p className="text-2xl font-black text-white">{promos.filter(p => p.status === 'draft').length}</p>
-              </div>
-            </div>
+          <div className="flex gap-4">
+            <button
+              onClick={() => {
+                setSettingsData({
+                  promo_badge: aboutUs.promo_badge || "",
+                  promo_title: aboutUs.promo_title || "",
+                  promo_subtitle: aboutUs.promo_subtitle || "",
+                });
+                setShowSettingsModal(true);
+              }}
+              className="flex items-center gap-3 px-6 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-2xl font-black transition-all active:scale-95"
+            >
+              <Settings size={20} />
+              Edit Header Section
+            </button>
+            <button
+              onClick={() => {
+                setEditingId(null);
+                setFormData({ name: "", badge: "", subheader: "", content: "", whatsapp_message: "", status: "draft" });
+                setShowForm(true);
+              }}
+              className="flex items-center gap-3 px-8 py-4 bg-white text-[var(--background)] rounded-2xl font-black transition-all shadow-2xl hover:bg-white/90 active:scale-95"
+            >
+              <Plus size={24} />
+              {t("admin.addPromo")}
+            </button>
           </div>
         </div>
 
@@ -204,210 +207,221 @@ export function PromosPage() {
                 <div className="w-24 h-24 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-white/10">
                   <TagIcon size={48} className="text-white/10" />
                 </div>
-                <p className="text-white/40 text-xl font-medium mb-10">{t("admin.noArticles")}</p>
-                <button
-                  onClick={() => setShowForm(true)}
-                  className="px-8 py-4 bg-white text-[var(--background)] rounded-2xl font-black transition-all shadow-2xl hover:bg-white/90 active:scale-95"
-                >
-                  {t("admin.addFirstPromo")}
-                </button>
+                <p className="text-white/40 text-xl font-medium">{t("admin.noArticles")}</p>
               </div>
             ) : (
-              <>
-                {/* Mobile Card View */}
-                <div className="lg:hidden divide-y divide-white/5">
-                  {filteredPromos.map((promo) => (
-                    <div key={promo.id} className="p-6 hover:bg-white/5 transition-colors">
-                      <div className="flex gap-6">
-                        <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 flex-shrink-0">
-                          <TagIcon className="text-white/40" size={24} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">{promo.name}</h3>
-                          <div className="flex items-center justify-between mt-auto">
-                            {getStatusBadge(promo.status)}
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => handleEdit(promo.id)}
-                                className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
-                              >
-                                <Edit2 size={18} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteClick(promo.id)}
-                                className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                              >
-                                <Trash2 size={18} />
-                              </button>
-                            </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-white/5 border-b border-white/10">
+                    <tr>
+                      <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">{t("admin.promoName")}</th>
+                      <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em]">{t("admin.content")}</th>
+                      <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">{t("admin.status")}</th>
+                      <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap text-right">{t("admin.actions")}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/10">
+                    {filteredPromos.map((promo) => (
+                      <tr key={promo.id} className="hover:bg-white/10 transition-all duration-300 group border-b border-white/5 last:border-0">
+                        <td className="px-6 py-4">
+                          <div className="text-lg font-bold text-white max-w-sm tracking-tight group-hover:text-blue-400 transition-colors">
+                            {promo.name}
                           </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Desktop Table View */}
-                <div className="hidden lg:block overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-white/5 border-b border-white/10">
-                      <tr>
-                        <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">{t("admin.promoName")}</th>
-                        <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em]">{t("admin.content")}</th>
-                        <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">{t("admin.status")}</th>
-                        <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">{t("admin.actions")}</th>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-white/60 text-sm line-clamp-2 max-w-xl whitespace-pre-wrap">
+                            {promo.content}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {getStatusBadge(promo.status)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <div className="flex gap-2 justify-end">
+                            <button
+                              onClick={() => handleEdit(promo.id)}
+                              className="p-3 text-white hover:bg-white/10 rounded-2xl transition-all"
+                              title={t("admin.edit")}
+                            >
+                              <Edit2 size={20} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(promo.id)}
+                              className="p-3 text-red-400 hover:bg-red-500/10 rounded-2xl transition-all"
+                              title={t("admin.delete")}
+                            >
+                              <Trash2 size={20} />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/10">
-                      {filteredPromos.map((promo) => (
-                        <tr key={promo.id} className="hover:bg-white/10 transition-all duration-300 group border-b border-white/5 last:border-0">
-                          <td className="px-6 py-4">
-                            <div className="text-lg font-bold text-white max-w-sm tracking-tight group-hover:text-blue-400 transition-colors">
-                              {promo.name}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="text-white/60 text-sm line-clamp-2 max-w-xl whitespace-pre-wrap">
-                              {promo.content}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {getStatusBadge(promo.status)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => handleEdit(promo.id)}
-                                className="p-3 text-white hover:bg-white/10 rounded-2xl transition-all active:scale-90"
-                                title={t("admin.edit")}
-                              >
-                                <Edit2 size={20} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteClick(promo.id)}
-                                className="p-3 text-red-400 hover:bg-red-500/10 rounded-2xl transition-all active:scale-90"
-                                title={t("admin.delete")}
-                              >
-                                <Trash2 size={20} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Form Modal */}
+      {/* Promo Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-blue-950/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-blue-900/40 backdrop-blur-3xl rounded-[3rem] border border-white/20 shadow-[0_0_100px_rgba(0,0,0,0.5)] w-full max-w-2xl max-h-[90vh] overflow-y-auto relative group">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-[0.03] rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-            
-            <div className="flex items-center justify-between p-8 border-b border-white/10 sticky top-0 bg-transparent z-20 backdrop-blur-xl">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 shadow-xl">
-                  {editingId ? <Edit2 className="text-white" size={24} /> : <Plus className="text-white" size={24} />}
-                </div>
-                <h2 className="text-3xl font-black text-white tracking-tighter">
-                  {editingId ? "Edit Promo" : "Tambah Promo Baru"}
-                </h2>
-              </div>
-              <button
-                onClick={() => setShowForm(false)}
-                className="p-3 text-white/40 hover:text-white rounded-2xl hover:bg-white/5 transition-all"
-              >
-                <X size={28} />
+          <div className="bg-blue-900/40 backdrop-blur-3xl rounded-[3rem] border border-white/20 shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
+            <div className="flex items-center justify-between p-8 border-b border-white/10 sticky top-0 bg-transparent z-10 backdrop-blur-3xl">
+              <h2 className="text-2xl font-black text-white">
+                {editingId ? "Edit Promo" : "Tambah Promo Baru"}
+              </h2>
+              <button onClick={() => setShowForm(false)} className="text-white/40 hover:text-white">
+                <X size={24} />
               </button>
             </div>
-
-            <form onSubmit={handleSubmit} className="p-8 space-y-8 relative z-10">
-              <div className="space-y-3">
-                <label className="text-xs font-black text-white/40 uppercase tracking-widest pl-2">
-                  {t("admin.promoName")}
-                </label>
+            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+              <div className="space-y-2">
+                <label className="text-xs font-black text-white/40 uppercase tracking-widest pl-1">Nama Promo</label>
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Contoh: Promo Cashback 20% Akhir Tahun"
-                  className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-[2rem] text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-xl font-bold tracking-tight placeholder:text-white/10 shadow-inner"
+                  className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold"
                 />
               </div>
-
-              <div className="space-y-4">
-                <label className="text-xs font-black text-white/40 uppercase tracking-widest pl-2">
-                  {t("admin.content")}
-                </label>
+              <div className="space-y-2">
+                <label className="text-xs font-black text-white/40 uppercase tracking-widest pl-1">Badge / Tagline Atas</label>
+                <input
+                  type="text"
+                  value={formData.badge}
+                  onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                  placeholder="Contoh: Special Offer"
+                  className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-black text-white/40 uppercase tracking-widest pl-1">Sub Header / Tagline Bawah</label>
+                <input
+                  type="text"
+                  value={formData.subheader}
+                  onChange={(e) => setFormData({ ...formData, subheader: e.target.value })}
+                  placeholder="Opsional: Teks tambahan di bawah judul"
+                  className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-black text-white/40 uppercase tracking-widest pl-1">Konten Promo</label>
                 <textarea
                   required
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  placeholder="Isi deskripsi dan fasilitas promo disini..."
                   rows={6}
-                  className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-[2rem] text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium placeholder:text-white/10 shadow-inner resize-y min-h-[150px]"
+                  className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
                 />
               </div>
-
-              <div className="space-y-4">
-                <label className="text-xs font-black text-white/40 uppercase tracking-widest pl-2">
-                  {t("admin.status")}
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, status: "draft" })}
-                    className={`flex items-center justify-center gap-3 p-6 rounded-[2rem] border-2 transition-all font-black uppercase tracking-widest text-xs ${
-                      formData.status === "draft"
-                        ? "bg-orange-500/20 text-orange-400 border-orange-500 shadow-[0_0_30px_rgba(249,115,22,0.2)]"
-                        : "bg-white/5 text-white/40 border-white/10 hover:border-white/20"
-                    }`}
-                  >
-                    <Clock size={16} />
-                    {t("admin.draft")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, status: "published" })}
-                    className={`flex items-center justify-center gap-3 p-6 rounded-[2rem] border-2 transition-all font-black uppercase tracking-widest text-xs ${
-                      formData.status === "published"
-                        ? "bg-green-500/20 text-green-400 border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.2)]"
-                        : "bg-white/5 text-white/40 border-white/10 hover:border-white/20"
-                    }`}
-                  >
-                    <CheckCircle2 size={16} />
-                    {t("admin.published")}
-                  </button>
-                </div>
+              <div className="space-y-2">
+                <label className="text-xs font-black text-white/40 uppercase tracking-widest pl-1">Pesan Custom WhatsApp (Opsional)</label>
+                <textarea
+                  value={formData.whatsapp_message}
+                  onChange={(e) => setFormData({ ...formData, whatsapp_message: e.target.value })}
+                  rows={3}
+                  placeholder="Contoh: Halo Min, saya tertarik dengan Layanan Promo Landing Page..."
+                  className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-all font-medium"
+                />
+                <p className="text-[10px] text-white/40 font-bold tracking-wider pl-1 uppercase">Jika dikosongkan, pesan default "Halo Kelar.co.id..." akan digunakan.</p>
               </div>
-
-              <div className="pt-8 border-t border-white/10 flex gap-4">
+              <div className="grid grid-cols-2 gap-4 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="flex-1 py-5 bg-white/5 border border-white/10 text-white rounded-[2rem] hover:bg-white/10 transition-all font-black uppercase tracking-widest text-sm"
+                  className="py-4 px-6 bg-white/5 text-white rounded-2xl font-black uppercase tracking-widest text-xs"
                 >
-                  {t("admin.cancel")}
+                  Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-5 bg-white text-[var(--background)] rounded-[2rem] hover:bg-white/90 transition-all font-black uppercase tracking-widest text-sm shadow-2xl flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="py-4 px-6 bg-white text-background rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl active:scale-95"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-[var(--background)]/30 border-t-[var(--background)] rounded-full animate-spin" />
-                      <span>Processing...</span>
-                    </>
-                  ) : (
-                    <span>{editingId ? t("admin.update") : t("admin.save")}</span>
-                  )}
+                  {isSubmitting ? "Processing..." : editingId ? "Update" : "Simpan"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Section Header Settings Modal */}
+      {showSettingsModal && (
+        <div className="fixed inset-0 bg-blue-950/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-indigo-950/40 backdrop-blur-3xl rounded-[3rem] border border-white/20 shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
+            <div className="flex items-center justify-between p-8 border-b border-white/10 sticky top-0 bg-transparent z-10 backdrop-blur-3xl">
+              <div className="flex items-center gap-3">
+                <Layout className="text-blue-400" size={24} />
+                <h2 className="text-2xl font-black text-white">Edit Header Section Promosi</h2>
+              </div>
+              <button onClick={() => setShowSettingsModal(false)} className="text-white/40 hover:text-white">
+                <X size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleSaveSettings} className="p-8 space-y-8">
+              <div className="bg-blue-400/10 border border-blue-400/20 p-6 rounded-2xl flex items-start gap-4 mb-4">
+                <Zap className="text-blue-400 shrink-0" size={20} />
+                <p className="text-white/70 text-sm leading-relaxed">
+                  Pengaturan ini akan mengubah teks besar dan sub-teks yang tampil di **Section Promosi** pada halaman utama.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] pl-1">Badge Text</label>
+                  <input
+                    type="text"
+                    required
+                    value={settingsData.promo_badge}
+                    onChange={(e) => setSettingsData({ ...settingsData, promo_badge: e.target.value })}
+                    placeholder="PROMO TERBATAS"
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] pl-1">Main Heading</label>
+                  <input
+                    type="text"
+                    required
+                    value={settingsData.promo_title}
+                    onChange={(e) => setSettingsData({ ...settingsData, promo_title: e.target.value })}
+                    placeholder="E-Katalog V6 Offers"
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] pl-1">Subtitle Description</label>
+                  <textarea
+                    required
+                    value={settingsData.promo_subtitle}
+                    onChange={(e) => setSettingsData({ ...settingsData, promo_subtitle: e.target.value })}
+                    rows={3}
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowSettingsModal(false)}
+                  className="flex-1 py-5 bg-white/5 text-white rounded-2xl font-black uppercase tracking-widest text-xs border border-white/10 hover:bg-white/10 transition-all"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 py-5 bg-white text-background rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl flex items-center justify-center gap-2 active:scale-95 transition-all"
+                >
+                  {isSubmitting ? <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" /> : <Save size={16} />}
+                  Simpan Perubahan
                 </button>
               </div>
             </form>

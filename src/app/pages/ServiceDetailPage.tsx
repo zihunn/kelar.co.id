@@ -6,22 +6,15 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ShieldCheck, Building2, BarChart3, Award, CheckCircle2, Phone } from "lucide-react";
 import { useData } from "../context/DataContext";
+import { useLanguage } from "../context/LanguageContext";
 
 export function ServiceDetailPage() {
   const { id: slug } = useParams<{ id: string }>();
   const { services, aboutUs } = useData();
+  const { t } = useLanguage();
 
   const service = services.find((s) => s.slug === slug);
 
-  const getIcon = (iconName: string) => {
-    switch (iconName) {
-      case "ShieldCheck": return ShieldCheck;
-      case "Building2": return Building2;
-      case "Award": return Award;
-      case "BarChart3": return BarChart3;
-      default: return ShieldCheck;
-    }
-  };
 
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -38,7 +31,6 @@ export function ServiceDetailPage() {
     return <Navigate to="/#layanan" replace />;
   }
 
-  const Icon = getIcon(service.icon);
 
   return (
     <div className="min-h-screen bg-[var(--background)] flex flex-col font-sans text-white overflow-hidden">
@@ -58,7 +50,7 @@ export function ServiceDetailPage() {
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
               className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-8 shadow-xl`}
             >
-              <Icon size={32} className="text-white" />
+              <img src={service.icons?.[0] || ""} alt={service.title} className="w-8 h-8 object-contain drop-shadow" />
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
@@ -84,7 +76,7 @@ export function ServiceDetailPage() {
             className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-10 md:p-14 mb-20 shadow-2xl relative overflow-hidden -mt-24 sm:-mt-32"
           >
             <div className={`absolute -top-32 -right-32 w-64 h-64 rounded-full bg-gradient-to-br ${service.color} blur-[100px] opacity-20`} />
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white text-balance tracking-tight">Informasi Layanan</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white text-balance tracking-tight">{t("serviceDetail.serviceInfo")}</h2>
             <p className="text-lg md:text-xl leading-relaxed text-white/70 font-light text-left text-balance whitespace-pre-line">
               {service.description}
             </p>
@@ -92,9 +84,9 @@ export function ServiceDetailPage() {
 
           {/* Pricing / Packages */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-6 text-white tracking-tight">Pilihan Paket</h2>
+            <h2 className="text-4xl md:text-5xl font-black mb-6 text-white tracking-tight">{t("serviceDetail.packageChoice")}</h2>
             <div className={`w-24 h-2 bg-gradient-to-r ${service.color} mx-auto rounded-full mb-6`} />
-            <p className="text-white/60 text-lg">Pilih paket yang paling sesuai dengan kebutuhan usaha Anda.</p>
+            <p className="text-white/60 text-lg">{t("serviceDetail.packageChoiceSubtitle")}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12 items-stretch">
@@ -112,7 +104,7 @@ export function ServiceDetailPage() {
                 {/* Popular Badge */}
                 {pkg.isPopular && (
                   <div className="absolute top-0 right-0 bg-[var(--kelar-primary)] text-white text-[10px] uppercase tracking-widest font-black py-2 px-6 rounded-bl-2xl">
-                    Paling Diminati
+                    {t("serviceDetail.mostPopular")}
                   </div>
                 )}
 
@@ -141,7 +133,7 @@ export function ServiceDetailPage() {
                 </div>
 
                 <motion.a
-                  href={`https://wa.me/62${aboutUs.whatsapp.replace(/^0/, "")}?text=Halo%20Kelar,%20Saya%20tertarik%20dengan%20${service.title}%20-%20${pkg.name}`}
+                  href={`https://wa.me/62${aboutUs.whatsapp.replace(/^0/, "")}?text=${encodeURIComponent(pkg.whatsapp_message || `Halo Kelar, Saya tertarik dengan layanan ${service.title} - ${pkg.name}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`relative z-10 mt-auto w-full py-4 rounded-2xl font-black text-center transition-all flex items-center justify-center gap-2 overflow-hidden
@@ -153,7 +145,7 @@ export function ServiceDetailPage() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Pilih Paket Ini
+                  {t("serviceDetail.selectPackage")}
                   <Phone size={16} />
                 </motion.a>
               </motion.div>

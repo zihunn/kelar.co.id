@@ -14,6 +14,8 @@ import {
   ShieldCheck,
   Star
 } from "lucide-react";
+import { api } from "../services/api";
+import { AnalyticsTracker } from "../components/AnalyticsTracker";
 import { motion, useScroll, useTransform, useSpring } from "motion/react";
 
 // Hook to detect if element is in view
@@ -114,6 +116,7 @@ export function VirtualOfficePage() {
 
   return (
     <div ref={containerRef} className="relative min-h-screen bg-background text-white selection:bg-white selection:text-[var(--background)] overflow-x-hidden">
+      <AnalyticsTracker />
       <Navbar />
 
       {/* Parallax Background Elements */}
@@ -133,6 +136,7 @@ export function VirtualOfficePage() {
         {/* Hero Section */}
         <section 
           ref={heroRef}
+          data-analytics="vo_hero_section"
           className="pt-48 pb-32 px-4 relative overflow-hidden flex items-center justify-center min-h-[90vh]"
         >
           {/* Background Image with Blur/Opacity */}
@@ -173,6 +177,7 @@ export function VirtualOfficePage() {
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => api.logAnalytics({ category: 'conversion', action: 'click', label: 'vo_hero_cta' })}
                   className="px-12 py-6 bg-white text-[var(--background)] rounded-2xl font-black text-xl shadow-[0_20px_50px_rgba(255,255,255,0.1)] hover:shadow-[0_20px_50px_rgba(255,255,255,0.2)] transition-all"
                 >
                   {t("virtual_office.cta")}
@@ -185,6 +190,7 @@ export function VirtualOfficePage() {
         {/* What is Virtual Office */}
         <section 
           ref={whatIsRef}
+          data-analytics="vo_what_is_section"
           className="py-32 bg-white/5 backdrop-blur-3xl border-y border-white/5 relative"
         >
           <div className="max-w-7xl mx-auto px-4">
@@ -246,6 +252,7 @@ export function VirtualOfficePage() {
         {/* Facilities Section */}
         <section 
           ref={facilitiesRef}
+          data-analytics="vo_facilities_section"
           className="py-40 relative overflow-hidden"
         >
           <div className="max-w-7xl mx-auto px-4 relative z-10">
@@ -287,6 +294,7 @@ export function VirtualOfficePage() {
         {/* List of Virtual Offices */}
         <section 
           ref={listRef}
+          data-analytics="vo_list_section"
           className="py-40 bg-white/5 backdrop-blur-3xl border-y border-white/5 relative overflow-hidden"
         >
           <div className="max-w-7xl mx-auto px-4 relative z-10">
@@ -350,7 +358,10 @@ export function VirtualOfficePage() {
                         {vo.name}
                       </h3>
                       
-                      <Link to={`/virtual-office/${vo.id}`}>
+                      <Link 
+                        to={`/virtual-office/${vo.id}`}
+                        onClick={() => api.logAnalytics({ category: 'conversion', action: 'click', label: `vo_item_${vo.name}` })}
+                      >
                         <motion.button 
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}

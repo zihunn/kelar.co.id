@@ -6,6 +6,8 @@ import { HeroSlider } from "../components/HeroSlider";
 import { ArticleCard } from "../components/ArticleCard";
 import { useData } from "../context/DataContext";
 import { useLanguage } from "../context/LanguageContext";
+import { api } from "../services/api";
+import { AnalyticsTracker } from "../components/AnalyticsTracker";
 import {
   Instagram,
   Facebook,
@@ -33,6 +35,9 @@ import {
   Tag,
   Zap,
   History,
+  X,
+  Eye,
+  ArrowRight,
 } from "lucide-react";
 import { motion, useScroll, useTransform, useSpring } from "motion/react";
 import { useRef } from "react";
@@ -71,7 +76,8 @@ function useInView(threshold = 0.1) {
 }
 
 // Promo Card Component with Overflow Detection
-function PromoCard({ promo, index, isInView, isGridItem, whatsapp, isMobile }: any) {
+function PromoCard({ promo, index, isInView, isGridItem, whatsapp, isMobile, onOpen }: any) {
+  const { t } = useLanguage();
   const contentRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
 
@@ -81,11 +87,10 @@ function PromoCard({ promo, index, isInView, isGridItem, whatsapp, isMobile }: a
         setIsOverflowing(contentRef.current.scrollHeight > contentRef.current.clientHeight);
       }
     };
-    
+
     checkOverflow();
-    // Use a small timeout to ensure content is fully rendered
     const timeoutId = setTimeout(checkOverflow, 100);
-    
+
     window.addEventListener('resize', checkOverflow);
     return () => {
       window.removeEventListener('resize', checkOverflow);
@@ -94,75 +99,79 @@ function PromoCard({ promo, index, isInView, isGridItem, whatsapp, isMobile }: a
   }, [promo.content]);
 
   return (
-    <motion.a
-      key={promo.id}
-      href={`https://wa.me/62${whatsapp.replace(/^0/, "")}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`flex-shrink-0 ${isGridItem ? "w-full" : "w-[85vw] sm:w-[500px]"} h-[600px] bg-white/5 rounded-[3rem] p-8 md:p-12 border border-white/10 group snap-center relative shadow-2xl hover:bg-white/10 transition-colors flex flex-col`}
-      initial={isMobile ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-      animate={isInView || isMobile ? { opacity: 1, scale: 1 } : {}}
-      transition={isMobile ? { duration: 0 } : { duration: 0.8, delay: index * 0.15 }}
-      whileHover={isMobile ? {} : { y: -15, transition: { duration: 0.4 } }}
-    >
-      <div className="absolute top-8 right-8 w-14 h-14 bg-gradient-to-br from-blue-400 to-indigo-500 text-[var(--background)] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-[0_0_30px_rgba(59,130,246,0.4)] z-10">
-        <Tag size={28} />
-      </div>
-
-      <div className="mb-6 flex-grow overflow-hidden relative z-10 flex flex-col">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-400/10 border border-blue-400/20 rounded-full mb-6 w-fit">
-          <Zap size={16} className="text-blue-400" />
-          <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] pt-0.5">Special Offer</span>
+    <>
+      <motion.div
+        key={promo.id}
+        onClick={() => {
+          api.logAnalytics({ category: 'engagement', action: 'click', label: `promo_detail_${promo.name}` });
+          onOpen(promo);
+        }}
+        className={`flex-shrink-0 ${isGridItem ? "w-full" : "w-[85vw] sm:w-[500px]"} h-[600px] bg-white/5 rounded-[3rem] p-8 md:p-12 border border-white/10 group snap-center relative shadow-2xl hover:bg-white/10 transition-colors flex flex-col cursor-pointer`}
+        initial={isMobile ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+        animate={isInView || isMobile ? { opacity: 1, scale: 1 } : {}}
+        transition={isMobile ? { duration: 0 } : { duration: 0.8, delay: index * 0.15 }}
+        whileHover={isMobile ? {} : { y: -15, transition: { duration: 0.4 } }}
+      >
+        <div className="absolute top-8 right-8 w-14 h-14 bg-gradient-to-br from-blue-400 to-indigo-500 text-[var(--background)] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-[0_0_30px_rgba(59,130,246,0.4)] z-10">
+          <Tag size={28} />
         </div>
-        <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-8 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-indigo-500 transition-all duration-300">
-          {promo.name}
-        </h3>
 
-        <div className="relative flex-grow overflow-hidden flex flex-col">
-          {/* Decorative Line */}
-          <div className="absolute left-0 top-2 bottom-4 w-[2px] bg-gradient-to-b from-blue-400/50 to-transparent" />
-
-          <div 
-            ref={contentRef}
-            className="text-white/80 text-[15px] leading-relaxed whitespace-pre-wrap font-medium overflow-y-auto pl-6 pr-4 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20"
-          >
-            {promo.content}
+        <div className="mb-6 flex-grow overflow-hidden relative z-10 flex flex-col">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-400/10 border border-blue-400/20 rounded-full mb-6 w-fit">
+            <Zap size={16} className="text-blue-400" />
+            <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] pt-0.5">{promo.badge || "Special Offer"}</span>
           </div>
-          
-          {/* Scroll indicator overlay - Only show if overflowing */}
-          {isOverflowing && (
-            <div className="absolute bottom-0 left-6 right-4 h-12 bg-gradient-to-t from-[#0d1b2a]/40 to-transparent pointer-events-none flex items-end justify-center pb-1">
-              <div className="flex flex-col items-center gap-0.5 opacity-50 group-hover:opacity-100 transition-opacity">
-                <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Scroll kebawah</span>
-                <ChevronDown size={14} className="text-blue-400 animate-bounce" />
-              </div>
-            </div>
+          <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-indigo-500 transition-all duration-300">
+            {promo.name}
+          </h3>
+          {promo.subheader && (
+            <p className="text-blue-400 text-sm font-black uppercase tracking-widest mb-6 opacity-80 group-hover:opacity-100 transition-all">
+              {promo.subheader}
+            </p>
           )}
-        </div>
-      </div>
 
-      <div className="relative z-10 mt-auto pt-6 border-t border-white/10 flex items-center justify-between group/cta">
-        <div className="flex items-center gap-3 text-white group-hover:text-blue-400 transition-colors">
-          <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-blue-400/10 transition-colors">
-            <Phone size={18} />
+          <div className="relative flex-grow overflow-hidden flex flex-col">
+            <div className="absolute left-0 top-2 bottom-4 w-[2px] bg-gradient-to-b from-blue-400/50 to-transparent" />
+            <div
+              ref={contentRef}
+              className="text-white/80 text-[15px] leading-relaxed whitespace-pre-wrap font-medium overflow-y-auto pl-6 pr-4 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20"
+            >
+              {promo.content}
+            </div>
+
+            {isOverflowing && (
+              <div className="absolute bottom-0 left-6 right-4 h-12 bg-gradient-to-t from-[#0d1b2a]/40 to-transparent pointer-events-none flex items-end justify-center pb-1">
+                <div className="flex flex-col items-center gap-0.5 opacity-50 group-hover:opacity-100 transition-opacity">
+                  <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">{t("landing.scrollDown")}</span>
+                  <ChevronDown size={14} className="text-blue-400 animate-bounce" />
+                </div>
+              </div>
+            )}
           </div>
-          <span className="text-sm font-black uppercase tracking-widest relative">
-            Klaim Promo
-            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-blue-400 transition-all duration-300 group-hover/cta:w-full" />
-          </span>
         </div>
 
-        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center -rotate-45 group-hover:bg-blue-400 group-hover:border-blue-400 group-hover:text-[var(--background)] transition-all duration-300">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14"></path>
-            <path d="m12 5 7 7-7 7"></path>
-          </svg>
-        </div>
-      </div>
+        <div className="relative z-10 mt-auto pt-6 border-t border-white/10 flex items-center justify-between group/cta">
+          <div className="flex items-center gap-3 text-white group-hover:text-blue-400 transition-colors">
+            <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-blue-400/10 transition-colors">
+              <Eye size={18} />
+            </div>
+            <span className="text-sm font-black uppercase tracking-widest relative">
+              {t("landing.viewDetailPrice")}
+              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-blue-400 transition-all duration-300 group-hover/cta:w-full" />
+            </span>
+          </div>
 
-      {/* Hover Glow Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-400/0 via-transparent to-blue-400/0 group-hover:from-blue-400/5 group-hover:to-indigo-500/10 transition-all duration-500 pointer-events-none" />
-    </motion.a>
+          <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center -rotate-45 group-hover:bg-blue-400 group-hover:border-blue-400 group-hover:text-[var(--background)] transition-all duration-300">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-400/0 via-transparent to-blue-400/0 group-hover:from-blue-400/5 group-hover:to-indigo-500/10 transition-all duration-500 pointer-events-none" />
+      </motion.div>
+    </>
   );
 }
 
@@ -172,6 +181,13 @@ export function LandingPage() {
   const location = useLocation();
 
   const [isMobile, setIsMobile] = useState(false);
+  const [showPromoDetailModal, setShowPromoDetailModal] = useState(false);
+  const [selectedPromo, setSelectedPromo] = useState<any>(null);
+
+  const handleOpenPromoModal = (promo: any) => {
+    setSelectedPromo(promo);
+    setShowPromoDetailModal(true);
+  };
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -208,6 +224,7 @@ export function LandingPage() {
   }, [location.hash]);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const ARTICLES_PER_PAGE = 6;
 
   // Only show published content
@@ -237,6 +254,7 @@ export function LandingPage() {
     }
   };
   const publishedPromos = promos.filter((p) => p.status === "published");
+  const mainPromo = publishedPromos[0];
 
   // Refs for scroll animations
   const [aboutRef, aboutInView] = useInView();
@@ -362,6 +380,7 @@ export function LandingPage() {
 
   return (
     <div className="relative min-h-screen bg-background text-foreground transition-all selection:bg-white selection:text-[var(--background)] overflow-x-hidden">
+      <AnalyticsTracker />
       {/* Parallax Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <motion.div
@@ -443,6 +462,7 @@ export function LandingPage() {
         {publishedPromos.length > 0 && (
           <section
             id="promo"
+            data-analytics="promo_section"
             ref={promoSectionRef}
             className="py-24 bg-background relative overflow-hidden"
           >
@@ -458,33 +478,40 @@ export function LandingPage() {
               >
                 <div className="inline-flex items-center gap-2 px-6 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white text-xs font-black uppercase tracking-widest mb-6 animate-pulse">
                   <Zap size={14} className="text-blue-400" />
-                  <span>{t("promo.title")}</span>
+                  <span>{aboutUs.promo_badge || t("promo.title")}</span>
                 </div>
                 <h2 className="text-4xl md:text-6xl font-black mb-6 text-white tracking-tight">
-                  E-Katalog V6 <span className="text-white/40">Offers</span>
+                  {aboutUs.promo_title ? (
+                    <>
+                      {aboutUs.promo_title.split(' ').slice(0, -1).join(' ')} <span className="text-white/40">{aboutUs.promo_title.split(' ').slice(-1)}</span>
+                    </>
+                  ) : (
+                    <>{t("landing.promoFallbackTitle")} <span className="text-white/40">{t("landing.promoFallbackTitleHighlight")}</span></>
+                  )}
                 </h2>
                 <p className="text-white/60 max-w-xl mx-auto text-lg md:text-xl font-light leading-relaxed">
-                  {t("promo.subtitle")}
+                  {aboutUs.promo_subtitle || t("promo.subtitle")}
                 </p>
               </motion.div>
 
               {/* Horizontal Scroll Container or Static Grid */}
               <motion.div
                 style={{ y: promoY }}
-                className={publishedPromos.length <= 3 
-                  ? "grid grid-cols-1 md:grid-cols-3 gap-8 mb-12" 
+                className={publishedPromos.length <= 3
+                  ? "grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
                   : "flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar"
                 }
               >
                 {publishedPromos.map((promo, index) => (
-                  <PromoCard 
-                    key={promo.id} 
-                    promo={promo} 
-                    index={index} 
+                  <PromoCard
+                    key={promo.id}
+                    promo={promo}
+                    index={index}
                     isInView={promoInView}
                     isGridItem={publishedPromos.length <= 3}
                     whatsapp={aboutUs.whatsapp}
                     isMobile={isMobile}
+                    onOpen={handleOpenPromoModal}
                   />
                 ))}
               </motion.div>
@@ -495,6 +522,7 @@ export function LandingPage() {
         {/* Services Section - Horizontal Scroll */}
         <section
           id="layanan"
+          data-analytics="services_section"
           ref={servicesSectionRef}
           className="py-24 bg-white/5 backdrop-blur-3xl border-y border-white/5 relative overflow-hidden"
         >
@@ -539,10 +567,10 @@ export function LandingPage() {
                     {service.icons.map((Icon: any, idx) => (
                       <div key={idx} className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white flex-shrink-0 flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-500`}>
                         {typeof Icon === 'string' ? (
-                          <img 
-                            src={Icon} 
+                          <img
+                            src={Icon}
                             alt={`${service.title} icon ${idx}`}
-                            className="w-10 h-10 sm:w-14 sm:h-14 object-contain p-0.5" 
+                            className="w-10 h-10 sm:w-14 sm:h-14 object-contain p-0.5"
                           />
                         ) : (
                           <Icon size={32} className="text-[#0E1B47]" />
@@ -561,12 +589,13 @@ export function LandingPage() {
                     </p>
                   </div>
 
-                   <Link
+                  <Link
                     to={`/layanan/${service.slug}`}
+                    onClick={() => api.logAnalytics({ category: 'conversion', action: 'click', label: `service_${service.title}` })}
                     className="relative mt-auto px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white font-black text-center transition-all flex items-center justify-center gap-2 overflow-hidden group/btn hover:scale-105 active:scale-95 duration-200 text-sm"
                   >
                     <span className="relative z-10">{t("services_section.cta")}</span>
-                    <Phone size={16} className="relative z-10 group-hover/btn:rotate-12 transition-transform" />
+                    <ArrowRight size={16} className="relative z-10 group-hover/btn:translate-x-1 transition-transform" />
                   </Link>
 
                   <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 dark:group-hover:opacity-20 blur-3xl transition-opacity duration-700 pointer-events-none rounded-full`} />
@@ -578,6 +607,7 @@ export function LandingPage() {
 
         <section
           id="about"
+          data-analytics="about_section"
           ref={aboutSectionRef}
           className="py-24 bg-white/5 backdrop-blur-lg border-y border-white/5 relative overflow-hidden"
         >
@@ -599,36 +629,43 @@ export function LandingPage() {
               </div>
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-24">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24">
               <motion.div
                 initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
                 animate={aboutInView || isMobile ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: isMobile ? 0 : 0.6, delay: isMobile ? 0 : 0.2 }}
-                className="bg-white/5 border border-white/10 rounded-[2.5rem] p-10 hover:bg-white/10 transition-colors"
+                className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden flex flex-col h-full"
               >
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-14 h-14 bg-gradient-to-br from-[var(--kelar-primary)] to-[var(--kelar-secondary)] rounded-2xl flex justify-center items-center shadow-lg">
-                    <History className="text-white" size={28} />
+                  <div className="w-14 h-14 bg-white text-[var(--background)] rounded-2xl flex justify-center items-center shadow-lg">
+                    <History size={28} />
                   </div>
-                  <h3 className="text-3xl font-bold text-white">Sejarah Kelar</h3>
+                  <h3 className="text-3xl font-bold text-white">{t("about.history")}</h3>
                 </div>
-                <div className="space-y-6 text-white/80 font-light leading-relaxed text-lg text-justify">
-                  <p>
-                    Berdiri di tengah dinamika bisnis modern, Kelar lahir dari sebuah visi sederhana namun kuat: "Memudahkan langkah setiap pengusaha". Sejak awal kemunculannya, Kelar telah berkomitmen untuk menjadi mitra strategis bagi UMKM dan perusahaan besar dalam menavigasi kompleksitas legalitas dan birokrasi di Indonesia.
-                  </p>
-                  <p>
-                    Dengan dedikasi yang tak kenal lelah, kami terus berevolusi mengintegrasikan teknologi dan keahlian manusia guna memberikan layanan profesional, cepat, dan transparan untuk memastikan bisnis Anda tumbuh dengan jaminan dan tanpa hambatan legalitas.
-                  </p>
+                <div className="relative h-64 overflow-hidden mb-8">
+                  <div className="text-white/80 font-light leading-relaxed text-lg text-justify whitespace-pre-wrap line-clamp-[6]">
+                    {aboutUs.description}
+                  </div>
+                </div>
+
+                <div className="mt-auto">
+                  <button
+                    onClick={() => setShowHistoryModal(true)}
+                    className="w-full py-4 px-8 bg-white/10 hover:bg-white text-white hover:text-[var(--background)] rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 border border-white/10 group/hist"
+                  >
+                    {t("about.viewMore")}
+                    <ChevronDown size={16} className="group-hover/hist:translate-y-1 transition-transform" />
+                  </button>
                 </div>
               </motion.div>
 
               <motion.div
-                className="bg-white/5 backdrop-blur-2xl rounded-[2.5rem] p-10 border border-white/10 shadow-2xl relative overflow-hidden group"
+                className="bg-white/5 backdrop-blur-2xl rounded-[2.5rem] p-10 border border-white/10 shadow-2xl relative overflow-hidden group flex flex-col h-full"
                 initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
                 animate={aboutInView || isMobile ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: isMobile ? 0 : 0.8, delay: isMobile ? 0 : 0.3 }}
               >
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--kelar-primary)] opacity-20 rounded-full blur-3xl group-hover:opacity-30 transition-all duration-700" />
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/5 opacity-20 rounded-full blur-3xl group-hover:opacity-30 transition-all duration-700" />
                 <div className="flex items-center gap-4 mb-8">
                   <div className="w-14 h-14 bg-white text-[var(--background)] rounded-2xl flex items-center justify-center shadow-xl">
                     <Mail size={28} />
@@ -643,11 +680,17 @@ export function LandingPage() {
                     <MapPin size={24} className="text-white mt-1 flex-shrink-0 group-hover/item:scale-110 transition-transform" />
                     <span className="text-white/90 group-hover/item:text-white transition-colors">{aboutUs.address}</span>
                   </div>
-                  <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group/item">
+                  <div
+                    onClick={() => api.logAnalytics({ category: 'conversion', action: 'click', label: 'whatsapp_click', metadata: { source: 'about_email' } })}
+                    className="flex items-center gap-4 p-5 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group/item"
+                  >
                     <Mail size={24} className="text-white flex-shrink-0 group-hover/item:scale-110 transition-transform" />
                     <a href={`mailto:${aboutUs.email}`} className="text-white/90 group-hover/item:text-white transition-colors">{aboutUs.email}</a>
                   </div>
-                  <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group/item">
+                  <div
+                    onClick={() => api.logAnalytics({ category: 'conversion', action: 'click', label: 'whatsapp_click', metadata: { source: 'about_phone' } })}
+                    className="flex items-center gap-4 p-5 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group/item"
+                  >
                     <Phone size={24} className="text-white flex-shrink-0 group-hover/item:scale-110 transition-transform" />
                     <a href={`tel:${aboutUs.phone}`} className="text-white/90 group-hover/item:text-white transition-colors">{aboutUs.phone}</a>
                   </div>
@@ -680,6 +723,7 @@ export function LandingPage() {
 
         <section
           id="artikel"
+          data-analytics="articles_section"
           ref={articleSectionRef}
           className="py-24 bg-background relative overflow-hidden"
         >
@@ -728,7 +772,7 @@ export function LandingPage() {
 
                 {/* Pagination Controls */}
                 {totalPages > 1 && (
-                  <motion.div 
+                  <motion.div
                     className="flex justify-center items-center mt-20 gap-3"
                     initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                     animate={articlesInView || isMobile ? { opacity: 1, y: 0 } : {}}
@@ -742,17 +786,16 @@ export function LandingPage() {
                     >
                       <ChevronLeft size={20} />
                     </button>
-                    
+
                     {/* Page Numbers */}
                     {[...Array(totalPages)].map((_, i) => (
                       <button
                         key={i}
                         onClick={() => handlePageChange(i + 1)}
-                        className={`w-12 h-12 rounded-2xl border transition-all text-sm font-black active:scale-95 ${
-                          currentPage === i + 1
-                            ? "bg-white text-[var(--background)] border-white shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-                            : "bg-white/5 border-white/10 text-white hover:bg-white/10"
-                        }`}
+                        className={`w-12 h-12 rounded-2xl border transition-all text-sm font-black active:scale-95 ${currentPage === i + 1
+                          ? "bg-white text-[var(--background)] border-white shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+                          : "bg-white/5 border-white/10 text-white hover:bg-white/10"
+                          }`}
                       >
                         {i + 1}
                       </button>
@@ -852,6 +895,126 @@ export function LandingPage() {
 
         <Footer />
       </div>
+      {/* Sejarah Detail Modal */}
+      {showHistoryModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center px-4 md:px-10 transition-all font-sans">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowHistoryModal(false)}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-[#0b1a2a] border border-white/10 rounded-[4rem] w-full max-w-2xl h-[800px] max-h-[90vh] p-10 md:p-14 flex flex-col items-center relative shadow-2xl overflow-hidden z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowHistoryModal(false)}
+              className="absolute top-8 right-8 text-white/20 hover:text-white transition-colors z-20"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Background Gradient Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-blue-500/10 blur-[100px] pointer-events-none" />
+
+            {/* Icon Container */}
+            <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-8 border border-white/5 shadow-inner shrink-0 scale-125">
+              <History size={32} className="text-blue-400" />
+            </div>
+
+            {/* Title */}
+            <h3 className="text-4xl md:text-5xl font-black text-white text-center mb-3 tracking-tighter leading-tight shrink-0">
+              {t("landing.historyModalTitle")}
+            </h3>
+
+            <div className="text-blue-400 font-black uppercase tracking-[0.3em] text-[10px] text-center mb-8 shrink-0">
+              {t("landing.historyModalSubtitle")}
+            </div>
+
+            {/* Content Box (Scrollable) */}
+            <div className="w-full h-full bg-white/5 rounded-[2.5rem] p-8 md:p-10 mb-8 border border-white/5 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20 custom-scrollbar-minimal">
+              <div className="text-white/90 text-[17px] leading-loose font-medium text-justify whitespace-pre-wrap">
+                {aboutUs.description}
+              </div>
+            </div>
+
+            {/* Primary Action Button */}
+            <button
+              onClick={() => setShowHistoryModal(false)}
+              className="w-full py-6 bg-white text-[#0b1a2a] rounded-full font-black flex items-center justify-center gap-3 hover:scale-105 transition-transform active:scale-95 shadow-2xl shrink-0 text-sm md:text-base uppercase tracking-widest"
+            >
+              {t("landing.closeWindow")}
+            </button>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Promo Detail Modal (Global Stack) */}
+      {showPromoDetailModal && selectedPromo && (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center px-4 md:px-10 transition-all font-sans">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowPromoDetailModal(false)}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-[#0b1a2a] border border-white/10 rounded-[4rem] w-full max-w-xl h-[800px] p-10 md:p-14 flex flex-col items-center relative shadow-2xl overflow-hidden z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button restored */}
+            <button
+              onClick={() => setShowPromoDetailModal(false)}
+              className="absolute top-8 right-8 text-white/20 hover:text-white transition-colors z-20"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Background Gradient Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-blue-500/10 blur-[100px] pointer-events-none" />
+
+            {/* Icon Container (Simplified) */}
+            <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-10 border border-white/5 shadow-inner shrink-0 scale-125">
+              <Tag size={32} className="text-blue-400" />
+            </div>
+
+            {/* Title */}
+            <h3 className="text-4xl md:text-5xl font-black text-white text-center mb-8 tracking-tighter leading-tight shrink-0">
+              {selectedPromo.name}
+            </h3>
+
+            {/* Content Box (Scrollable) */}
+            <div className="w-full h-full bg-white/5 rounded-[2.5rem] p-10 mb-10 border border-white/5 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20 custom-scrollbar-minimal">
+              <div className="text-blue-400 font-black uppercase tracking-[0.3em] text-xs text-center mb-10 pb-6 border-b border-white/5">
+                {selectedPromo.subheader || t("landing.promoDetailFallbackSubheader")}
+              </div>
+              <div className="text-white/90 text-[17px] leading-loose font-medium whitespace-pre-wrap">
+                {selectedPromo.content}
+              </div>
+            </div>
+
+            {/* Primary Action Button */}
+            <a
+              href={`https://wa.me/62${aboutUs.whatsapp.replace(/^0/, "")}?text=${encodeURIComponent(selectedPromo.whatsapp_message || `Halo Kelar.co.id, saya tertarik dengan promo: ${selectedPromo.name}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-6 bg-white text-[#0b1a2a] rounded-full font-black flex items-center justify-center gap-3 hover:scale-105 transition-transform active:scale-95 shadow-2xl mb-8 shrink-0 text-lg uppercase tracking-widest"
+            >
+              <Phone size={20} />
+              {t("landing.claimPromo")}
+            </a>
+
+            {/* Secondary Dismiss Button */}
+            <button
+              onClick={() => setShowPromoDetailModal(false)}
+              className="text-white/30 hover:text-white text-xs font-black uppercase tracking-[0.5em] transition-colors shrink-0"
+            >
+              {t("landing.maybeLater")}
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

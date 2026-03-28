@@ -55,6 +55,7 @@ export function ServicesPage() {
         packages: service.packages.map(pkg => ({
           name: pkg.name,
           price: pkg.price,
+          whatsapp_message: pkg.whatsapp_message || "",
           is_popular: pkg.isPopular,
           features: [...pkg.features]
         }))
@@ -73,9 +74,9 @@ export function ServicesPage() {
     if (serviceToDelete) {
       try {
         await deleteService(serviceToDelete);
-        toast.success("Layanan berhasil dihapus");
+        toast.success(t("admin.services.deleteSuccess"));
       } catch (error) {
-        toast.error("Gagal menghapus layanan");
+        toast.error(t("admin.services.deleteFailed"));
       }
     }
   };
@@ -85,7 +86,7 @@ export function ServicesPage() {
       ...formData,
       packages: [
         ...formData.packages,
-        { name: "", price: "", is_popular: false, features: [""] }
+        { name: "", price: "", whatsapp_message: "", is_popular: false, features: [""] }
       ]
     });
   };
@@ -145,6 +146,9 @@ export function ServicesPage() {
       submissionData.append(`packages[${pIdx}][name]`, pkg.name);
       submissionData.append(`packages[${pIdx}][price]`, pkg.price);
       submissionData.append(`packages[${pIdx}][is_popular]`, pkg.is_popular ? "1" : "0");
+      if (pkg.whatsapp_message) {
+        submissionData.append(`packages[${pIdx}][whatsapp_message]`, pkg.whatsapp_message);
+      }
       pkg.features.forEach((feat: string, fIdx: number) => {
         submissionData.append(`packages[${pIdx}][features][${fIdx}]`, feat);
       });
@@ -157,10 +161,10 @@ export function ServicesPage() {
     try {
       if (editingId) {
         await updateService(editingId, submissionData);
-        toast.success("Layanan berhasil diupdate");
+        toast.success(t("admin.services.updateSuccess"));
       } else {
         await addService(submissionData);
-        toast.success("Layanan berhasil ditambahkan");
+        toast.success(t("admin.services.addSuccess"));
       }
       setShowForm(false);
       setEditingId(null);
@@ -175,7 +179,7 @@ export function ServicesPage() {
         packages: []
       });
     } catch (error) {
-      toast.error(editingId ? "Gagal update layanan" : "Gagal tambah layanan");
+      toast.error(editingId ? t("admin.services.updateFailed") : t("admin.services.addFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -218,7 +222,7 @@ export function ServicesPage() {
             className="flex items-center justify-center gap-2 px-6 py-3 bg-[var(--kelar-primary)] hover:bg-[var(--kelar-primary)]/90 text-white rounded-2xl font-bold transition-all shadow-lg active:scale-95"
           >
             <Plus size={20} />
-            <span>Tambah Layanan</span>
+            <span>{t("admin.services.addService")}</span>
           </button>
         </div>
 
@@ -235,7 +239,7 @@ export function ServicesPage() {
             />
           </div>
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between">
-            <span className="text-white/50">Total Layanan</span>
+            <span className="text-white/50">{t("admin.services.totalServices")}</span>
             <span className="text-2xl font-black text-white">{services.length}</span>
           </div>
         </div>
@@ -246,10 +250,10 @@ export function ServicesPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/10 bg-white/5">
-                  <th className="px-6 py-4 text-white/50 font-bold uppercase text-xs tracking-wider">Layanan</th>
-                  <th className="px-6 py-4 text-white/50 font-bold uppercase text-xs tracking-wider">Slug</th>
-                  <th className="px-6 py-4 text-white/50 font-bold uppercase text-xs tracking-wider text-center">Paket</th>
-                  <th className="px-6 py-4 text-white/50 font-bold uppercase text-xs tracking-wider text-right">Aksi</th>
+                  <th className="px-6 py-4 text-white/50 font-bold uppercase text-xs tracking-wider">{t("admin.services.serviceName")}</th>
+                  <th className="px-6 py-4 text-white/50 font-bold uppercase text-xs tracking-wider">{t("admin.services.slug")}</th>
+                  <th className="px-6 py-4 text-white/50 font-bold uppercase text-xs tracking-wider text-center">{t("admin.services.package")}</th>
+                  <th className="px-6 py-4 text-white/50 font-bold uppercase text-xs tracking-wider text-right">{t("admin.actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -293,7 +297,7 @@ export function ServicesPage() {
                               onClick={() => moveService(service.id, "up")}
                               disabled={services.findIndex(s => s.id === service.id) === 0}
                               className="p-2 text-white/40 hover:text-blue-400 disabled:opacity-20 disabled:hover:text-white/40 transition-all border-r border-white/10"
-                              title="Pindah ke Atas"
+                              title={t("admin.services.moveUp")}
                             >
                               <ChevronUp size={18} />
                             </button>
@@ -301,7 +305,7 @@ export function ServicesPage() {
                               onClick={() => moveService(service.id, "down")}
                               disabled={services.findIndex(s => s.id === service.id) === services.length - 1}
                               className="p-2 text-white/40 hover:text-blue-400 disabled:opacity-20 disabled:hover:text-white/40 transition-all"
-                              title="Pindah ke Bawah"
+                              title={t("admin.services.moveDown")}
                             >
                               <ChevronDown size={18} />
                             </button>
@@ -309,14 +313,14 @@ export function ServicesPage() {
                           <button
                             onClick={() => handleEdit(service.id)}
                             className="p-2 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white rounded-lg transition-all"
-                            title="Edit"
+                            title={t("admin.edit")}
                           >
                             <Edit2 size={18} />
                           </button>
                           <button
                             onClick={() => handleDeleteClick(service.id)}
                             className="p-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg transition-all"
-                            title="Hapus"
+                            title={t("admin.delete")}
                           >
                             <Trash2 size={18} />
                           </button>
@@ -344,7 +348,7 @@ export function ServicesPage() {
               <div className="p-8 border-b border-white/10 flex items-center justify-between bg-white/5">
                 <div>
                   <h2 className="text-2xl font-black text-white">
-                    {editingId ? "Edit Layanan" : "Tambah Layanan Baru"}
+                    {editingId ? t("admin.services.editService") : t("admin.services.addNew")}
                   </h2>
                   <p className="text-white/40 text-sm">Lengkapi detail layanan dan paket di bawah ini.</p>
                 </div>
@@ -360,7 +364,7 @@ export function ServicesPage() {
                 <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Nama Layanan</label>
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">{t("admin.services.serviceName")}</label>
                       <input
                         required
                         type="text"
@@ -371,7 +375,7 @@ export function ServicesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Slug URL</label>
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">{t("admin.services.slugUrl")}</label>
                       <input
                         required
                         type="text"
@@ -382,7 +386,7 @@ export function ServicesPage() {
                       />
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Penjelasan Singkat (Subtitle)</label>
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">{t("admin.services.subtitle")}</label>
                       <input
                         required
                         type="text"
@@ -393,7 +397,7 @@ export function ServicesPage() {
                       />
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Informasi Lengkap</label>
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">{t("admin.services.fullInfo")}</label>
                       <textarea
                         required
                         rows={3}
@@ -404,7 +408,7 @@ export function ServicesPage() {
                       />
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Icons (Multiupload)</label>
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">{t("admin.services.icons")}</label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {formData.icons.map((icon, idx) => (
                           <div key={idx} className="relative aspect-square rounded-2xl bg-white/5 border border-white/10 overflow-hidden group">
@@ -428,7 +432,7 @@ export function ServicesPage() {
                         ))}
                         <label className="aspect-square rounded-2xl bg-white/5 border-2 border-dashed border-white/10 hover:border-[var(--kelar-primary)]/50 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-white/10 text-white/30 hover:text-[var(--kelar-primary)]">
                           <Plus size={32} />
-                          <span className="text-[10px] font-bold uppercase mt-1">Upload</span>
+                          <span className="text-[10px] font-bold uppercase mt-1">{t("admin.services.upload")}</span>
                           <input
                             type="file"
                             multiple
@@ -441,10 +445,10 @@ export function ServicesPage() {
                           />
                         </label>
                       </div>
-                      <p className="text-[10px] text-white/30 italic mt-2">* Rekomendasi 2-3 icon per layanan. Ukuran 500x500px.</p>
+                      <p className="text-[10px] text-white/30 italic mt-2">{t("admin.services.iconRecommendation")}</p>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">Warna (Gradient Class)</label>
+                      <label className="text-sm font-bold text-white/50 ml-1 uppercase tracking-wider">{t("admin.services.gradientColor")}</label>
                       <input
                         placeholder="Contoh: from-blue-500 to-indigo-600"
                         value={formData.color}
@@ -458,7 +462,7 @@ export function ServicesPage() {
                   <div className="space-y-6">
                     <div className="flex items-center justify-between border-b border-white/10 pb-4">
                       <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                        Paket Layanan
+                        {t("admin.services.packages")}
                         <span className="text-xs px-2 py-0.5 bg-white/10 rounded-md text-white/40">{formData.packages.length}</span>
                       </h3>
                       <button
@@ -467,7 +471,7 @@ export function ServicesPage() {
                         className="text-[var(--kelar-primary)] hover:text-[var(--kelar-primary)]/80 font-bold text-sm flex items-center gap-2 transition-colors"
                       >
                         <PlusCircle size={18} />
-                        Tambah Paket
+                        {t("admin.services.addPackage")}
                       </button>
                     </div>
 
@@ -484,7 +488,7 @@ export function ServicesPage() {
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div className="space-y-2">
-                              <label className="text-xs font-bold text-white/30 ml-1 uppercase">Nama Paket</label>
+                              <label className="text-xs font-bold text-white/30 ml-1 uppercase">{t("admin.services.packageName")}</label>
                               <input
                                 required
                                 placeholder="Contoh: Paket Basic"
@@ -494,13 +498,23 @@ export function ServicesPage() {
                               />
                             </div>
                             <div className="space-y-2">
-                              <label className="text-xs font-bold text-white/30 ml-1 uppercase">Harga (Tampil)</label>
+                              <label className="text-xs font-bold text-white/30 ml-1 uppercase">{t("admin.services.displayPrice")}</label>
                               <input
                                 required
                                 placeholder="Contoh: 2.500.000"
                                 value={pkg.price}
                                 onChange={(e) => updatePackage(pIdx, "price", e.target.value)}
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-[var(--kelar-primary)]"
+                              />
+                            </div>
+                            <div className="space-y-2 md:col-span-2">
+                              <label className="text-xs font-bold text-white/30 ml-1 uppercase">{t("admin.services.customWaMessage")}</label>
+                              <textarea
+                                placeholder="Contoh: Halo Min, saya tertarik dengan layanan konsul dan mau order Paket Basic..."
+                                value={pkg.whatsapp_message || ""}
+                                onChange={(e) => updatePackage(pIdx, "whatsapp_message", e.target.value)}
+                                rows={2}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-green-500 font-medium text-sm"
                               />
                             </div>
                             <div className="flex items-center gap-2 ml-1">
@@ -511,19 +525,19 @@ export function ServicesPage() {
                                 onChange={(e) => updatePackage(pIdx, "is_popular", e.target.checked)}
                                 className="w-5 h-5 rounded-md border-white/10 bg-white/5 text-[var(--kelar-primary)] focus:ring-offset-0 focus:ring-0"
                               />
-                              <label htmlFor={`popular-${pIdx}`} className="text-sm text-white/70 cursor-pointer">Set sebagai Paket Populer</label>
+                              <label htmlFor={`popular-${pIdx}`} className="text-sm text-white/70 cursor-pointer">{t("admin.services.setPopular")}</label>
                             </div>
                           </div>
 
                           <div className="space-y-4">
                             <div className="flex items-center justify-between ml-1">
-                              <label className="text-xs font-bold text-white/30 uppercase">Fitur / Keuntungan</label>
+                              <label className="text-xs font-bold text-white/30 uppercase">{t("admin.services.features")}</label>
                               <button
                                 type="button"
                                 onClick={() => addFeature(pIdx)}
                                 className="text-xs text-[var(--kelar-primary)] border border-[var(--kelar-primary)]/30 px-3 py-1 rounded-full hover:bg-[var(--kelar-primary)]/10 transition-all font-bold"
                               >
-                                + Add Item
+                                {t("admin.services.addFeature")}
                               </button>
                             </div>
                             <div className="grid grid-cols-1 gap-3">
@@ -553,8 +567,8 @@ export function ServicesPage() {
                       {formData.packages.length === 0 && (
                         <div className="py-12 border-2 border-dashed border-white/5 rounded-3xl flex flex-col items-center justify-center text-white/20">
                           <PlusCircle size={40} className="mb-4" />
-                          <p className="font-medium">Belum ada paket ditambahkan</p>
-                          <button type="button" onClick={addPackage} className="mt-4 text-sm text-[var(--kelar-primary)] font-bold underline">Tambah paket pertama</button>
+                          <p className="font-medium">{t("admin.services.noPackages")}</p>
+                          <button type="button" onClick={addPackage} className="mt-4 text-sm text-[var(--kelar-primary)] font-bold underline">{t("admin.services.addFirstPackage")}</button>
                         </div>
                       )}
                     </div>
@@ -568,14 +582,14 @@ export function ServicesPage() {
                     onClick={() => setShowForm(false)}
                     className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl transition-all"
                   >
-                    Batal
+                    {t("admin.cancel")}
                   </button>
                   <button
                     disabled={isSubmitting}
                     type="submit"
                     className="px-12 py-3 bg-[var(--kelar-primary)] hover:bg-[var(--kelar-primary)]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-2xl transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] min-w-[160px]"
                   >
-                    {isSubmitting ? "Menyimpan..." : editingId ? "Simpan Perubahan" : "Tambah Layanan"}
+                    {isSubmitting ? t("admin.services.saving") : editingId ? t("admin.services.saveChanges") : t("admin.services.addService")}
                   </button>
                 </div>
               </form>
@@ -588,7 +602,7 @@ export function ServicesPage() {
           isOpen={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
           onConfirm={confirmDelete}
-          title="Hapus Layanan"
+          title={t("admin.services.deleteService")}
           message="Apakah Anda yakin ingin menghapus layanan ini? Seluruh data paket dan fitur juga akan terhapus secara permanen."
         />
       </div>

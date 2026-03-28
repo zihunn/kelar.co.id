@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { useLanguage } from "../context/LanguageContext";
 import { useNavigate, useLocation } from "react-router";
+import { api } from "../services/api";
 
 export function HeroSlider() {
   const { heroSlides } = useData();
@@ -118,6 +119,7 @@ export function HeroSlider() {
                     </p>
                     <button
                       onClick={() => {
+                        api.logAnalytics({ category: 'conversion', action: 'click', label: 'hero_cta', metadata: { slide: slide.title } });
                         if (slide.redirectUrl.startsWith("/#")) {
                           const sectionId = slide.redirectUrl.replace("/#", "");
                           if (location.pathname === "/") {

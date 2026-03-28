@@ -6,6 +6,8 @@ import { useLanguage } from "../context/LanguageContext";
 import { Calendar, ArrowLeft, Share2 } from "lucide-react";
 import { useEffect } from "react";
 import { ArticleCard } from "../components/ArticleCard";
+import { api } from "../services/api";
+import { AnalyticsTracker } from "../components/AnalyticsTracker";
 
 export function ArticleDetail() {
   const { id } = useParams();
@@ -81,6 +83,7 @@ export function ArticleDetail() {
 
   return (
     <div className="min-h-screen bg-background text-white transition-colors selection:bg-white selection:text-[var(--background)]">
+      <AnalyticsTracker />
       <Navbar />
 
       {/* Article Header */}
@@ -127,13 +130,16 @@ export function ArticleDetail() {
       </div>
 
       {/* Article Content */}
-      <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 text-white">
+      <article 
+        data-analytics="article_content_section"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 text-white"
+      >
         <div
           className="prose prose-invert prose-lg max-w-none 
             prose-headings:font-black prose-headings:font-montserrat prose-headings:text-white prose-headings:tracking-tight
             prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-8
             prose-h3:text-2xl prose-h3:mt-10 prose-h3:mb-6
-            prose-p:text-white/70 prose-p:leading-relaxed prose-p:mb-8 prose-p:font-light
+            prose-p:text-white/70 prose-p:leading-relaxed prose-p:mb-4 prose-p:font-light
             prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
             prose-ul:my-8 prose-li:my-2 prose-li:text-white/70
             prose-img:rounded-3xl prose-img:shadow-2xl prose-img:border prose-img:border-white/10
@@ -144,7 +150,10 @@ export function ArticleDetail() {
 
       {/* Related Articles */}
       {otherArticles.length > 0 && (
-        <section className="py-24 bg-white/5 border-y border-white/5 transition-colors relative overflow-hidden">
+        <section 
+            data-analytics="other_articles_section"
+            className="py-24 bg-white/5 border-y border-white/5 transition-colors relative overflow-hidden"
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <h2 className="text-3xl md:text-5xl font-black mb-16 text-white font-montserrat tracking-tight">
               {t("articleDetail.otherArticles")}
@@ -170,6 +179,7 @@ export function ArticleDetail() {
               href={`https://wa.me/62${aboutUs.whatsapp.replace(/^0/, "")}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => api.logAnalytics({ category: 'conversion', action: 'click', label: 'whatsapp_click', metadata: { source: 'article_detail_cta', article: article.title } })}
               className="px-10 py-5 bg-white text-background rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl"
             >
               {t("articleDetail.contactUs")}

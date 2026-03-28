@@ -9,6 +9,7 @@ import {
   X,
   Tag,
   ShieldCheck,
+  BarChart3,
 } from "lucide-react";
 import { useSidebar } from "../../context/SidebarContext";
 import { useLanguage } from "../../context/LanguageContext";
@@ -25,6 +26,7 @@ export function AdminSidebar() {
       icon: LayoutDashboard,
       label: t("admin.dashboard"),
     },
+    { path: "/admin/stats", icon: BarChart3, label: "Statistik" },
     { path: "/admin/hero-slider", icon: Image, label: t("admin.heroSlider") },
     { path: "/admin/articles", icon: FileText, label: t("admin.articles") },
     { path: "/admin/promos", icon: Tag, label: t("admin.promos") },

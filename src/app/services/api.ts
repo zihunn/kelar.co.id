@@ -1,5 +1,5 @@
-// const API_BASE_URL = "http://127.0.0.1:8000/api";
-const API_BASE_URL = "https://api.kelar.co.id/api";
+const API_BASE_URL = "http://127.0.0.1:8000/api";
+// const API_BASE_URL = "https://api.kelar.co.id/api";
 
 export const api = {
   async login(email: string, password: string) {
@@ -350,5 +350,52 @@ export const api = {
     if (!response.ok)
       throw new Error(data.meta?.message || "Gagal mengubah urutan.");
     return data;
+  },
+  async logAnalytics(data: {
+    category: string;
+    action: string;
+    label?: string;
+    value?: number;
+    metadata?: any;
+  }) {
+    // Basic session handling
+    let sessionId = sessionStorage.getItem("kelar_session_id");
+    if (!sessionId) {
+      sessionId = Math.random().toString(36).substring(2, 15);
+      sessionStorage.setItem("kelar_session_id", sessionId);
+    }
+
+    try {
+      console.log("[Analytics] Logging event:", data.category, data.action, data.label);
+      const response = await fetch(`${API_BASE_URL}/analytics/log`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          session_id: sessionId,
+          referrer: document.referrer,
+        }),
+      });
+      if (!response.ok) {
+        console.error("[Analytics] Error response:", await response.text());
+      }
+    } catch (e) {
+      console.error("[Analytics] Failed to log event:", e);
+    }
+  },
+
+  async getAnalyticsStats(days: number = 30) {
+    const response = await fetch(`${API_BASE_URL}/analytics/stats?days=${days}`, {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${this.getToken()}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || "Gagal mengambil statistik.");
+    return result.data;
   },
 };

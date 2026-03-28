@@ -38,6 +38,8 @@ const ArticlesPage = lazy(() => import("./pages/admin/ArticlesPage").then((m) =>
 const AboutUsPage = lazy(() => import("./pages/admin/AboutUsPage").then((m) => ({ default: m.AboutUsPage })));
 const PromosPage = lazy(() => import("./pages/admin/PromosPage").then((m) => ({ default: m.PromosPage })));
 const ServicesPage = lazy(() => import("./pages/admin/ServicesPage").then((m) => ({ default: m.ServicesPage })));
+const AnalyticsStatsPage = lazy(() => import("./pages/admin/AnalyticsStatsPage").then((m) => ({ default: m.AnalyticsStatsPage })));
+const ArticlePreviewPage = lazy(() => import("./pages/admin/ArticlePreviewPage").then((m) => ({ default: m.ArticlePreviewPage })));
 
 function NotFound() {
   const { t } = useLanguage();
@@ -167,6 +169,22 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<LoadingFallback />}>
         <ServicesPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/admin/stats",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <AnalyticsStatsPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/admin/preview/article",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <ArticlePreviewPage />
       </Suspense>
     ),
   },

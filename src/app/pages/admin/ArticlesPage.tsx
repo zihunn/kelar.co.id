@@ -3,6 +3,7 @@ import { AdminLayout } from "../../components/admin/AdminLayout";
 import { useData } from "../../context/DataContext";
 import { useLanguage } from "../../context/LanguageContext";
 import {
+  Calendar,
   Plus,
   Edit2,
   Trash2,
@@ -10,6 +11,7 @@ import {
   Upload,
   Link as LinkIcon,
   Loader2,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import ReactQuill from "react-quill";
@@ -211,6 +213,11 @@ export function ArticlesPage() {
     setIsSaving(false);
   };
 
+  const handleLivePreview = () => {
+    localStorage.setItem("kelar_article_preview", JSON.stringify(formData));
+    window.open("/admin/preview/article", "_blank");
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "published":
@@ -261,12 +268,23 @@ export function ArticlesPage() {
         {showForm && (
           <div className="fixed inset-0 bg-blue-950/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-blue-900/40 backdrop-blur-3xl rounded-[3rem] border border-white/20 shadow-[0_0_100px_rgba(0,0,0,0.5)] max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
-              <div className="flex items-center justify-between p-8 border-b border-white/10 sticky top-0 bg-blue-900/60 backdrop-blur-3xl z-10">
-                <h2 className="text-3xl font-black text-white tracking-tight">
-                  {editingId
-                    ? `${t("admin.edit")} ${t("admin.article")}`
-                    : t("admin.addArticle")}
-                </h2>
+              <div className="flex items-center justify-between p-8 border-b border-white/10 sticky top-0 bg-blue-900/60 backdrop-blur-3xl z-10 transition-all">
+                <div className="flex items-center gap-6">
+                  <h2 className="text-3xl font-black text-white tracking-tight">
+                    {editingId
+                      ? `${t("admin.edit")} ${t("admin.article")}`
+                      : t("admin.addArticle")}
+                  </h2>
+                  <div className="h-8 w-[1px] bg-white/10" />
+                  <button
+                    type="button"
+                    onClick={handleLivePreview}
+                    className="flex items-center gap-2 px-6 py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-500/30 transition-all shadow-lg"
+                  >
+                    <Eye size={16} />
+                    Live Preview
+                  </button>
+                </div>
                 <button
                   onClick={resetForm}
                   className="text-white/60 hover:text-white transition-colors"
@@ -374,7 +392,24 @@ export function ArticlesPage() {
                   <label className="block text-white font-bold uppercase tracking-widest text-xs mb-3 ml-1">
                     {t("admin.content")}
                   </label>
-                  <div className="border border-white/10 rounded-[2rem] overflow-hidden bg-white/5">
+                  <div className="border border-white/10 rounded-[2rem] overflow-hidden bg-white/5 ql-custom-editor">
+                    <style>{`
+                      .ql-custom-editor .ql-editor {
+                        font-family: inherit;
+                        font-size: 1.125rem;
+                        line-height: 1.75;
+                      }
+                      .ql-custom-editor .ql-editor p {
+                        margin-bottom: 1rem;
+                      }
+                      .ql-custom-editor .ql-editor h1,
+                      .ql-custom-editor .ql-editor h2,
+                      .ql-custom-editor .ql-editor h3 {
+                        margin-top: 1.5rem;
+                        margin-bottom: 1rem;
+                        font-weight: 900;
+                      }
+                    `}</style>
                     <ReactQuill
                       theme="snow"
                       value={formData.content}
@@ -384,7 +419,7 @@ export function ArticlesPage() {
                       modules={quillModules}
                       formats={quillFormats}
                       className="text-white"
-                      style={{ minHeight: "300px" }}
+                      style={{ minHeight: "400px" }}
                     />
                   </div>
                 </div>
@@ -496,6 +531,13 @@ export function ArticlesPage() {
                           {getStatusBadge(article.status)}
                           <div className="flex gap-2">
                             <button
+                              onClick={() => window.open(`/artikel/${article.id}`, "_blank")}
+                              className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                              title="Preview"
+                            >
+                              <Eye size={18} />
+                            </button>
+                            <button
                               onClick={() => handleEdit(article.id)}
                               className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
                               title={t("admin.edit")}
@@ -577,6 +619,13 @@ export function ArticlesPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex gap-2">
+                            <button
+                              onClick={() => window.open(`/artikel/${article.id}`, "_blank")}
+                              className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                              title="Preview"
+                            >
+                              <Eye size={18} />
+                            </button>
                             <button
                               onClick={() => handleEdit(article.id)}
                               className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
