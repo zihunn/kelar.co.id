@@ -323,7 +323,7 @@ const translations: Record<Language, any> = {
     },
     landing: {
       scrollDown: "Scroll kebawah",
-      viewDetailPrice: "Lihat Detail & Harga",
+      viewDetailPrice: "Lihat Detail",
       promoFallbackTitle: "E-Katalog V6",
       promoFallbackTitleHighlight: "Offers",
       historyModalTitle: "Sejarah Kelar",
@@ -622,7 +622,7 @@ const translations: Record<Language, any> = {
     },
     landing: {
       scrollDown: "Scroll down",
-      viewDetailPrice: "View Details & Pricing",
+      viewDetailPrice: "View Details",
       promoFallbackTitle: "E-Catalog V6",
       promoFallbackTitleHighlight: "Offers",
       historyModalTitle: "Kelar History",

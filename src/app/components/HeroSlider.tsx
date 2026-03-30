@@ -144,7 +144,10 @@ export function HeroSlider() {
                             navigate(slide.redirectUrl);
                           }
                         } else {
-                          navigate(slide.redirectUrl);
+                          const target = (slide.redirectUrl && /^\d+$/.test(slide.redirectUrl))
+                            ? `/artikel/${slide.redirectUrl}`
+                            : slide.redirectUrl;
+                          navigate(target);
                         }
                       }}
                       className="px-8 py-3.5 sm:px-10 sm:py-5 bg-white text-[var(--background)] rounded-xl sm:rounded-2xl font-black transition-all shadow-2xl hover:bg-white/90 active:scale-95 text-sm sm:text-lg uppercase tracking-wider sm:normal-case sm:tracking-normal w-full sm:w-auto text-center"

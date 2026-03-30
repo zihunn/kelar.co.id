@@ -85,7 +85,13 @@ export function HeroSliderPage() {
       const fd = new FormData();
       fd.append("title", formData.title);
       fd.append("description", formData.description);
-      fd.append("redirect_url", formData.redirectUrl);
+      
+      // Ensure article links have /artikel/ prefix
+      const finalRedirectUrl = formData.linkType === "article" && formData.redirectUrl && !formData.redirectUrl.startsWith("/")
+        ? `/artikel/${formData.redirectUrl}`
+        : formData.redirectUrl;
+        
+      fd.append("redirect_url", finalRedirectUrl);
       fd.append("status", formData.status);
 
       if (imageSource === "upload" && selectedFile) {
@@ -119,12 +125,16 @@ export function HeroSliderPage() {
     const slide = heroSlides.find((s) => s.id === id);
     if (slide) {
       const isSection = slide.redirectUrl?.startsWith("/#");
+      const isArticlePath = slide.redirectUrl?.startsWith("/artikel/");
+      
       setFormData({
         title: slide.title || "",
         description: slide.description || "",
         image: slide.image || "",
         mobileImage: slide.mobile_image || "",
-        redirectUrl: slide.redirectUrl || "",
+        redirectUrl: isArticlePath 
+          ? slide.redirectUrl.replace("/artikel/", "") 
+          : (slide.redirectUrl || ""),
         linkType: isSection ? "section" : "article",
         status: slide.status || "draft",
       });

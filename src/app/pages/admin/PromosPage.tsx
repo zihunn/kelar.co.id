@@ -36,6 +36,7 @@ export function PromosPage() {
     badge: "",
     subheader: "",
     content: "",
+    price: "",
     whatsapp_message: "",
     status: "draft",
   });
@@ -55,6 +56,7 @@ export function PromosPage() {
         badge: promo.badge || "",
         subheader: promo.subheader || "",
         content: promo.content,
+        price: promo.price || "",
         whatsapp_message: promo.whatsapp_message || "",
         status: promo.status,
       });
@@ -75,26 +77,26 @@ export function PromosPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (editingId) {
-      updatePromo(editingId, formData).then(() => {
+    try {
+      if (editingId) {
+        await updatePromo(editingId, formData);
         toast.success(t("admin.promo") + " berhasil diupdate");
-        setIsSubmitting(false);
-        setShowForm(false);
-        setEditingId(null);
-        setFormData({ name: "", badge: "", subheader: "", content: "", whatsapp_message: "", status: "draft" });
-      });
-    } else {
-      addPromo(formData).then(() => {
+      } else {
+        await addPromo(formData);
         toast.success(t("admin.promo") + " berhasil ditambahkan");
-        setIsSubmitting(false);
-        setShowForm(false);
-        setEditingId(null);
-        setFormData({ name: "", badge: "", subheader: "", content: "", whatsapp_message: "", status: "draft" });
-      });
+      }
+      setShowForm(false);
+      setEditingId(null);
+      setFormData({ name: "", badge: "", subheader: "", content: "", price: "", whatsapp_message: "", status: "draft" });
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "Gagal menyimpan promo");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -168,7 +170,7 @@ export function PromosPage() {
             <button
               onClick={() => {
                 setEditingId(null);
-                setFormData({ name: "", badge: "", subheader: "", content: "", whatsapp_message: "", status: "draft" });
+                setFormData({ name: "", badge: "", subheader: "", content: "", price: "", whatsapp_message: "", status: "draft" });
                 setShowForm(true);
               }}
               className="flex items-center gap-3 px-8 py-4 bg-white text-[var(--background)] rounded-2xl font-black transition-all shadow-2xl hover:bg-white/90 active:scale-95"
@@ -215,6 +217,7 @@ export function PromosPage() {
                   <thead className="bg-white/5 border-b border-white/10">
                     <tr>
                       <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">{t("admin.promoName")}</th>
+                      <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em]">Harga</th>
                       <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em]">{t("admin.content")}</th>
                       <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">{t("admin.status")}</th>
                       <th className="px-6 py-5 text-left text-xs font-black text-white uppercase tracking-[0.2em] whitespace-nowrap text-right">{t("admin.actions")}</th>
@@ -226,6 +229,11 @@ export function PromosPage() {
                         <td className="px-6 py-4">
                           <div className="text-lg font-bold text-white max-w-sm tracking-tight group-hover:text-blue-400 transition-colors">
                             {promo.name}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-blue-400 font-black">
+                            {promo.price || "-"}
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -305,6 +313,16 @@ export function PromosPage() {
                   onChange={(e) => setFormData({ ...formData, subheader: e.target.value })}
                   placeholder="Opsional: Teks tambahan di bawah judul"
                   className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-black text-white/40 uppercase tracking-widest pl-1">Harga Promo</label>
+                <input
+                  type="text"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  placeholder="Contoh: Rp 500.000 atau Mulai Rp 1 Juta"
+                  className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold"
                 />
               </div>
               <div className="space-y-2">

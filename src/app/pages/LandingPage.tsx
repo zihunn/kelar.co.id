@@ -125,9 +125,17 @@ function PromoCard({ promo, index, isInView, isGridItem, whatsapp, isMobile, onO
             {promo.name}
           </h3>
           {promo.subheader && (
-            <p className="text-blue-400 text-sm font-black uppercase tracking-widest mb-6 opacity-80 group-hover:opacity-100 transition-all">
+            <p className="text-blue-400 text-sm font-black uppercase tracking-widest mb-4 opacity-80 group-hover:opacity-100 transition-all">
               {promo.subheader}
             </p>
+          )}
+
+          {promo.price && (
+            <div className="mb-6 flex items-baseline gap-2">
+              <span className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                {promo.price}
+              </span>
+            </div>
           )}
 
           <div className="relative flex-grow overflow-hidden flex flex-col">
@@ -980,9 +988,15 @@ export function LandingPage() {
             </div>
 
             {/* Title */}
-            <h3 className="text-4xl md:text-5xl font-black text-white text-center mb-8 tracking-tighter leading-tight shrink-0">
+            <h3 className="text-4xl md:text-5xl font-black text-white text-center mb-3 tracking-tighter leading-tight shrink-0">
               {selectedPromo.name}
             </h3>
+
+            {selectedPromo.price && (
+              <div className="mb-8 text-3xl font-black text-blue-400 shrink-0">
+                {selectedPromo.price}
+              </div>
+            )}
 
             {/* Content Box (Scrollable) */}
             <div className="w-full h-full bg-white/5 rounded-[2.5rem] p-10 mb-10 border border-white/5 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20 custom-scrollbar-minimal">

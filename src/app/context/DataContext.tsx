@@ -35,6 +35,7 @@ export interface Promo {
   name: string;
   subheader?: string;
   content: string;
+  price?: string;
   whatsapp_message?: string;
   status: "published" | "draft";
 }
@@ -423,6 +424,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
             name: p.name,
             subheader: p.subheader,
             content: p.content,
+            price: p.price,
             whatsapp_message: p.whatsapp_message,
             status: p.status,
           })),
@@ -702,6 +704,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
             name: data.name,
             subheader: data.subheader,
             content: data.content,
+            price: data.price,
             whatsapp_message: data.whatsapp_message,
             status: data.status,
           },
@@ -715,26 +718,29 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
 
   const updatePromo = async (id: string, promoData: Partial<Promo>) => {
     try {
+      console.log(`Updating promo ${id}...`, promoData);
       const { api } = await import("../services/api");
       const data = await api.updatePromo(id, promoData);
       if (data) {
-        setPromos(
-          promos.map((p) =>
+        setPromos((prev) =>
+          prev.map((p) =>
             p.id === id
               ? {
                 ...p,
-                badge: data.badge,
-                title: data.title,
-                subtitle: data.subtitle,
-                name: data.name,
-                subheader: data.subheader,
-                content: data.content,
-                whatsapp_message: data.whatsapp_message,
-                status: data.status,
+                badge: data.badge ?? p.badge,
+                title: data.title ?? p.title,
+                subtitle: data.subtitle ?? p.subtitle,
+                name: data.name ?? p.name,
+                subheader: data.subheader ?? p.subheader,
+                content: data.content ?? p.content,
+                price: data.price ?? p.price,
+                whatsapp_message: data.whatsapp_message ?? p.whatsapp_message,
+                status: data.status ?? p.status,
               }
               : p,
           ),
         );
+        console.log("Promo updated successfully:", data);
       }
     } catch (error) {
       console.error(`Gagal memperbarui promo ${id}:`, error);
